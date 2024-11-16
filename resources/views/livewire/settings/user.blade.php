@@ -54,7 +54,7 @@ new class extends Component {
     //select Item
     public function selectItem($id, $action)
     {
-        if (auth()->user()->category == 'user') {
+        if (auth()->user()->category != 'admin') {
             $this->error("This action is unauthorized.", position: 'toast-top');
             return;
         }
@@ -73,12 +73,20 @@ new class extends Component {
             $this->category = $this->myuser->category;
             $this->group_id = $this->myuser->group_id;
             $this->myModal = true;
+        } elseif ($action == 'reset') {
+            //reset password to a random password and copy new password to clipboard
+            $newPassword = Str::lower(Str::random(4));
+            $this->myuser = User::find($id);
+            $this->myuser->password = bcrypt($newPassword);
+            $this->myuser->save();
+            $this->success("Password reset to: " . $newPassword, position: 'toast-top');
+
         } elseif ($action == 'delete'){
             if ($id == auth()->user()->id) {
                 $this->warning("You can't delete yourself.", position: 'toast-top');
             } else {
                 User::destroy($id);
-                $this->success("User deleted.", position: 'toast-top');
+                $this->success("Data deleted.", position: 'toast-top');
                 $this->resetPage();
             }
         }
@@ -96,7 +104,7 @@ new class extends Component {
         $this->myuser->category = $this->category;
         $this->myuser->group_id = $this->group_id;
         $this->myuser->save();
-        $this->success("Info saved.", position: 'toast-top');
+        $this->success("Data saved.", position: 'toast-top');
         $this->reset();
         $this->resetPage();
         $this->myModal = false;
@@ -140,17 +148,18 @@ new class extends Component {
     {
         $categories = [
             [
+                'id' => 'user',
+                'name' => 'user'
+            ],
+            [
+            'id' => 'manager',
+            'name' => 'manager'
+            ],            
+            [
                 'id' => 'admin',
                 'name' => 'admin'
             ],
-            [
-                'id' => 'manager',
-                'name' => 'manager'
-            ],
-            [
-                'id' => 'user',
-                'name' => 'user'
-            ]
+
         ];
         return [
             'categories' => $categories,
@@ -164,32 +173,34 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Users" separator progress-indicator>
+    <x-header title="User" separator progress-indicator>
         <x-slot:middle class="!justify-end">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
-            <x-button label="New User" class="btn-primary" wire:click="selectItem(0,'new')" />
+            <x-button label="New" class="btn-primary" wire:click="selectItem(0,'new')" />
         </x-slot:actions>
     </x-header>
 
     <!-- TABLE  -->
     <x-card>
-        <x-table :headers="$headers" :rows="$users" :sort-by="$sortBy" with-pagination :per-page-values="[10, 25, 50]"
-            show-empty-text>
+        <x-table :headers="$headers" :rows="$users" :sort-by="$sortBy" with-pagination show-empty-text>
             @scope('actions', $user)
-            <div class="w-48 flex justify-end gap-2">
+            <div class="w-48 flex justify-end">
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $user['id'] }},'edit')"
-                    class="btn-ghost btn-sm text-blue-500" />
+                    class="btn-ghost btn-xs text-blue-500" tooltip="Edit" />
+                <x-button icon="o-receipt-refund" wire:click="selectItem({{ $user['id'] }},'reset')"
+                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-yellow-500"
+                    tooltip="Reset Password" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $user['id'] }},'delete')"
-                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-sm text-red-500" />
+                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-red-500" tooltip="Delete" />
             </div>
             @endscope
         </x-table>
     </x-card>
 
     <!-- New/Edit user modal -->
-    <x-modal wire:model="myModal" title="User Info" separator persistent>
+    <x-modal wire:model="myModal" separator persistent>
         <div>
             <x-input label="Name" wire:model='uname' clearable />
             @if($action =='new')
@@ -202,8 +213,8 @@ new class extends Component {
 
 
         <x-slot:actions>
+            <x-button label="Save" wire:click="save" class="btn-primary" />
             <x-button label="Cancel" wire:click="closeModal" />
-            <x-button label="Confirm" wire:click="save" class="btn-primary" />
         </x-slot:actions>
     </x-modal>
 </div>

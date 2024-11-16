@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
@@ -8,6 +9,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body class="min-h-screen font-sans antialiased bg-base-200/50 dark:bg-base-200">
 
     {{-- NAVBAR mobile only --}}
@@ -35,21 +37,27 @@
 
                 {{-- User --}}
                 @if($user = auth()->user())
-                    <x-menu-separator />
+                <x-menu-separator />
 
-                    <x-list-item :item="$user" value="name" sub-value="email" no-separator no-hover class="-mx-2 !-my-2 rounded">
-                        <x-slot:actions>
-                            <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="logoff" no-wire-navigate link="/logout" />
-                        </x-slot:actions>
-                    </x-list-item>
+                <x-list-item :item="$user" value="name" sub-value="email" no-separator no-hover
+                    class="-mx-2 !-my-2 rounded">
+                    <x-slot:actions>
+                        <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="logoff"
+                            no-wire-navigate link="/logout" />
+                    </x-slot:actions>
+                </x-list-item>
 
-                    <x-menu-separator />
+                <x-menu-separator />
                 @endif
 
-                <x-menu-item title="Hello" icon="o-sparkles" link="/" />
+                <x-menu-item title="Home" icon="o-home" link="/" />
                 <x-menu-sub title="Settings" icon="o-cog-6-tooth">
-                    <x-menu-item title="Wifi" icon="o-wifi" link="####" />
-                    <x-menu-item title="Archives" icon="o-archive-box" link="####" />
+                    <x-menu-item title="User" icon="o-users" link="/user" />
+                    @if(auth()->user()->category =='admin')
+                    <x-menu-separator />
+                    <x-menu-item title="Account Code" icon="o-calculator" link="/account-code" />
+                    <x-menu-item title="App Group" icon="o-rectangle-group" link="/app-group" />
+                    @endif
                 </x-menu-sub>
             </x-menu>
         </x-slot:sidebar>
@@ -60,7 +68,8 @@
         </x-slot:content>
     </x-main>
 
-    {{--  TOAST area --}}
+    {{-- TOAST area --}}
     <x-toast />
 </body>
+
 </html>

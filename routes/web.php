@@ -1,10 +1,5 @@
 <?php
 
-// use Livewire\Volt\Volt;
-
-// Volt::route('/', 'users.index');
-
-
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -22,9 +17,9 @@ Route::get('/logout', function () {
 
 // Protected routes here
 Route::middleware('auth')->group(function () {
-    Volt::route('/', 'users.index');
-    // Volt::route('/users', 'users.index');
-    // Volt::route('/users/create', 'users.create');
-    // Volt::route('/users/{user}/edit', 'users.edit');
-    // // ... more
+    Volt::route('/', 'dashboard');
+    //settings
+    Volt::route('/user', 'settings.user');
+    Volt::route('/account-code', 'settings.acc_code');
+    Volt::route('/app-group', 'settings.app_group');
 });
