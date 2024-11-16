@@ -1,12 +1,16 @@
 <?php
 
 use App\Models\User;
+use App\Models\AppGroup;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Volt\Component;
 use Mary\Traits\Toast;
 use Livewire\WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Livewire\Attributes\Validate;
+
+
 
 new class extends Component {
     use Toast;
@@ -14,9 +18,25 @@ new class extends Component {
 
     public string $search = '';
 
-    public bool $drawer = false;
+    public bool $myModal = false;
 
-    public array $sortBy = ['column' => 'name', 'direction' => 'asc'];
+    public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
+
+    public User $myuser; //new user
+
+    #[Validate('required')]
+    public string $uname = '';
+    #[Validate('required|min:4')]
+    public string $password = '';
+    #[Validate('required|email|unique:users')]
+    public string $email = '';
+    #[Validate('required')]
+    public string $category = '';
+    #[Validate('required')]
+    public string $group_id = '';
+
+    public $action = "new";
+    
 
     // Clear filters
     public function clear(): void
@@ -24,12 +44,64 @@ new class extends Component {
         $this->reset();
         $this->success('Filters cleared.', position: 'toast-top');
     }
-
-    // Delete action
-    public function delete($id): void
+    //close Modal
+    public function closeModal(): void
     {
-        $this->warning("Will delete #$id", 'It is fake.', position: 'toast-top');
+        $this->reset();
+        $this->resetPage();
+        $this->myModal = false;
     }
+    //select Item
+    public function selectItem($id, $action)
+    {
+        if (auth()->user()->category == 'user') {
+            $this->error("This action is unauthorized.", position: 'toast-top');
+            return;
+        }
+        
+        $this->selectedItemID = $id;
+        $this->action = $action;
+
+        if ($action == 'new') {
+            $this->myuser = new User();
+            $this->myModal = true;
+        } elseif ($action == 'edit') {
+            $this->myuser = User::find($id);
+            $this->uname = $this->myuser->name;
+            $this->password = $this->myuser->password;
+            $this->email = $this->myuser->email;
+            $this->category = $this->myuser->category;
+            $this->group_id = $this->myuser->group_id;
+            $this->myModal = true;
+        } elseif ($action == 'delete'){
+            if ($id == auth()->user()->id) {
+                $this->warning("You can't delete yourself.", position: 'toast-top');
+            } else {
+                User::destroy($id);
+                $this->success("User deleted.", position: 'toast-top');
+                $this->resetPage();
+            }
+        }
+    }
+    //save 
+    public function save()
+    {
+
+        $validatedData = $this->validate();
+        if ($this->action == 'new') {
+            $this->myuser->password = bcrypt($this->password);            
+        }
+        $this->myuser->name = $this->uname;
+        $this->myuser->email = $this->email;
+        $this->myuser->category = $this->category;
+        $this->myuser->group_id = $this->group_id;
+        $this->myuser->save();
+        $this->success("Info saved.", position: 'toast-top');
+        $this->reset();
+        $this->resetPage();
+        $this->myModal = false;
+    }
+
 
     // Table headers
     public function headers(): array
@@ -39,7 +111,7 @@ new class extends Component {
             ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'],
             ['key' => 'category', 'label' => 'Category', 'class' => 'w-24'],
             ['key' => 'email', 'label' => 'E-mail', 'class' => 'w-64'],
-            ['key' => 'group_name', 'label' => 'Group Name'],
+            ['key' => 'group_id', 'label' => 'Group ID'],
 
         ];
     }
@@ -52,32 +124,43 @@ new class extends Component {
      */
     public function users(): LengthAwarePaginator
     {
-        // return collect([
-        //     ['id' => 1, 'name' => 'Mary', 'email' => 'mary@mary-ui.com', 'age' => 23],
-        //     ['id' => 2, 'name' => 'Giovanna', 'email' => 'giovanna@mary-ui.com', 'age' => 7],
-        //     ['id' => 3, 'name' => 'Marina', 'email' => 'marina@mary-ui.com', 'age' => 5],
-        // ])
-        //     ->sortBy([[...array_values($this->sortBy)]])
-        //     ->when($this->search, function (Collection $collection) {
-        //         return $collection->filter(fn(array $item) => str($item['name'])->contains($this->search, true));
-        //     });
-
-        return User::query()
+         return User::query()
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
-            ->paginate(5); // No more `->get()`
+            ->paginate(10); // No more `->get()`
 
+    }
 
+    public function groups(): Collection
+    {
+        return AppGroup::all();
     }
 
     public function with(): array
     {
+        $categories = [
+            [
+                'id' => 'admin',
+                'name' => 'admin'
+            ],
+            [
+                'id' => 'manager',
+                'name' => 'manager'
+            ],
+            [
+                'id' => 'user',
+                'name' => 'user'
+            ]
+        ];
         return [
+            'categories' => $categories,
             'users' => $this->users(),
-            'headers' => $this->headers()
+            'headers' => $this->headers(),
+            'groups' => $this->groups(),
         ];
     }
-}; ?>
+};
+?>
 
 <div>
     <!-- HEADER -->
@@ -86,33 +169,41 @@ new class extends Component {
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
-            <x-button label="Filters" @click="$wire.drawer = true" responsive icon="o-funnel" />
+            <x-button label="New User" class="btn-primary" wire:click="selectItem(0,'new')" />
         </x-slot:actions>
     </x-header>
 
     <!-- TABLE  -->
     <x-card>
-        <x-table :headers="$headers" :rows="$users" :sort-by="$sortBy" per-page="perPage"
-            :per-page-values="[10, 25, 50]" with-pagination show-empty-text>
+        <x-table :headers="$headers" :rows="$users" :sort-by="$sortBy" with-pagination :per-page-values="[10, 25, 50]"
+            show-empty-text>
             @scope('actions', $user)
             <div class="w-48 flex justify-end gap-2">
-                <x-button icon="o-pencil-square" wire:click="delete({{ $user['id'] }})" wire:confirm="Are you sure?"
-                    spinner class="btn-ghost btn-sm text-blue-500" />
-                <x-button icon="o-trash" wire:click="delete({{ $user['id'] }})" wire:confirm="Are you sure?" spinner
-                    class="btn-ghost btn-sm text-red-500" />
+                <x-button icon="o-pencil-square" wire:click="selectItem({{ $user['id'] }},'edit')"
+                    class="btn-ghost btn-sm text-blue-500" />
+                <x-button icon="o-trash" wire:click="selectItem({{ $user['id'] }},'delete')"
+                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-sm text-red-500" />
             </div>
             @endscope
         </x-table>
     </x-card>
 
-    <!-- FILTER DRAWER -->
-    <x-drawer wire:model="drawer" title="Filters" right separator with-close-button class="lg:w-1/3">
-        <x-input placeholder="Search..." wire:model.live.debounce="search" icon="o-magnifying-glass"
-            @keydown.enter="$wire.drawer = false" />
+    <!-- New/Edit user modal -->
+    <x-modal wire:model="myModal" title="User Info" separator persistent>
+        <div>
+            <x-input label="Name" wire:model='uname' clearable />
+            @if($action =='new')
+            <x-input label="Password" wire:model='password' type="password" clearable />
+            @endif
+            <x-input label="Email" wire:model='email' type="email" />
+            <x-select label="Category" wire:model="category" :options="$categories" placeholder="Select one category" />
+            <x-select label="Group Name" wire:model="group_id" :options="$groups" placeholder="Select one group" />
+        </div>
+
 
         <x-slot:actions>
-            <x-button label="Reset" icon="o-x-mark" wire:click="clear" spinner />
-            <x-button label="Done" icon="o-check" class="btn-primary" @click="$wire.drawer = false" />
+            <x-button label="Cancel" wire:click="closeModal" />
+            <x-button label="Confirm" wire:click="save" class="btn-primary" />
         </x-slot:actions>
-    </x-drawer>
+    </x-modal>
 </div>
