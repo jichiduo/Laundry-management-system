@@ -17,6 +17,7 @@ class AppUser extends Model
      */
     protected $fillable = [
         'user_id',
+        'division_id',
         'group_id',
     ];
 
@@ -28,12 +29,18 @@ class AppUser extends Model
     protected $casts = [
         'id' => 'integer',
         'user_id' => 'integer',
+        'division_id' => 'integer',
         'group_id' => 'integer',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(\App\Models\AppUser::class);
+    }
+
+    public function division(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Division::class);
     }
 
     public function group(): BelongsTo

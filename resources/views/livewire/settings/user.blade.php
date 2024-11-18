@@ -189,7 +189,7 @@ new class extends Component {
             <div class="w-48 flex justify-end">
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $user['id'] }},'edit')"
                     class="btn-ghost btn-xs text-blue-500" tooltip="Edit" />
-                <x-button icon="o-receipt-refund" wire:click="selectItem({{ $user['id'] }},'reset')"
+                <x-button icon="o-arrow-path" wire:click="selectItem({{ $user['id'] }},'reset')"
                     wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-yellow-500"
                     tooltip="Reset Password" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $user['id'] }},'delete')"

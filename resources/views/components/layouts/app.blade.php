@@ -49,14 +49,21 @@
 
                 <x-menu-separator />
                 @endif
-
                 <x-menu-item title="Home" icon="o-home" link="/" />
+                <x-menu-sub title="Work Order" icon="o-archive-box">
+                    <x-menu-item title="New" icon="o-rocket-launch" link="/user" />
+                    <x-menu-item title="List" icon="o-list-bullet" link="/user" />
+                    <x-menu-item title="Search" icon="o-magnifying-glass" link="/user" />
+                </x-menu-sub>
+                <x-menu-item title="Customer" icon="o-user-group" link="/" />
                 <x-menu-sub title="Settings" icon="o-cog-6-tooth">
                     <x-menu-item title="User" icon="o-users" link="/user" />
+                    <x-menu-item title="Product" icon="o-shopping-bag" link="/" />
                     @if(auth()->user()->category =='admin')
                     <x-menu-separator />
                     <x-menu-item title="Account Code" icon="o-calculator" link="/account-code" />
                     <x-menu-item title="App Group" icon="o-rectangle-group" link="/app-group" />
+                    <x-menu-item title="Division" icon="o-share" link="/division" />
                     @endif
                 </x-menu-sub>
             </x-menu>

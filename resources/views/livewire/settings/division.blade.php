@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Division;
 use App\Models\AppGroup;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,16 +22,13 @@ new class extends Component {
 
     public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
 
-    public AppGroup $myappGroup; //new user
+    public Division $myDivision; //new user
 
     #[Validate('required')]
     public string $uname = '';
-    #[Validate('required')]
-    public string $currency = '';
-    public string $tax_rate = '';
     public string $address = '';
-    public string $description = '';
-
+    public string $tel = '';
+    public string $remark = '';
 
     public $action = "new";
     
@@ -60,19 +58,17 @@ new class extends Component {
         $this->action = $action;
 
         if ($action == 'new') {
-            $this->myappGroup = new AppGroup();
+            $this->myDivision = new Division();
             $this->myModal = true;
         } elseif ($action == 'edit') {
-            $this->myappGroup = AppGroup::find($id);
-
-            $this->uname = $this->myappGroup->name;
-            $this->currency = $this->myappGroup->currency;
-            $this->tax_rate = $this->myappGroup->tax_rate;
-            $this->address = $this->myappGroup->address;
-            $this->description = $this->myappGroup->description;
+            $this->myDivision = Division::find($id);
+            $this->uname = $this->myDivision->name;
+            $this->address = $this->myDivision->address;
+            $this->tel = $this->myDivision->tel;
+            $this->remark = $this->myDivision->remark;
             $this->myModal = true;
         } elseif ($action == 'delete'){
-                AccCode::destroy($id);
+                Division::destroy($id);
                 $this->success("Data deleted.", position: 'toast-top');
                 $this->reset();
                 $this->resetPage();
@@ -84,12 +80,11 @@ new class extends Component {
 
         $validatedData = $this->validate();
 
-        $this->myappGroup->name = $this->uname;
-        $this->myappGroup->currency = $this->currency;
-        $this->myappGroup->tax_rate = $this->tax_rate;
-        $this->myappGroup->address = $this->address;
-        $this->myappGroup->description = $this->description;
-        $this->myappGroup->save();
+        $this->myDivision->name = $this->uname;
+        $this->myDivision->address = $this->address;
+        $this->myDivision->tel = $this->tel;
+        $this->myDivision->remark = $this->remark;
+        $this->myDivision->save();
         $this->success("Data saved.", position: 'toast-top');
         $this->reset();
         $this->resetPage();
@@ -102,19 +97,17 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-24'],
-            ['key' => 'currency', 'label' => 'Currency'],
-            ['key' => 'tax_rate', 'label' => 'Tax Rate'],
+            ['key' => 'name', 'label' => 'Name', 'class' => 'w-48'],
+            ['key' => 'tel', 'label' => 'Tel', 'class' => 'w-24'],
             ['key' => 'address', 'label' => 'Address'],
-            ['key' => 'description', 'label' => 'Description'],
-
+            ['key' => 'remark', 'label' => 'Remark'],
         ];
     }
 
     // get all data from table
     public function allData(): LengthAwarePaginator
     {
-         return AppGroup::query()
+         return Division::query()
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
             ->paginate(10); 
@@ -135,7 +128,7 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="App Group" separator progress-indicator>
+    <x-header title="Division" separator progress-indicator>
         <x-slot:middle class="!justify-end">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
@@ -162,10 +155,9 @@ new class extends Component {
     <x-modal wire:model="myModal" separator persistent>
         <div>
             <x-input label="Name" wire:model='uname' clearable />
-            <x-input label="Currency" wire:model='currency' clearable />
-            <x-input label="Tax Rate" wire:model='tax_rate' clearable />
+            <x-input label="Tel" wire:model='tel' clearable />
             <x-input label="Address" wire:model='address' clearable />
-            <x-input label="Description" wire:model='description' clearable />
+            <x-input label="Remark" wire:model='remark' clearable />
         </div>
 
 

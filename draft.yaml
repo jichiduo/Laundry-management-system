@@ -30,6 +30,7 @@ models:
 
   AppUser:
     user_id: unsignedBigInteger foreign:Users
+    divison_id: unsignedBigInteger foreign:Divisions
     group_id: unsignedBigInteger foreign:App_groups
 
   CreditTerm:
@@ -43,7 +44,7 @@ models:
 
   Type:
     name: string:50
-    category: string:50 default:"asset"
+    category: string:50 default:"product"
 
   Division:
     name: string:128
@@ -59,7 +60,7 @@ models:
     to_currency: string:128
     rate: decimal:16,8 default:0.00000000
 
-  Asset:
+  Product:
     name: string:255
     description: text nullable
     unit: string:20 nullable
