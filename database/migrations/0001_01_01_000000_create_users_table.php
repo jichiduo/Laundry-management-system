@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('category');
             $table->biginteger('group_id');
-            $table->string('group_name');
+            $table->string('group_name')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -15,13 +15,13 @@ return new class extends Migration
 
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 32)->unique();
             $table->string('name', 128);
+            $table->string('password', 255)->nullable();
             $table->string('tel', 50)->nullable();
             $table->string('email', 255)->nullable();
             $table->string('address', 255)->nullable();
             $table->string('member_card', 50)->nullable();
-            $table->unsignedBigInteger('member_level_id');
+            $table->unsignedBigInteger('member_level_id')->nullable();
             $table->foreign('member_level_id')->references('id')->on('MemberLevels');
             $table->string('member_level_name', 255)->nullable();
             $table->decimal('member_discount', 4, 2)->default(1);

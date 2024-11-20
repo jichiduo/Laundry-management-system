@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Customer;
 use App\Models\AppGroup;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,16 +22,16 @@ new class extends Component {
 
     public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
 
-    public AppGroup $myappGroup; //new user
+    public Customer $myCustomer; //new Customer
 
     #[Validate('required')]
     public string $uname = '';
+    public string $code = '';
+    public string $email = '';
     #[Validate('required')]
-    public string $currency = '';
-    public string $tax_rate = '';
+    public string $tel = '';
     public string $address = '';
-    public string $description = '';
-
+    public string $remark = '';
 
     public $action = "new";
     
@@ -51,29 +52,24 @@ new class extends Component {
     //select Item
     public function selectItem($id, $action)
     {
-        if (auth()->user()->category != 'admin') {
-            $this->error("This action is unauthorized.", position: 'toast-top');
-            return;
-        }
         
         $this->selectedItemID = $id;
         $this->action = $action;
 
         if ($action == 'new') {
-            $this->myappGroup = new AppGroup();
+            $this->myCustomer = new Customer();
             $this->myModal = true;
         } elseif ($action == 'edit') {
-            $this->myappGroup = AppGroup::find($id);
-
-            $this->uname = $this->myappGroup->name;
-            $this->currency = $this->myappGroup->currency;
-            $this->tax_rate = $this->myappGroup->tax_rate;
-            $this->address = $this->myappGroup->address;
-            $this->description = $this->myappGroup->description;
+            $this->myCustomer = Customer::find($id);
+            $this->uname = $this->myCustomer->name;
+            $this->tel = $this->myCustomer->tel;
+            $this->address = $this->myCustomer->address;
+            $this->remark = $this->myCustomer->remark;
+            $this->email = $this->myCustomer->email;
             $this->myModal = true;
         } elseif ($action == 'delete'){
             $rc=0;
-            $sql = "select count(*) as cnt from work_orders where group_id = ? LIMIT 1";
+            $sql = "select count(*) as cnt from work_orders where customer_id = ? LIMIT 1";
             $cnt = DB::select($sql, [$id]);
             foreach ($cnt as $c) {
                 $rc = $c->cnt;
@@ -83,24 +79,35 @@ new class extends Component {
                 $this->error("This data is used in work order, can't be deleted.", position: 'toast-top');
                 return;
             }
-            AppGroup::destroy($id);
-            $this->success("Data deleted.", position: 'toast-top');
+            $data = DB::table('customers')->where('id', [$id])->update([
+                'is_active' => 0,
+            ]);
+            if($data<0){
+                $this->error("Data not deleted.", position: 'toast-top');
+            }else{
+                $this->success("Data deleted.", position: 'toast-top');
+            }
             $this->reset();
             $this->resetPage();
         }
+        
     }
     //save 
     public function save()
     {
 
         $validatedData = $this->validate();
-
-        $this->myappGroup->name = $this->uname;
-        $this->myappGroup->currency = $this->currency;
-        $this->myappGroup->tax_rate = $this->tax_rate;
-        $this->myappGroup->address = $this->address;
-        $this->myappGroup->description = $this->description;
-        $this->myappGroup->save();
+        if ($this->action == 'new') {
+            $this->myCustomer->create_by = Auth()->user()->id;     
+            $this->myCustomer->group_id = Auth()->user()->group_id;      
+        }
+        $this->myCustomer->name = $this->uname;
+        $this->myCustomer->email = $this->email;
+        $this->myCustomer->tel = $this->tel;
+        $this->myCustomer->address = $this->address;
+        $this->myCustomer->remark = $this->remark;
+        $this->myCustomer->update_by = Auth()->user()->id;
+        $this->myCustomer->save();
         $this->success("Data saved.", position: 'toast-top');
         $this->reset();
         $this->resetPage();
@@ -113,20 +120,26 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-24'],
-            ['key' => 'currency', 'label' => 'Currency'],
-            ['key' => 'tax_rate', 'label' => 'Tax Rate'],
-            ['key' => 'address', 'label' => 'Address'],
-            ['key' => 'description', 'label' => 'Description'],
+            ['key' => 'name', 'label' => 'Name', 'class' => 'w-36'],
+            ['key' => 'tel', 'label' => 'Tel'],
+            ['key' => 'email', 'label' => 'E-mail' ],
+            ['key' => 'address', 'label' => 'Address' ],
+            ['key' => 'remark', 'label' => 'Remark' ],
 
         ];
     }
 
-    // get all data from table
-    public function allData(): LengthAwarePaginator
+    /**
+     * For demo purpose, this is a static collection.
+     *
+     * On real projects you do it with Eloquent collections.
+     * Please, refer to maryUI docs to see the eloquent examples.
+     */
+    public function Customers(): LengthAwarePaginator
     {
-         return AppGroup::query()
-            ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
+         return Customer::query()
+            ->where('is_active', 1)
+            ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%")->orwhere('tel', 'like', "%$this->search%")->orWhere('email', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
             ->paginate(10); 
 
@@ -135,9 +148,8 @@ new class extends Component {
 
     public function with(): array
     {
- 
         return [
-            'allData' => $this->allData(),
+            'Customers' => $this->Customers(),
             'headers' => $this->headers(),
         ];
     }
@@ -146,7 +158,7 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="App Group" separator progress-indicator>
+    <x-header title="Customer" separator progress-indicator>
         <x-slot:middle class="!justify-end">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
@@ -157,33 +169,34 @@ new class extends Component {
 
     <!-- TABLE  -->
     <x-card>
-        <x-table :headers="$headers" :rows="$allData" :sort-by="$sortBy" with-pagination show-empty-text>
-            @scope('actions', $user)
+        <x-table :headers="$headers" :rows="$Customers" :sort-by="$sortBy" with-pagination show-empty-text>
+            @scope('actions', $Customer)
             <div class="w-48 flex justify-end">
-                <x-button icon="o-pencil-square" wire:click="selectItem({{ $user['id'] }},'edit')"
+                <x-button icon="o-pencil-square" wire:click="selectItem({{ $Customer['id'] }},'edit')"
                     class="btn-ghost btn-xs text-blue-500" tooltip="Edit" />
-                <x-button icon="o-trash" wire:click="selectItem({{ $user['id'] }},'delete')"
+                <x-button icon="o-credit-card" wire:click="selectItem({{ $Customer['id'] }},'reset')" spinner
+                    class="btn-ghost btn-xs text-yellow-500" tooltip="Member Card Info" />
+                <x-button icon="o-trash" wire:click="selectItem({{ $Customer['id'] }},'delete')"
                     wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-red-500" tooltip="Delete" />
             </div>
             @endscope
         </x-table>
     </x-card>
 
-    <!-- New/Edit user modal -->
+    <!-- New/Edit Customer modal -->
     <x-modal wire:model="myModal" separator persistent>
         <div>
-            <x-input label="Name" wire:model='uname' clearable />
-            <x-input label="Currency" wire:model='currency' clearable />
-            <x-input label="Tax Rate" wire:model='tax_rate' clearable />
-            <x-input label="Address" wire:model='address' clearable />
-            <x-input label="Description" wire:model='description' clearable />
+            <x-input label="Name" wire:model='uname' clearable autocomplete="off" />
+            <x-input label="Tel" wire:model='tel' />
+            <x-input label="Email" wire:model='email' type="email" />
+            <x-input label="Address" wire:model='address' />
+            <x-input label="Remark" wire:model='remark' />
         </div>
 
 
         <x-slot:actions>
             <x-button label="Save" wire:click="save" class="btn-primary" />
             <x-button label="Cancel" wire:click="closeModal" />
-
         </x-slot:actions>
     </x-modal>
 </div>

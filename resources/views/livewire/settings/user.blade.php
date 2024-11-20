@@ -87,7 +87,7 @@ new class extends Component {
             } else {
                 $rc=0;
                 $sql = "select count(*) as cnt from work_orders where user_id = ? LIMIT 1";
-                $cnt = DB::select($sql, $id);
+                $cnt = DB::select($sql, [$id]);
                 foreach ($cnt as $c) {
                     $rc = $c->cnt;
                     break;
@@ -210,7 +210,7 @@ new class extends Component {
     <!-- New/Edit user modal -->
     <x-modal wire:model="myModal" separator persistent>
         <div>
-            <x-input label="Name" wire:model='uname' clearable />
+            <x-input label="Name" wire:model='uname' clearable autocomplete="off" />
             @if($action =='new')
             <x-input label="Password" wire:model='password' type="password" clearable />
             @endif

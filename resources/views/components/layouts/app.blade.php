@@ -51,11 +51,10 @@
                 @endif
                 <x-menu-item title="Home" icon="o-home" link="/" />
                 <x-menu-sub title="Work Order" icon="o-archive-box">
-                    <x-menu-item title="New" icon="o-rocket-launch" link="/user" />
-                    <x-menu-item title="List" icon="o-list-bullet" link="/user" />
-                    <x-menu-item title="Search" icon="o-magnifying-glass" link="/user" />
+                    <x-menu-item title="New" icon="o-rocket-launch" link="/work-order/new" />
+                    <x-menu-item title="List" icon="o-list-bullet" link="/work-order/list" />
                 </x-menu-sub>
-                <x-menu-item title="Customer" icon="o-user-group" link="/" />
+                <x-menu-item title="Customer" icon="o-user-group" link="/customer" />
                 <x-menu-sub title="Settings" icon="o-cog-6-tooth">
                     <x-menu-item title="User" icon="o-users" link="/user" />
                     <x-menu-item title="Product" icon="o-shopping-bag" link="/product" />

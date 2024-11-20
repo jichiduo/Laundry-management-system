@@ -142,13 +142,13 @@ models:
     discount: decimal:4,2 default:1
 
   Customer:
-    code: string:32 unique
     name: string:128
+    password: string:255 nullable
     tel: string:50 nullable
     email: string:255 nullable
     address: string:255 nullable
     member_card: string:50 nullable
-    member_level_id: unsignedBigInteger foreign:MemberLevels
+    member_level_id: unsignedBigInteger nullable foreign:MemberLevels
     member_level_name: string:255 nullable
     member_discount: decimal:4,2 default:1
     balance: decimal:20,2 default:0.00

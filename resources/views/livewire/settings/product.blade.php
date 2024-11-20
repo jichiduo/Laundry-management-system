@@ -4,6 +4,7 @@ use App\Models\Product;
 use App\Models\AppGroup;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Livewire\Volt\Component;
 use Mary\Traits\Toast;
 use Livewire\WithPagination;
@@ -145,6 +146,7 @@ new class extends Component {
             'allData' => $this->allData(),
             'headers' => $this->headers(),
             'groups' => AppGroup::all(),
+            'types'  => DB::table('types')->where('category','Laundry')->get(),
         ];
     }
 };
@@ -182,7 +184,8 @@ new class extends Component {
             <x-input label="Unit" wire:model='unit' clearable />
             <x-input label="Price" wire:model='price' clearable />
             <x-input label="Description" wire:model='description' clearable />
-            <x-input label="Type" wire:model='type' clearable />
+            <x-select label="Type" wire:model="type" :options="$types" option-value="name" option-label="name"
+                placeholder="Select one type" />
             <x-select label="Group Name" wire:model="group_id" :options="$groups" placeholder="Select one group" />
         </div>
 

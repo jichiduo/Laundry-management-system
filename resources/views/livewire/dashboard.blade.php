@@ -68,9 +68,9 @@ new class extends Component {
             <x-card title="New Job" subtitle="create a new job" separator>
                 <x-button label="New Job" wire:click="newJob" class="btn-primary" icon="o-rocket-launch" />
             </x-card>
-            <x-card title="Find an Item" subtitle="please enter cloth tracing number" separator>
-                <x-input placeholder="Search..." wire:model.live.debounce="search" clearable
-                    icon="o-magnifying-glass" />
+            <x-card title="Find Item" subtitle="please enter/scan tracing number/barcode" separator>
+                <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass"
+                    autocomplete="off" />
             </x-card>
         </div>
 

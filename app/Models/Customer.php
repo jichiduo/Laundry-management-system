@@ -17,8 +17,8 @@ class Customer extends Model
      * @var array
      */
     protected $fillable = [
-        'code',
         'name',
+        'password',
         'tel',
         'email',
         'address',
@@ -32,6 +32,15 @@ class Customer extends Model
         'update_by',
         'is_active',
         'group_id',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password',
     ];
 
     /**

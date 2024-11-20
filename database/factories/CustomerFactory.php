@@ -23,8 +23,8 @@ class CustomerFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => $this->faker->regexify('[A-Za-z0-9]{32}'),
             'name' => $this->faker->name(),
+            'password' => $this->faker->password(),
             'tel' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'email' => $this->faker->safeEmail(),
             'address' => $this->faker->regexify('[A-Za-z0-9]{255}'),

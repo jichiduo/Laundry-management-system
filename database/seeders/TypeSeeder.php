@@ -21,31 +21,31 @@ class TypeSeeder extends Seeder
         ]);
         DB::table('types')->insert([
             'name' => 'Cloth',
-            'name' => 'Clothing'
+            'category' => 'Laundry'
         ]);
         DB::table('types')->insert([
             'name' => 'Pants',
-            'name' => 'Clothing'
+            'category' => 'Laundry'
         ]);
         DB::table('types')->insert([
             'name' => 'Large Size',
-            'name' => 'Clothing'
+            'category' => 'Laundry'
         ]);
         DB::table('types')->insert([
             'name' => 'Others',
-            'name' => 'Clothing'
+            'category' => 'Laundry'
         ]);
         DB::table('types')->insert([
             'name' => 'Cash',
-            'name' => 'Payment',
+            'category' => 'Payment',
         ]);
         DB::table('types')->insert([
             'name' => 'QR Code',
-            'name' => 'Payment',
+            'category' => 'Payment',
         ]);
         DB::table('types')->insert([
             'name' => 'Member Card',
-            'name' => 'Payment',
+            'category' => 'Payment',
         ]);
     }
 }

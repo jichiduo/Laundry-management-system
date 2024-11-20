@@ -20,7 +20,7 @@ new class extends Component {
 
     public bool $myModal = false;
 
-    public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
+    public array $sortBy = ['column' => 'id', 'direction' => 'asc'];
 
     public Division $myDivision; //new user
 
@@ -71,7 +71,7 @@ new class extends Component {
 
             $rc=0;
             $sql = "select count(*) as cnt from work_orders where division_id = ? LIMIT 1";
-            $cnt = DB::select($sql, $id);
+            $cnt = DB::select($sql, [$id]);
             foreach ($cnt as $c) {
                 $rc = $c->cnt;
                 break;
@@ -114,6 +114,7 @@ new class extends Component {
             ['key' => 'tel', 'label' => 'Tel', 'class' => 'w-24'],
             ['key' => 'address', 'label' => 'Address'],
             ['key' => 'remark', 'label' => 'Remark'],
+
         ];
     }
 
