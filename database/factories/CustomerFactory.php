@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use App\Models\AppGroup;
 use App\Models\Customer;
 use App\Models\MemberLevel;
 
@@ -36,6 +37,7 @@ class CustomerFactory extends Factory
             'create_by' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'update_by' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'is_active' => $this->faker->boolean(),
+            'group_id' => AppGroup::factory(),
         ];
     }
 }

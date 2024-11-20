@@ -30,7 +30,7 @@ models:
 
   AppUser:
     user_id: unsignedBigInteger foreign:Users
-    divison_id: unsignedBigInteger foreign:Divisions
+    division_id: unsignedBigInteger foreign:Divisions
     group_id: unsignedBigInteger foreign:App_groups
 
   CreditTerm:
@@ -64,7 +64,7 @@ models:
     name: string:255
     description: text nullable
     unit: string:20 nullable
-    price: decimal:20,4 default:0.00
+    price: decimal:20,2 default:0.00
     acc_code: string:50 nullable
     acc_name: string:128 nullable
     status: string:50 nullable default:"draft"
@@ -78,7 +78,8 @@ models:
     useful_life: string:50 nullable
     life_end_date: datetime nullable
     location: string:50 nullable
-    Type: string:50 nullable default:"cloth"
+    type: string:50 nullable default:"cloth"
+    group_id: unsignedBigInteger foreign:App_groups
 
   WorkOrder:
     wo_no: string:128 unique
@@ -116,7 +117,7 @@ models:
   WorkOrderItem:
     wo_no: string:128 foreign:Work_orders.wo_no
     barcode: string:128 nullable
-    name: string:255
+    name: string:255 index
     description: text nullable
     quantity: decimal:20,2 default:0.00
     unit: string:20 nullable
@@ -128,7 +129,7 @@ models:
     sub_total: decimal:20,2 default:0.00
     acc_code: string:50
     acc_name: string:128 nullable
-    status: string:50 default:"draft"
+    status: string:50 default:"draft" index
     remark: string:255 nullable
     location: string:100 nullable
 
@@ -155,6 +156,7 @@ models:
     create_by: string:50 nullable
     update_by: string:50 nullable
     is_active: boolean default:1
+    group_id: unsignedBigInteger foreign:App_groups
     relationships:
       hasMany: WorkOrder
 

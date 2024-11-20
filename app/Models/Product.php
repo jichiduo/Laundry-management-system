@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
@@ -32,7 +33,8 @@ class Product extends Model
         'useful_life',
         'life_end_date',
         'location',
-        'Type',
+        'type',
+        'group_id',
     ];
 
     /**
@@ -42,10 +44,16 @@ class Product extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'price' => 'decimal:4',
+        'price' => 'decimal:2',
         'equipment' => 'boolean',
         'warranty_start_date' => 'datetime',
         'warranty_end_date' => 'datetime',
         'life_end_date' => 'datetime',
+        'group_id' => 'integer',
     ];
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(AppGroup::class);
+    }
 }

@@ -72,10 +72,21 @@ new class extends Component {
             $this->description = $this->myappGroup->description;
             $this->myModal = true;
         } elseif ($action == 'delete'){
-                AccCode::destroy($id);
-                $this->success("Data deleted.", position: 'toast-top');
-                $this->reset();
-                $this->resetPage();
+            $rc=0;
+            $sql = "select count(*) as cnt from work_orders where group_id = ? LIMIT 1";
+            $cnt = DB::select($sql, $id);
+            foreach ($cnt as $c) {
+                $rc = $c->cnt;
+                break;
+            }
+            if($rc > 0){
+                $this->error("This data is used in work order, can't be deleted.", position: 'toast-top');
+                return;
+            }
+            AppGroup::destroy($id);
+            $this->success("Data deleted.", position: 'toast-top');
+            $this->reset();
+            $this->resetPage();
         }
     }
     //save 

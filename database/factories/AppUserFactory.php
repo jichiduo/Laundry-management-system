@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\AppGroup;
 use App\Models\AppUser;
+use App\Models\Division;
 use App\Models\User;
 
 class AppUserFactory extends Factory
@@ -24,6 +25,7 @@ class AppUserFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'division_id' => Division::factory(),
             'group_id' => AppGroup::factory(),
         ];
     }

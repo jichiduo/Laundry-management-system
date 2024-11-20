@@ -17,9 +17,11 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             GroupSeeder::class,
+            DivisionSeeder::class,
             UserSeeder::class,
-            //LocationSeeder::class,
             CategorySeeder::class,
+            TypeSeeder::class,
+            AppUserSeeder::class,
         ]);
     }
 }

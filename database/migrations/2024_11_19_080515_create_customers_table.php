@@ -30,6 +30,8 @@ return new class extends Migration
             $table->string('create_by', 50)->nullable();
             $table->string('update_by', 50)->nullable();
             $table->boolean('is_active')->default(1);
+            $table->unsignedBigInteger('group_id');
+            $table->foreign('group_id')->references('id')->on('App_groups');
             $table->timestamps();
         });
 

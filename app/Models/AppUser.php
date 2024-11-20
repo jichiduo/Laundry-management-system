@@ -40,7 +40,7 @@ class AppUser extends Model
 
     public function division(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Division::class);
+        return $this->belongsTo(Division::class);
     }
 
     public function group(): BelongsTo

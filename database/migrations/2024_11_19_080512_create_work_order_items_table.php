@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('wo_no', 128);
             $table->foreign('wo_no')->references('wo_no')->on('work_orders');
             $table->string('barcode', 128)->nullable();
-            $table->string('name', 255);
+            $table->string('name', 255)->index();
             $table->text('description')->nullable();
             $table->decimal('quantity', 20, 2)->default(0.00);
             $table->string('unit', 20)->nullable();
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->decimal('sub_total', 20, 2)->default(0.00);
             $table->string('acc_code', 50);
             $table->string('acc_name', 128)->nullable();
-            $table->string('status', 50)->default('draft');
+            $table->string('status', 50)->default('draft')->index();
             $table->string('remark', 255)->nullable();
             $table->string('location', 100)->nullable();
             $table->timestamps();

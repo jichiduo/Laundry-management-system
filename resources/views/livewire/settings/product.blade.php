@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Division;
+use App\Models\Product;
 use App\Models\AppGroup;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,15 +20,19 @@ new class extends Component {
 
     public bool $myModal = false;
 
-    public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
+    public array $sortBy = ['column' => 'id', 'direction' => 'asc'];
 
-    public Division $myDivision; //new user
+    public Product $myProduct; //new user
 
     #[Validate('required')]
     public string $uname = '';
-    public string $address = '';
-    public string $tel = '';
-    public string $remark = '';
+    public string $unit = '';
+    public $price = 0.00;
+    public string $description = '';
+    public string $type = '';
+    #[Validate('required')]
+    public int $group_id = 0;
+
 
     public $action = "new";
     
@@ -58,20 +62,23 @@ new class extends Component {
         $this->action = $action;
 
         if ($action == 'new') {
-            $this->myDivision = new Division();
+            $this->myProduct = new Product();
             $this->myModal = true;
         } elseif ($action == 'edit') {
-            $this->myDivision = Division::find($id);
-            $this->uname = $this->myDivision->name;
-            $this->address = $this->myDivision->address;
-            $this->tel = $this->myDivision->tel;
-            $this->remark = $this->myDivision->remark;
+            $this->myProduct = Product::find($id);
+            $this->uname = $this->myProduct->name;
+            $this->unit = $this->myProduct->unit;
+            $this->price = $this->myProduct->price;
+            $this->description = $this->myProduct->description;
+            $this->type = $this->myProduct->type;
+            $this->group_id = $this->myProduct->group_id;
             $this->myModal = true;
         } elseif ($action == 'delete'){
-
+            $this->myProduct = Product::find($id);
+            $product_name = $this->myProduct->name;
             $rc=0;
-            $sql = "select count(*) as cnt from work_orders where division_id = ? LIMIT 1";
-            $cnt = DB::select($sql, $id);
+            $sql = "select count(*) as cnt from work_order_items where name = ? LIMIT 1";
+            $cnt = DB::select($sql, [$product_name]);
             foreach ($cnt as $c) {
                 $rc = $c->cnt;
                 break;
@@ -80,8 +87,7 @@ new class extends Component {
                 $this->error("This data is used in work order, can't be deleted.", position: 'toast-top');
                 return;
             }
-
-            Division::destroy($id);
+            Product::destroy($id);
             $this->success("Data deleted.", position: 'toast-top');
             $this->reset();
             $this->resetPage();
@@ -93,11 +99,13 @@ new class extends Component {
 
         $validatedData = $this->validate();
 
-        $this->myDivision->name = $this->uname;
-        $this->myDivision->address = $this->address;
-        $this->myDivision->tel = $this->tel;
-        $this->myDivision->remark = $this->remark;
-        $this->myDivision->save();
+        $this->myProduct->name = $this->uname;
+        $this->myProduct->unit = $this->unit;
+        $this->myProduct->price = $this->price;
+        $this->myProduct->description = $this->description;
+        $this->myProduct->type = $this->type;
+        $this->myProduct->group_id = $this->group_id;
+        $this->myProduct->save();
         $this->success("Data saved.", position: 'toast-top');
         $this->reset();
         $this->resetPage();
@@ -110,17 +118,19 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-48'],
-            ['key' => 'tel', 'label' => 'Tel', 'class' => 'w-24'],
-            ['key' => 'address', 'label' => 'Address'],
-            ['key' => 'remark', 'label' => 'Remark'],
+            ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'],
+            ['key' => 'unit', 'label' => 'Unit'],
+            ['key' => 'price', 'label' => 'Price'],
+            ['key' => 'description', 'label' => 'Desc'],
+            ['key' => 'type', 'label' => 'Type'],
+
         ];
     }
 
     // get all data from table
     public function allData(): LengthAwarePaginator
     {
-         return Division::query()
+         return Product::query()
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
             ->paginate(10); 
@@ -134,6 +144,7 @@ new class extends Component {
         return [
             'allData' => $this->allData(),
             'headers' => $this->headers(),
+            'groups' => AppGroup::all(),
         ];
     }
 };
@@ -141,7 +152,7 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Division" separator progress-indicator>
+    <x-header title="Product" separator progress-indicator>
         <x-slot:middle class="!justify-end">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
@@ -168,9 +179,11 @@ new class extends Component {
     <x-modal wire:model="myModal" separator persistent>
         <div>
             <x-input label="Name" wire:model='uname' clearable />
-            <x-input label="Tel" wire:model='tel' clearable />
-            <x-input label="Address" wire:model='address' clearable />
-            <x-input label="Remark" wire:model='remark' clearable />
+            <x-input label="Unit" wire:model='unit' clearable />
+            <x-input label="Price" wire:model='price' clearable />
+            <x-input label="Description" wire:model='description' clearable />
+            <x-input label="Type" wire:model='type' clearable />
+            <x-select label="Group Name" wire:model="group_id" :options="$groups" placeholder="Select one group" />
         </div>
 
 

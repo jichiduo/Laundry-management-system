@@ -58,7 +58,7 @@
                 <x-menu-item title="Customer" icon="o-user-group" link="/" />
                 <x-menu-sub title="Settings" icon="o-cog-6-tooth">
                     <x-menu-item title="User" icon="o-users" link="/user" />
-                    <x-menu-item title="Product" icon="o-shopping-bag" link="/" />
+                    <x-menu-item title="Product" icon="o-shopping-bag" link="/product" />
                     @if(auth()->user()->category =='admin')
                     <x-menu-separator />
                     <x-menu-item title="Account Code" icon="o-calculator" link="/account-code" />

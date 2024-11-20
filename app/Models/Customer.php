@@ -31,6 +31,7 @@ class Customer extends Model
         'create_by',
         'update_by',
         'is_active',
+        'group_id',
     ];
 
     /**
@@ -44,6 +45,7 @@ class Customer extends Model
         'member_discount' => 'decimal:2',
         'balance' => 'decimal:2',
         'is_active' => 'boolean',
+        'group_id' => 'integer',
     ];
 
     public function workOrders(): HasMany
@@ -54,5 +56,10 @@ class Customer extends Model
     public function memberLevel(): BelongsTo
     {
         return $this->belongsTo(MemberLevel::class);
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(AppGroup::class);
     }
 }

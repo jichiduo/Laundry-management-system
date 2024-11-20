@@ -23,4 +23,5 @@ Route::middleware('auth')->group(function () {
     Volt::route('/account-code', 'settings.acc_code');
     Volt::route('/app-group', 'settings.app_group');
     Volt::route('/division', 'settings.division');
+    Volt::route('/product', 'settings.product');
 });

@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('assets', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255);
             $table->text('description')->nullable();
             $table->string('unit', 20)->nullable();
-            $table->decimal('price', 20, 4)->default(0.00);
+            $table->decimal('price', 20, 2)->default(0.00);
             $table->string('acc_code', 50)->nullable();
             $table->string('acc_name', 128)->nullable();
             $table->string('status', 50)->nullable()->default('draft');
@@ -32,7 +32,9 @@ return new class extends Migration
             $table->string('useful_life', 50)->nullable();
             $table->dateTime('life_end_date')->nullable();
             $table->string('location', 50)->nullable();
-            $table->string('Type', 50)->nullable()->default('cloth');
+            $table->string('type', 50)->nullable()->default('cloth');
+            $table->unsignedBigInteger('group_id');
+            $table->foreign('group_id')->references('id')->on('App_groups');
             $table->timestamps();
         });
 
@@ -44,6 +46,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assets');
+        Schema::dropIfExists('products');
     }
 };

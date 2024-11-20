@@ -79,12 +79,24 @@ new class extends Component {
             $this->myuser = User::find($id);
             $this->myuser->password = bcrypt($newPassword);
             $this->myuser->save();
-            $this->success("Password reset to: " . $newPassword, position: 'toast-top');
+            $this->success("Password reset to " . $newPassword, position: 'toast-top');
 
         } elseif ($action == 'delete'){
             if ($id == auth()->user()->id) {
                 $this->warning("You can't delete yourself.", position: 'toast-top');
             } else {
+                $rc=0;
+                $sql = "select count(*) as cnt from work_orders where user_id = ? LIMIT 1";
+                $cnt = DB::select($sql, $id);
+                foreach ($cnt as $c) {
+                    $rc = $c->cnt;
+                    break;
+                }
+                if($rc > 0){
+                    $this->error("This data is used in work order, can't be deleted.", position: 'toast-top');
+                    return;
+                }
+
                 User::destroy($id);
                 $this->success("Data deleted.", position: 'toast-top');
                 $this->resetPage();
@@ -139,10 +151,6 @@ new class extends Component {
 
     }
 
-    public function groups(): Collection
-    {
-        return AppGroup::all();
-    }
 
     public function with(): array
     {
@@ -165,7 +173,7 @@ new class extends Component {
             'categories' => $categories,
             'users' => $this->users(),
             'headers' => $this->headers(),
-            'groups' => $this->groups(),
+            'groups' => AppGroup::all(),
         ];
     }
 };
