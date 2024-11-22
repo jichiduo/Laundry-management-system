@@ -21,9 +21,11 @@ class UserSeeder extends Seeder
             'name' => 'Morgan',
             'email' => 'zeng78@gmail.com',
             'password' => Hash::make('1'),
-            'category' => 'admin',
+            'role' => 'admin',
+            'division_id' => 1,
+            'division_name' => 'Batam Centre Shop',
             'group_id' => 1,
-            'group_name' => 'Batam',
+            'group_name' => 'Batam Group',
         ]);
     }
 }

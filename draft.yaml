@@ -11,10 +11,6 @@ models:
     description: text nullable
     is_active: boolean default:1
 
-  AppGroupDivision:
-    group_id: unsignedBigInteger foreign:App_groups
-    division_id: unsignedBigInteger foreign:Divisions
-
   AppLog:
     wo_no: string:128 nullable
     trans_no: string:128 nullable
@@ -27,14 +23,6 @@ models:
   AppSetting:
     name: string:50
     value: string:255 nullable
-
-  AppUser:
-    user_id: unsignedBigInteger foreign:Users
-    division_id: unsignedBigInteger foreign:Divisions
-    group_id: unsignedBigInteger foreign:App_groups
-
-  CreditTerm:
-    name: string:50
 
   Currency:
     name: string:50
@@ -52,6 +40,8 @@ models:
     tel: string:50 nullable
     logo_file_url: string:255 nullable
     remark: string:255 nullable
+    group_id: unsignedBigInteger foreign:App_groups
+    group_name: string:128 nullable
     relationships:
       hasMany: WorkOrder, User
 
@@ -107,6 +97,7 @@ models:
     status: string:50 default:"draft" index
     pickup_date: datetime nullable
     group_id: unsignedBigInteger foreign:App_groups
+    group_name: string:128 nullable
     delivery_status: string:50 nullable
     export_tag: boolean default:0
     export_date: datetime nullable

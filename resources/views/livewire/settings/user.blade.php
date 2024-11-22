@@ -2,6 +2,8 @@
 
 use App\Models\User;
 use App\Models\AppGroup;
+use App\Models\Division;
+use App\Models\Role;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Volt\Component;
@@ -24,16 +26,15 @@ new class extends Component {
 
     public User $myuser; //new user
 
-    #[Validate('required')]
     public string $uname = '';
-    #[Validate('required|min:4')]
     public string $password = '';
-    #[Validate('required|email|unique:users')]
     public string $email = '';
-    #[Validate('required')]
-    public string $category = '';
-    #[Validate('required')]
+    public string $role = '';
+    public string $division_id = '';
+    public string $division_name = '';
     public string $group_id = '';
+    public string $group_name = '';
+
 
     public $action = "new";
     
@@ -54,7 +55,7 @@ new class extends Component {
     //select Item
     public function selectItem($id, $action)
     {
-        if (auth()->user()->category != 'admin') {
+        if (auth()->user()->role != 'admin') {
             $this->error("This action is unauthorized.", position: 'toast-top');
             return;
         }
@@ -70,7 +71,8 @@ new class extends Component {
             $this->uname = $this->myuser->name;
             $this->password = $this->myuser->password;
             $this->email = $this->myuser->email;
-            $this->category = $this->myuser->category;
+            $this->role = $this->myuser->role;
+            $this->division_id = $this->myuser->division_id;
             $this->group_id = $this->myuser->group_id;
             $this->myModal = true;
         } elseif ($action == 'reset') {
@@ -106,15 +108,27 @@ new class extends Component {
     //save 
     public function save()
     {
-
-        $validatedData = $this->validate();
+        //add email validation
+        $validatedData = $this->validate([
+            'uname' => 'required',
+            'password' => 'required|min:4',
+            'email' => 'required|email|unique:users,email,' . $this->myuser->id,
+            'role' => 'required',
+            'division_id' => 'required',
+            'group_id' => 'required',
+        ]);
         if ($this->action == 'new') {
             $this->myuser->password = bcrypt($this->password);            
         }
         $this->myuser->name = $this->uname;
         $this->myuser->email = $this->email;
-        $this->myuser->category = $this->category;
+        $this->myuser->role = $this->role;
+        $this->myuser->division_id = $this->division_id;
         $this->myuser->group_id = $this->group_id;
+        //get division name from database
+        $this->myuser->division_name = Division::where('id', $this->division_id)->value('name');
+        //get group name from database
+        $this->myuser->group_name = AppGroup::where('id', $this->group_id)->value('name');
         $this->myuser->save();
         $this->success("Data saved.", position: 'toast-top');
         $this->reset();
@@ -122,16 +136,16 @@ new class extends Component {
         $this->myModal = false;
     }
 
-
     // Table headers
     public function headers(): array
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
             ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'],
-            ['key' => 'category', 'label' => 'Category', 'class' => 'w-24'],
+            ['key' => 'role', 'label' => 'Role', 'class' => 'w-24'],
             ['key' => 'email', 'label' => 'E-mail', 'class' => 'w-64'],
-            ['key' => 'group_id', 'label' => 'Group ID'],
+            ['key' => 'division_name', 'label' => 'Division'],
+            ['key' => 'group_name', 'label' => 'Group'],
 
         ];
     }
@@ -154,25 +168,11 @@ new class extends Component {
 
     public function with(): array
     {
-        $categories = [
-            [
-                'id' => 'user',
-                'name' => 'user'
-            ],
-            [
-            'id' => 'manager',
-            'name' => 'manager'
-            ],            
-            [
-                'id' => 'admin',
-                'name' => 'admin'
-            ],
-
-        ];
         return [
-            'categories' => $categories,
+            'roles' => Role::all(),
             'users' => $this->users(),
             'headers' => $this->headers(),
+            'divisions' => Division::all(),
             'groups' => AppGroup::all(),
         ];
     }
@@ -215,8 +215,10 @@ new class extends Component {
             <x-input label="Password" wire:model='password' type="password" clearable />
             @endif
             <x-input label="Email" wire:model='email' type="email" />
-            <x-select label="Category" wire:model="category" :options="$categories" placeholder="Select one category" />
-            <x-select label="Group Name" wire:model="group_id" :options="$groups" placeholder="Select one group" />
+            <x-select label="Role" wire:model="role" :options="$roles" option-value="name" option-label="name"
+                placeholder="Select role" />
+            <x-select label="Divison" wire:model="division_id" :options="$divisions" placeholder="Select division" />
+            <x-select label="Group" wire:model="group_id" :options="$groups" placeholder="Select group" />
         </div>
 
 

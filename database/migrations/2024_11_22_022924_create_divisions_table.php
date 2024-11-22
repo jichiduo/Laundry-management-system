@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('app_group_divisions', function (Blueprint $table) {
+        Schema::create('divisions', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 128);
+            $table->string('address', 255)->nullable();
+            $table->string('tel', 50)->nullable();
+            $table->string('logo_file_url', 255)->nullable();
+            $table->string('remark', 255)->nullable();
             $table->unsignedBigInteger('group_id');
             $table->foreign('group_id')->references('id')->on('App_groups');
-            $table->unsignedBigInteger('division_id');
-            $table->foreign('division_id')->references('id')->on('Divisions');
+            $table->string('group_name', 128)->nullable();
             $table->timestamps();
         });
 
@@ -30,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('app_group_divisions');
+        Schema::dropIfExists('divisions');
     }
 };

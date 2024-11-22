@@ -44,6 +44,7 @@ return new class extends Migration
             $table->dateTime('pickup_date')->nullable();
             $table->unsignedBigInteger('group_id');
             $table->foreign('group_id')->references('id')->on('App_groups');
+            $table->string('group_name', 128)->nullable();
             $table->string('delivery_status', 50)->nullable();
             $table->boolean('export_tag')->default(0);
             $table->dateTime('export_date')->nullable();

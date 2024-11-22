@@ -15,16 +15,10 @@ new class extends Component {
     //get division name by current user id 
     public function mount(): void 
     {
-        $user_id = auth()->user()->id;
-        //get division_id from app_users by user_id
-        $division_id = DB::table('app_users')->select('division_id')->where('user_id', $user_id)->first()->division_id;
+        $user_id = Auth()->user()->id;
+        $division_id = Auth()->user()->division_id;
         //check if division_id is null
         if($division_id == null){
-            $this->error("Fetal Err, cannot find Division for the current user.", position: 'toast-top');
-            return;
-        }
-        $this->division_name = DB::table('divisions')->select('name')->where('id', $division_id)->first()->name;
-        if($this->division_name == null){
             $this->error("Fetal Err, cannot find Division for the current user.", position: 'toast-top');
             return;
         }
@@ -58,7 +52,8 @@ new class extends Component {
     </x-header>
 
     <!-- TABLE  -->
-    <x-card title="Welcome, {{ auth()->user()->name }}" subtitle="Current shop: {{ $division_name }}" separator>
+    <x-card title="Welcome, {{ Auth()->user()->name }}" subtitle="Current shop: {{ Auth()->user()->division_name }}"
+        separator>
         <div class="p-4 rounded-xl grid lg:grid-cols-3 gap-4 bg-base-200">
             <x-stat title="Ready for Pickup" value="{{ $pickup }}" icon="o-truck" />
             <x-stat title="In Progress" value="{{ $inprogress }}" icon="o-play-circle" />

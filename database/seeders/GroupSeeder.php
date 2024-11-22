@@ -17,7 +17,7 @@ class GroupSeeder extends Seeder
     {
         //
         DB::table('app_groups')->insert([
-            'name' => 'Batam',
+            'name' => 'Batam Group',
             'currency' => 'IDR',
             'tax_rate' => 0,
             'address' => 'Ruko Grand Niaga MasBlok B No. 53 Batam Centre',

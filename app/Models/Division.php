@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Division extends Model
@@ -21,6 +22,8 @@ class Division extends Model
         'tel',
         'logo_file_url',
         'remark',
+        'group_id',
+        'group_name',
     ];
 
     /**
@@ -30,6 +33,7 @@ class Division extends Model
      */
     protected $casts = [
         'id' => 'integer',
+        'group_id' => 'integer',
     ];
 
     public function workOrders(): HasMany
@@ -40,5 +44,10 @@ class Division extends Model
     public function users(): HasMany
     {
         return $this->hasMany(\App\Models\AppUser::class);
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(AppGroup::class);
     }
 }

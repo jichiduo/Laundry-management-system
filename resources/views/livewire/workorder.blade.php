@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Customer;
+use App\Models\WorkOrder;
 use App\Models\AppGroup;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;

@@ -42,6 +42,7 @@ class WorkOrder extends Model
         'status',
         'pickup_date',
         'group_id',
+        'group_name',
         'delivery_status',
         'export_tag',
         'export_date',

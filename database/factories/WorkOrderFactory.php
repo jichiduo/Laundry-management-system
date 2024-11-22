@@ -50,6 +50,7 @@ class WorkOrderFactory extends Factory
             'status' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'pickup_date' => $this->faker->dateTime(),
             'group_id' => AppGroup::factory(),
+            'group_name' => $this->faker->regexify('[A-Za-z0-9]{128}'),
             'delivery_status' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'export_tag' => $this->faker->boolean(),
             'export_date' => $this->faker->dateTime(),

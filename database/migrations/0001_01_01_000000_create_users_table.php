@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('category');
+            $table->string('role');
+            $table->biginteger('division_id');
+            $table->string('division_name')->nullable();
             $table->biginteger('group_id');
             $table->string('group_name')->nullable();
             $table->rememberToken();
