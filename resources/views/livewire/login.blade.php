@@ -42,7 +42,8 @@ class extends Component {
 <div>
     <div class="mt-24 w-80 flex flex-col items-center justify-center mx-auto">
         <div class="mb-10">
-            <p class="text-blue-600 text-2xl"> Cuci-Cuci System Login </p>
+            <p class="text-blue-600 text-2xl"> {{ isset($title) ? $title.' - '.config('app.name') : config('app.name')
+                }} System Login </p>
         </div>
 
         <x-form wire:submit="login">

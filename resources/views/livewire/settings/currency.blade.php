@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\AppGroup;
 use App\Models\Currency;
+use App\Models\AppGroup;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Volt\Component;
@@ -20,18 +20,12 @@ new class extends Component {
 
     public bool $myModal = false;
 
-    public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
+    public array $sortBy = ['column' => 'id', 'direction' => 'asc'];
 
-    public AppGroup $myappGroup; //new user
+    public Currency $myCurrency; 
 
     #[Validate('required')]
     public string $uname = '';
-    #[Validate('required')]
-    public string $currency = '';
-    public string $tax_rate = '';
-    public string $address = '';
-    public string $description = '';
-
 
     public $action = "new";
     
@@ -61,33 +55,17 @@ new class extends Component {
         $this->action = $action;
 
         if ($action == 'new') {
-            $this->myappGroup = new AppGroup();
+            $this->myCurrency = new Currency();
             $this->myModal = true;
         } elseif ($action == 'edit') {
-            $this->myappGroup = AppGroup::find($id);
-
-            $this->uname = $this->myappGroup->name;
-            $this->currency = $this->myappGroup->currency;
-            $this->tax_rate = $this->myappGroup->tax_rate;
-            $this->address = $this->myappGroup->address;
-            $this->description = $this->myappGroup->description;
+            $this->myCurrency = Currency::find($id);
+            $this->uname = $this->myCurrency->name;
             $this->myModal = true;
         } elseif ($action == 'delete'){
-            $rc=0;
-            $sql = "select count(*) as cnt from work_orders where group_id = ? LIMIT 1";
-            $cnt = DB::select($sql, [$id]);
-            foreach ($cnt as $c) {
-                $rc = $c->cnt;
-                break;
-            }
-            if($rc > 0){
-                $this->error("This data is used in work order, can't be deleted.", position: 'toast-top');
-                return;
-            }
-            AppGroup::destroy($id);
-            $this->success("Data deleted.", position: 'toast-top');
-            $this->reset();
-            $this->resetPage();
+                Currency::destroy($id);
+                $this->success("Data deleted.", position: 'toast-top');
+                $this->reset();
+                $this->resetPage();
         }
     }
     //save 
@@ -96,12 +74,8 @@ new class extends Component {
 
         $validatedData = $this->validate();
 
-        $this->myappGroup->name = $this->uname;
-        $this->myappGroup->currency = $this->currency;
-        $this->myappGroup->tax_rate = $this->tax_rate;
-        $this->myappGroup->address = $this->address;
-        $this->myappGroup->description = $this->description;
-        $this->myappGroup->save();
+        $this->myCurrency->name = $this->uname;
+        $this->myCurrency->save();
         $this->success("Data saved.", position: 'toast-top');
         $this->reset();
         $this->resetPage();
@@ -114,19 +88,14 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-24'],
-            ['key' => 'currency', 'label' => 'Currency'],
-            ['key' => 'tax_rate', 'label' => 'Tax Rate'],
-            ['key' => 'address', 'label' => 'Address'],
-            ['key' => 'description', 'label' => 'Description'],
-
+            ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'],
         ];
     }
 
     // get all data from table
     public function allData(): LengthAwarePaginator
     {
-         return AppGroup::query()
+         return Currency::query()
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
             ->paginate(10); 
@@ -140,7 +109,6 @@ new class extends Component {
         return [
             'allData' => $this->allData(),
             'headers' => $this->headers(),
-            'currencies' => Currency::all(),
         ];
     }
 };
@@ -148,7 +116,7 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="App Group" separator progress-indicator>
+    <x-header title="Currency" separator progress-indicator>
         <x-slot:middle class="!justify-end">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
@@ -175,11 +143,6 @@ new class extends Component {
     <x-modal wire:model="myModal" separator persistent>
         <div>
             <x-input label="Name" wire:model='uname' clearable />
-            <x-select label="Currency" wire:model="currency" :options="$currencies" option-value="name"
-                option-label="name" placeholder="Select Currency" />
-            <x-input label="Tax Rate" wire:model='tax_rate' clearable />
-            <x-input label="Address" wire:model='address' clearable />
-            <x-input label="Description" wire:model='description' clearable />
         </div>
 
 

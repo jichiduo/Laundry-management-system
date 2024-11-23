@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             TypeSeeder::class,
             RoleSeeder::class,
+            CurrencySeeder::class,
         ]);
     }
 }
