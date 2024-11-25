@@ -53,22 +53,26 @@
                 @endif
                 <x-menu-item title="Home" icon="o-home" link="/" />
                 <x-menu-sub title="Work Order" icon="o-archive-box">
-                    <x-menu-item title="New" icon="o-rocket-launch" link="/work-order/new" />
-                    <x-menu-item title="List" icon="o-list-bullet" link="/work-order/list" />
+                    <x-menu-item title="New" icon="o-rocket-launch" link="/workorder/new" />
+                    <x-menu-item title="List" icon="o-list-bullet" link="/workorder/list" />
                 </x-menu-sub>
                 <x-menu-item title="Customer" icon="o-user-group" link="/customer" />
+                @if(auth()->user()->role !='user')
                 <x-menu-sub title="Settings" icon="o-cog-6-tooth">
-                    <x-menu-item title="User" icon="o-users" link="/user" />
                     <x-menu-item title="Product" icon="o-shopping-bag" link="/product" />
-                    @if(auth()->user()->role =='admin')
                     <x-menu-separator />
-                    <x-menu-item title="Account Code" icon="o-calculator" link="/account-code" />
-                    <x-menu-item title="App Group" icon="o-rectangle-group" link="/app-group" />
-                    <x-menu-item title="Division" icon="o-share" link="/division" />
                     <x-menu-item title="Currency" icon="o-currency-dollar" link="/currency" />
                     <x-menu-item title="Exchange Rate" icon="o-document-currency-dollar" link="/exchange-rate" />
+                    @if(auth()->user()->role =='admin')
+                    <x-menu-separator />
+                    <x-menu-item title="User" icon="o-users" link="/user" />
+                    <x-menu-item title="App Group" icon="o-rectangle-group" link="/app-group" />
+                    <x-menu-item title="Division" icon="o-share" link="/division" />
+                    <x-menu-item title="Type" icon="o-chart-bar" link="/type" />
+                    <x-menu-item title="Account Code" icon="o-calculator" link="/account-code" />
                     @endif
                 </x-menu-sub>
+                @endif
             </x-menu>
         </x-slot:sidebar>
 

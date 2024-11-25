@@ -34,6 +34,7 @@ new class extends Component {
     public string $division_name = '';
     public string $group_id = '';
     public string $group_name = '';
+    public $mydivisions = [];
 
 
     public $action = "new";
@@ -77,7 +78,7 @@ new class extends Component {
             $this->myModal = true;
         } elseif ($action == 'reset') {
             //reset password to a random password and copy new password to clipboard
-            $newPassword = Str::lower(Str::random(4));
+            $newPassword = Str::lower(rand(1000,9999));
             $this->myuser = User::find($id);
             $this->myuser->password = bcrypt($newPassword);
             $this->myuser->save();
@@ -168,14 +169,21 @@ new class extends Component {
 
     public function with(): array
     {
+        
         return [
             'roles' => Role::all(),
             'users' => $this->users(),
             'headers' => $this->headers(),
-            'divisions' => Division::all(),
+            'divisions' => $this->mydivisions,
             'groups' => AppGroup::all(),
         ];
     }
+
+    public function getDivisions(): void {
+        //get division by group_id
+        $this->mydivisions = Division::where('group_id', $this->group_id)->get();
+    }
+
 };
 ?>
 
@@ -217,8 +225,9 @@ new class extends Component {
             <x-input label="Email" wire:model='email' type="email" />
             <x-select label="Role" wire:model="role" :options="$roles" option-value="name" option-label="name"
                 placeholder="Select role" />
-            <x-select label="Divison" wire:model="division_id" :options="$divisions" placeholder="Select division" />
-            <x-select label="Group" wire:model="group_id" :options="$groups" placeholder="Select group" />
+            <x-select label="Group" wire:model="group_id" wire:change='getDivisions' :options="$groups"
+                placeholder="Select group" />
+            <x-select label="Divison" wire:model="division_id" :options="$mydivisions" placeholder="Select division" />
         </div>
 
 

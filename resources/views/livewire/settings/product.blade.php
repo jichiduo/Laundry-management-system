@@ -54,7 +54,7 @@ new class extends Component {
     //select Item
     public function selectItem($id, $action)
     {
-        if (auth()->user()->role != 'admin') {
+        if (auth()->user()->role == 'user') {
             $this->error("This action is unauthorized.", position: 'toast-top');
             return;
         }

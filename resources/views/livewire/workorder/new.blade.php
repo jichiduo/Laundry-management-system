@@ -162,12 +162,12 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Customer" separator progress-indicator>
+    <x-header title="Work Order" separator progress-indicator>
         <x-slot:middle class="!justify-end">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
-            <x-button label="New" class="btn-primary" wire:click="selectItem(0,'new')" />
+            <x-button label="New Work Order" class="btn-primary" wire:click="selectItem(0,'new')" />
         </x-slot:actions>
     </x-header>
 

@@ -42,7 +42,12 @@ new class extends Component {
             $this->sales = $c->total;
             break;
         }
-    }    
+    }
+
+    public function newWorkOrder(): void
+    {
+        $this->redirect('/workorder/new');
+    }
 }; ?>
 
 <div>
@@ -60,8 +65,8 @@ new class extends Component {
             <x-stat title="Today Sales" value="{{ $sales }}" icon="o-banknotes" />
         </div>
         <div class="p-4 mt-4 rounded-xl grid lg:grid-cols-2 gap-4 bg-base-200">
-            <x-card title="New Job" subtitle="create a new job" separator>
-                <x-button label="New Job" wire:click="newJob" class="btn-primary" icon="o-rocket-launch" />
+            <x-card title="New Work Order" subtitle="create a new job" separator>
+                <x-button label="New Work Order" wire:click="newWorkOrder" class="btn-primary" icon="o-rocket-launch" />
             </x-card>
             <x-card title="Find Item" subtitle="please enter/scan tracing number/barcode" separator>
                 <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass"

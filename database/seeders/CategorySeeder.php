@@ -19,7 +19,7 @@ class CategorySeeder extends Seeder
             'name' => 'Fix Asset'
         ]);
         DB::table('categories')->insert([
-            'name' => 'Clothing'
+            'name' => 'Laundry'
         ]);
         DB::table('categories')->insert([
             'name' => 'Payment'

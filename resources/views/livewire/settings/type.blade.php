@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Currency;
-use App\Models\AppGroup;
+use App\Models\Type;
+use App\Models\Category;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Volt\Component;
@@ -22,10 +22,12 @@ new class extends Component {
 
     public array $sortBy = ['column' => 'id', 'direction' => 'asc'];
 
-    public Currency $myCurrency; 
+    public Type $myType; //new user
 
     #[Validate('required')]
     public string $uname = '';
+    #[Validate('required|min:4')]
+    public string $category = '';
 
     public $action = "new";
     
@@ -46,7 +48,7 @@ new class extends Component {
     //select Item
     public function selectItem($id, $action)
     {
-        if (auth()->user()->role == 'user') {
+        if (auth()->user()->role != 'admin') {
             $this->error("This action is unauthorized.", position: 'toast-top');
             return;
         }
@@ -55,14 +57,15 @@ new class extends Component {
         $this->action = $action;
 
         if ($action == 'new') {
-            $this->myCurrency = new Currency();
+            $this->myType = new Type();
             $this->myModal = true;
         } elseif ($action == 'edit') {
-            $this->myCurrency = Currency::find($id);
-            $this->uname = $this->myCurrency->name;
+            $this->myType = Type::find($id);
+            $this->uname = $this->myType->name;
+            $this->category = $this->myType->category;
             $this->myModal = true;
         } elseif ($action == 'delete'){
-                Currency::destroy($id);
+                Type::destroy($id);
                 $this->success("Data deleted.", position: 'toast-top');
                 $this->reset();
                 $this->resetPage();
@@ -74,8 +77,9 @@ new class extends Component {
 
         $validatedData = $this->validate();
 
-        $this->myCurrency->name = $this->uname;
-        $this->myCurrency->save();
+        $this->myType->name = $this->uname;
+        $this->myType->category = $this->category;
+        $this->myType->save();
         $this->success("Data saved.", position: 'toast-top');
         $this->reset();
         $this->resetPage();
@@ -89,13 +93,14 @@ new class extends Component {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
             ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'],
+            ['key' => 'category', 'label' => 'category'],
         ];
     }
 
     // get all data from table
     public function allData(): LengthAwarePaginator
     {
-         return Currency::query()
+         return Type::query()
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
             ->paginate(10); 
@@ -109,6 +114,7 @@ new class extends Component {
         return [
             'allData' => $this->allData(),
             'headers' => $this->headers(),
+            'categories' => Category::all(),
         ];
     }
 };
@@ -116,7 +122,7 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Currency" separator progress-indicator>
+    <x-header title="Type" separator progress-indicator>
         <x-slot:middle class="!justify-end">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
@@ -143,6 +149,8 @@ new class extends Component {
     <x-modal wire:model="myModal" separator persistent>
         <div>
             <x-input label="Name" wire:model='uname' clearable />
+            <x-select label="Category" wire:model="category" :options="$categories" option-value="name"
+                option-label="name" placeholder="Select category" />
         </div>
 
 

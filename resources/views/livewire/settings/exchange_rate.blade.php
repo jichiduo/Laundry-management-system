@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Currency;
+use App\Models\ExchangeRate;
 use App\Models\AppGroup;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,10 +23,13 @@ new class extends Component {
 
     public array $sortBy = ['column' => 'id', 'direction' => 'asc'];
 
-    public Currency $myCurrency; 
+    public ExchangeRate $myExchangeRate; 
 
     #[Validate('required')]
-    public string $uname = '';
+    public string $from_currency = '';
+    #[Validate('required')]
+    public string $to_currency = '';
+    public $rate = 0;
 
     public $action = "new";
     
@@ -55,14 +59,16 @@ new class extends Component {
         $this->action = $action;
 
         if ($action == 'new') {
-            $this->myCurrency = new Currency();
+            $this->myExchangeRate = new ExchangeRate();
             $this->myModal = true;
         } elseif ($action == 'edit') {
-            $this->myCurrency = Currency::find($id);
-            $this->uname = $this->myCurrency->name;
+            $this->myExchangeRate = ExchangeRate::find($id);
+            $this->from_currency = $this->myExchangeRate->from_currency;
+            $this->to_currency = $this->myExchangeRate->to_currency;
+            $this->rate = $this->myExchangeRate->rate;
             $this->myModal = true;
         } elseif ($action == 'delete'){
-                Currency::destroy($id);
+                ExchangeRate::destroy($id);
                 $this->success("Data deleted.", position: 'toast-top');
                 $this->reset();
                 $this->resetPage();
@@ -74,8 +80,10 @@ new class extends Component {
 
         $validatedData = $this->validate();
 
-        $this->myCurrency->name = $this->uname;
-        $this->myCurrency->save();
+        $this->myExchangeRate->from_currency = $this->from_currency;
+        $this->myExchangeRate->to_currency = $this->to_currency;
+        $this->myExchangeRate->rate = $this->rate;
+        $this->myExchangeRate->save();
         $this->success("Data saved.", position: 'toast-top');
         $this->reset();
         $this->resetPage();
@@ -88,15 +96,17 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'],
+            ['key' => 'from_currency', 'label' => 'From Currency', 'class' => 'w-64'],
+            ['key' => 'to_currency', 'label' => 'To Currency', 'class' => 'w-64'],
+            ['key' => 'rate', 'label' => 'Rate'],
         ];
     }
 
     // get all data from table
     public function allData(): LengthAwarePaginator
     {
-         return Currency::query()
-            ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
+         return ExchangeRate::query()
+            ->when($this->search, fn(Builder $q) => $q->where('from_currency', 'like', "%$this->search%")->orWhere('to_currency', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
             ->paginate(10); 
 
@@ -109,6 +119,7 @@ new class extends Component {
         return [
             'allData' => $this->allData(),
             'headers' => $this->headers(),
+            'currencies' => Currency::all(),
         ];
     }
 };
@@ -116,7 +127,7 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Currency" separator progress-indicator>
+    <x-header title="Exchange Rate" separator progress-indicator>
         <x-slot:middle class="!justify-end">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
@@ -142,7 +153,11 @@ new class extends Component {
     <!-- New/Edit user modal -->
     <x-modal wire:model="myModal" separator persistent>
         <div>
-            <x-input label="Name" wire:model='uname' clearable />
+            <x-select label="From Currency" wire:model="from_currency" :options="$currencies" option-value="name"
+                option-label="name" placeholder="Select Currency" />
+            <x-select label="To Currency" wire:model="to_currency" :options="$currencies" option-value="name"
+                option-label="name" placeholder="Select Currency" />
+            <x-input label="Rate" wire:model='rate' clearable />
         </div>
 
 
