@@ -24,11 +24,9 @@ new class extends Component {
 
     public Customer $myCustomer; //new Customer
 
-    #[Validate('required')]
     public string $uname = '';
     public string $code = '';
     public string $email = '';
-    #[Validate('required')]
     public string $tel = '';
     public string $address = '';
     public string $remark = '';
@@ -98,8 +96,12 @@ new class extends Component {
     //save 
     public function save()
     {
-
-        $validatedData = $this->validate();
+        //add email validation
+        $validatedData = $this->validate([
+            'uname' => 'required',
+            'email' => 'email|unique:users,email,' . $this->myCustomer->id,
+            'tel' => 'required',
+        ]);
         if ($this->action == 'new') {
             $this->myCustomer->create_by = Auth()->user()->id;     
             $this->myCustomer->group_id = Auth()->user()->group_id;      

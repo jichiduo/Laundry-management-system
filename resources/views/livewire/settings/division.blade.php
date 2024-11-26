@@ -162,7 +162,7 @@ new class extends Component {
     <x-card>
         <x-table :headers="$headers" :rows="$allData" :sort-by="$sortBy" with-pagination show-empty-text>
             @scope('actions', $user)
-            <div class="w-48 flex justify-end">
+            <div class="w-24 flex justify-end">
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $user['id'] }},'edit')"
                     class="btn-ghost btn-xs text-blue-500" tooltip="Edit" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $user['id'] }},'delete')"
