@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('app_groups', function (Blueprint $table) {
+        Schema::create('member_levels', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 128);
-            $table->string('currency', 50);
-            $table->decimal('tax_rate', 5, 2);
-            $table->string('address', 255)->nullable();
-            $table->text('description')->nullable();
-            $table->boolean('is_active')->default(1);
+            $table->string('name', 255);
+            $table->decimal('discount', 4, 2)->default(1);
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('app_groups');
+        Schema::dropIfExists('member_levels');
     }
 };

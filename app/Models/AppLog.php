@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AppLog extends Model
 {
@@ -35,9 +34,4 @@ class AppLog extends Model
         'user_id' => 'integer',
         'amount' => 'decimal:2',
     ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(\App\Models\AppUser::class);
-    }
 }

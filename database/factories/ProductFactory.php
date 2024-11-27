@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\AppGroup;
 use App\Models\Product;
 
 class ProductFactory extends Factory
@@ -40,7 +39,7 @@ class ProductFactory extends Factory
             'life_end_date' => $this->faker->dateTime(),
             'location' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'type' => $this->faker->regexify('[A-Za-z0-9]{50}'),
-            'group_id' => AppGroup::factory(),
+            'group_id' => $this->faker->randomNumber(),
         ];
     }
 }

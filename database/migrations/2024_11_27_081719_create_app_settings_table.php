@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('acc_codes', function (Blueprint $table) {
+        Schema::create('app_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 50);
-            $table->string('name', 128);
+            $table->string('name', 50);
+            $table->string('value', 255)->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('acc_codes');
+        Schema::dropIfExists('app_settings');
     }
 };

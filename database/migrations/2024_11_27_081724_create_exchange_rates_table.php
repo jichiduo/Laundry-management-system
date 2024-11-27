@@ -11,8 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('exchange_rates', function (Blueprint $table) {
             $table->id();
             $table->string('from_currency', 128);
@@ -20,8 +18,6 @@ return new class extends Migration
             $table->decimal('rate', 16, 8)->default(0.00000000);
             $table->timestamps();
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('app_groups', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50);
+            $table->string('name', 128);
+            $table->string('currency', 50)->nullable();
+            $table->decimal('tax_rate', 5, 2)->default(0.00);
+            $table->string('address', 255)->nullable();
+            $table->text('description')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('app_groups');
     }
 };

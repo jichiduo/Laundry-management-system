@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\Customer;
 use App\Models\Transaction;
 
 class TransactionFactory extends Factory
@@ -24,7 +23,7 @@ class TransactionFactory extends Factory
         return [
             'trans_no' => $this->faker->regexify('[A-Za-z0-9]{128}'),
             'wo_no' => $this->faker->regexify('[A-Za-z0-9]{128}'),
-            'customer_id' => Customer::factory(),
+            'customer_id' => $this->faker->randomNumber(),
             'customer_name' => $this->faker->regexify('[A-Za-z0-9]{128}'),
             'card_no' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'amount' => $this->faker->randomFloat(2, 0, 999999999999999999.99),

@@ -4,9 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\AppGroup;
 use App\Models\Customer;
-use App\Models\MemberLevel;
 
 class CustomerFactory extends Factory
 {
@@ -29,7 +27,7 @@ class CustomerFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'address' => $this->faker->regexify('[A-Za-z0-9]{255}'),
             'member_card' => $this->faker->regexify('[A-Za-z0-9]{50}'),
-            'member_level_id' => MemberLevel::factory(),
+            'member_level_id' => $this->faker->randomNumber(),
             'member_level_name' => $this->faker->regexify('[A-Za-z0-9]{255}'),
             'member_discount' => $this->faker->randomFloat(2, 0, 99.99),
             'balance' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
@@ -37,7 +35,7 @@ class CustomerFactory extends Factory
             'create_by' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'update_by' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'is_active' => $this->faker->boolean(),
-            'group_id' => AppGroup::factory(),
+            'group_id' => $this->faker->randomNumber(),
         ];
     }
 }

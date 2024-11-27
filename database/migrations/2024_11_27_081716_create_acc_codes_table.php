@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('currencies', function (Blueprint $table) {
+        Schema::create('acc_codes', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50);
+            $table->string('code', 50)->nullable();
+            $table->string('name', 128)->nullable();
             $table->timestamps();
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('currencies');
+        Schema::dropIfExists('acc_codes');
     }
 };

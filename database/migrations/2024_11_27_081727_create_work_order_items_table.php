@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('work_order_items', function (Blueprint $table) {
             $table->id();
-            $table->string('wo_no', 128);
-            $table->foreign('wo_no')->references('wo_no')->on('work_orders');
+            $table->string('wo_no', 128)->index();
             $table->string('barcode', 128)->nullable();
             $table->string('name', 255)->index();
             $table->text('description')->nullable();
@@ -25,18 +22,16 @@ return new class extends Migration
             $table->decimal('price', 20, 4)->default(0.00);
             $table->decimal('total', 20, 2)->default(0.00);
             $table->decimal('discount', 20, 2)->default(0.00);
-            $table->decimal('tax_rate', 6, 2)->default(0.00);
+            $table->decimal('tax_rate', 5, 2)->default(0.00);
             $table->decimal('tax', 20, 2)->default(0.00);
             $table->decimal('sub_total', 20, 2)->default(0.00);
-            $table->string('acc_code', 50);
+            $table->string('acc_code', 50)->nullable();
             $table->string('acc_name', 128)->nullable();
             $table->string('status', 50)->default('draft')->index();
             $table->string('remark', 255)->nullable();
             $table->string('location', 100)->nullable();
             $table->timestamps();
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

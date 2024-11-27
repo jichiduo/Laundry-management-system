@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\AppGroup;
 use App\Models\Division;
 
 class DivisionFactory extends Factory
@@ -27,7 +26,7 @@ class DivisionFactory extends Factory
             'tel' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'logo_file_url' => $this->faker->regexify('[A-Za-z0-9]{255}'),
             'remark' => $this->faker->regexify('[A-Za-z0-9]{255}'),
-            'group_id' => AppGroup::factory(),
+            'group_id' => $this->faker->randomNumber(),
             'group_name' => $this->faker->regexify('[A-Za-z0-9]{128}'),
         ];
     }

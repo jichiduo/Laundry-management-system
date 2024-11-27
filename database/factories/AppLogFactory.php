@@ -5,7 +5,6 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\AppLog;
-use App\Models\User;
 
 class AppLogFactory extends Factory
 {
@@ -24,7 +23,7 @@ class AppLogFactory extends Factory
         return [
             'wo_no' => $this->faker->regexify('[A-Za-z0-9]{128}'),
             'trans_no' => $this->faker->regexify('[A-Za-z0-9]{128}'),
-            'user_id' => User::factory(),
+            'user_id' => $this->faker->randomNumber(),
             'user_name' => $this->faker->userName(),
             'action' => $this->faker->regexify('[A-Za-z0-9]{20}'),
             'amount' => $this->faker->randomFloat(2, 0, 999999999999999999.99),

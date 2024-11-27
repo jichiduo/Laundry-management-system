@@ -40,12 +40,6 @@ new class extends Component {
     public $action = "new";
     
 
-    // Clear filters
-    public function clear(): void
-    {
-        $this->reset();
-        $this->success('Filters cleared.', position: 'toast-top');
-    }
     //close Modal
     public function closeModal(): void
     {

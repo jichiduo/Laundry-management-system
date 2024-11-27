@@ -41,6 +41,7 @@
 
                 <x-list-item :item="$user" value="name" sub-value="email" no-separator link="/profile"
                     class="-mx-2 !-my-2 rounded">
+
                     <x-slot:actions>
 
                         <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="logoff"
@@ -48,7 +49,7 @@
 
                     </x-slot:actions>
                 </x-list-item>
-                Current Division <strong>{{auth()->user()->division_name}}</strong>
+                <x-menu-item title="{{auth()->user()->division_name}}" icon="o-building-storefront" />
                 <x-menu-separator />
                 @endif
                 <x-menu-item title="Home" icon="o-home" link="/" />
@@ -60,16 +61,17 @@
                 @if(auth()->user()->role !='user')
                 <x-menu-sub title="Settings" icon="o-cog-6-tooth">
                     <x-menu-item title="Product" icon="o-shopping-bag" link="/product" />
-                    <x-menu-separator />
-                    <x-menu-item title="Currency" icon="o-currency-dollar" link="/currency" />
-                    <x-menu-item title="Exchange Rate" icon="o-document-currency-dollar" link="/exchange-rate" />
+                    {{--
+                    <x-menu-item title="Exchange Rate" icon="o-document-currency-dollar" link="/exchange-rate" /> --}}
                     @if(auth()->user()->role =='admin')
                     <x-menu-separator />
                     <x-menu-item title="User" icon="o-users" link="/user" />
                     <x-menu-item title="App Group" icon="o-rectangle-group" link="/app-group" />
                     <x-menu-item title="Division" icon="o-share" link="/division" />
                     <x-menu-item title="Type" icon="o-chart-bar" link="/type" />
-                    <x-menu-item title="Account Code" icon="o-calculator" link="/account-code" />
+                    <x-menu-item title="Currency" icon="o-currency-dollar" link="/currency" />
+                    {{--
+                    <x-menu-item title="Account Code" icon="o-calculator" link="/account-code" /> --}}
                     @endif
                 </x-menu-sub>
                 @endif

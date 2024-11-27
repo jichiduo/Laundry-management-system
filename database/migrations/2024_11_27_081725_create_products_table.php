@@ -11,8 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255);
@@ -32,13 +30,10 @@ return new class extends Migration
             $table->string('useful_life', 50)->nullable();
             $table->dateTime('life_end_date')->nullable();
             $table->string('location', 50)->nullable();
-            $table->string('type', 50)->nullable()->default('cloth');
+            $table->string('type', 50)->nullable()->default('Luandry');
             $table->unsignedBigInteger('group_id');
-            $table->foreign('group_id')->references('id')->on('App_groups');
             $table->timestamps();
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

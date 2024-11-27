@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WorkOrderItem extends Model
 {
@@ -50,9 +49,4 @@ class WorkOrderItem extends Model
         'tax' => 'decimal:2',
         'sub_total' => 'decimal:2',
     ];
-
-    public function workOrder(): BelongsTo
-    {
-        return $this->belongsTo(WorkOrder::class, 'wo_no', 'wo_no');
-    }
 }

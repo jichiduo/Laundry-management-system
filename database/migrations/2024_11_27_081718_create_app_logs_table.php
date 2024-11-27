@@ -11,22 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('app_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('wo_no', 128)->nullable();
+            $table->string('wo_no', 128)->nullable()->index();
             $table->string('trans_no', 128)->nullable();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('Users');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('user_name', 50);
             $table->string('action', 20);
             $table->decimal('amount', 20, 2);
             $table->string('remark', 255)->nullable();
             $table->timestamps();
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

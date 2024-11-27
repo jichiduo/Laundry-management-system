@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\WorkOrder;
 use App\Models\WorkOrderItem;
 
 class WorkOrderItemFactory extends Factory
@@ -22,7 +21,7 @@ class WorkOrderItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'wo_no' => WorkOrder::factory()->create()->wo_no,
+            'wo_no' => $this->faker->regexify('[A-Za-z0-9]{128}'),
             'barcode' => $this->faker->regexify('[A-Za-z0-9]{128}'),
             'name' => $this->faker->name(),
             'description' => $this->faker->text(),
@@ -31,7 +30,7 @@ class WorkOrderItemFactory extends Factory
             'price' => $this->faker->randomFloat(4, 0, 9999999999999999.9999),
             'total' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
             'discount' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
-            'tax_rate' => $this->faker->randomFloat(2, 0, 9999.99),
+            'tax_rate' => $this->faker->randomFloat(2, 0, 999.99),
             'tax' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
             'sub_total' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
             'acc_code' => $this->faker->regexify('[A-Za-z0-9]{50}'),

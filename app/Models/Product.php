@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
@@ -51,9 +50,4 @@ class Product extends Model
         'life_end_date' => 'datetime',
         'group_id' => 'integer',
     ];
-
-    public function group(): BelongsTo
-    {
-        return $this->belongsTo(AppGroup::class);
-    }
 }

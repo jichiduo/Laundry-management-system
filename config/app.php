@@ -13,9 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
-    //base currency for the application
-    'base_currency' => env('BASE_CURRENCY', 'SGD'),
+    'name' => env('APP_NAME', 'Cuci-Cuci'),
 
     /*
     |--------------------------------------------------------------------------

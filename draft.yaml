@@ -1,20 +1,20 @@
 models:
   AccCode:
-    code: string:50
-    name: string:128
+    code: string:50 nullable
+    name: string:128 nullable
 
   AppGroup:
     name: string:128
-    currency: string:50
-    tax_rate: decimal:5,2
+    currency: string:50 nullable
+    tax_rate: decimal:5,2 default:0.00
     address: string:255 nullable
     description: text nullable
     is_active: boolean default:1
 
   AppLog:
-    wo_no: string:128 nullable
+    wo_no: string:128 nullable index
     trans_no: string:128 nullable
-    user_id: unsignedBigInteger foreign:Users
+    user_id: unsignedBigInteger nullable
     user_name: string:50
     action: string:20
     amount: decimal:20,2
@@ -32,7 +32,7 @@ models:
 
   Type:
     name: string:50
-    category: string:50 default:"product"
+    category: string:50
 
   Division:
     name: string:128
@@ -40,10 +40,8 @@ models:
     tel: string:50 nullable
     logo_file_url: string:255 nullable
     remark: string:255 nullable
-    group_id: unsignedBigInteger foreign:App_groups
+    group_id: unsignedBigInteger nullable
     group_name: string:128 nullable
-    relationships:
-      hasMany: WorkOrder, User
 
   ExchangeRate:
     from_currency: string:128
@@ -68,45 +66,36 @@ models:
     useful_life: string:50 nullable
     life_end_date: datetime nullable
     location: string:50 nullable
-    type: string:50 nullable default:"cloth"
-    group_id: unsignedBigInteger foreign:App_groups
+    type: string:50 nullable default:"Luandry"
+    group_id: unsignedBigInteger
 
   WorkOrder:
     wo_no: string:128 unique
-    division_id: unsignedBigInteger foreign:Divisions
-    division_name: string:128 nullable
-    customer_id: unsignedBigInteger nullable foreign:Customers
-    customer_name: string:128 nullable
-    customer_tel: string:50 nullable
+    customer_id: unsignedBigInteger nullable
+    customer_name: string:128 nullable index
+    customer_tel: string:50 nullable index
     customer_email: string:50 nullable
     customer_address: string:255 nullable
-    credit_term: string:50 nullable
     currency: string:50 nullable
     base_currency: string:50 nullable
     exchange_rate: decimal:16,8 nullable
     explain: string:255 nullable
-    remark: string:255 nullable
     weight: decimal:20,2 default:0.00
     total: decimal:20,2 default:0.00
     discount: decimal:20,2 default:0.00
     tax: decimal:20,2 default:0.00
     grand_total: decimal:20,2 default:0.00
-    submit_by_userid: unsignedBigInteger nullable foreign:Users.id
-    submit_by_username: string:50 nullable
-    submit_date: datetime nullable
     status: string:50 default:"draft" index
     pickup_date: datetime nullable
-    group_id: unsignedBigInteger foreign:App_groups
+    user_id: unsignedBigInteger nullable
+    user_name: string:50 nullable
+    division_id: unsignedBigInteger nullable
+    division_name: string:128 nullable
+    group_id: unsignedBigInteger nullable
     group_name: string:128 nullable
-    delivery_status: string:50 nullable
-    export_tag: boolean default:0
-    export_date: datetime nullable
-    relationships:
-      belongsTo: User, Division, App_group, Customer
-      hasMany: Work_order_items
 
   WorkOrderItem:
-    wo_no: string:128 foreign:Work_orders.wo_no
+    wo_no: string:128 index
     barcode: string:128 nullable
     name: string:255 index
     description: text nullable
@@ -115,10 +104,10 @@ models:
     price: decimal:20,4 default:0.00
     total: decimal:20,2 default:0.00
     discount: decimal:20,2 default:0.00
-    tax_rate: decimal:6,2 default:0.00
+    tax_rate: decimal:5,2 default:0.00
     tax: decimal:20,2 default:0.00
     sub_total: decimal:20,2 default:0.00
-    acc_code: string:50
+    acc_code: string:50 nullable
     acc_name: string:128 nullable
     status: string:50 default:"draft" index
     remark: string:255 nullable
@@ -133,13 +122,13 @@ models:
     discount: decimal:4,2 default:1
 
   Customer:
-    name: string:128
+    name: string:128 index
     password: string:255 nullable
-    tel: string:50 nullable
-    email: string:255 nullable
+    tel: string:50 nullable index
+    email: string:255 nullable index
     address: string:255 nullable
     member_card: string:50 nullable
-    member_level_id: unsignedBigInteger nullable foreign:MemberLevels
+    member_level_id: unsignedBigInteger nullable
     member_level_name: string:255 nullable
     member_discount: decimal:4,2 default:1
     balance: decimal:20,2 default:0.00
@@ -147,17 +136,15 @@ models:
     create_by: string:50 nullable
     update_by: string:50 nullable
     is_active: boolean default:1
-    group_id: unsignedBigInteger foreign:App_groups
-    relationships:
-      hasMany: WorkOrder
+    group_id: unsignedBigInteger
 
   Transaction:
     trans_no: string:128 unique
-    wo_no: string:128 nullable
-    customer_id: unsignedBigInteger foreign:Customers.id
+    wo_no: string:128 nullable index
+    customer_id: unsignedBigInteger nullable
     customer_name: string:128 nullable
     card_no: string:50 nullable
     amount: decimal:20,2 default:0.00
-    payment_type: string:50 nullable default:"cash"
+    payment_type: string:50 nullable default:"Cash"
     remark: string:255 nullable
     create_by: string:50 nullable
