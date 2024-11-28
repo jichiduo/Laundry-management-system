@@ -2,6 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+use Illuminate\Support\Facades\DB;
+
+//multi language
+//set locale
+Route::get('/lang/{locale}', function ($locale) {
+    session()->put('locale', $locale);
+    return redirect()->back();
+})->name('language');
 
 // Users will be redirected to this route if not logged in
 Volt::route('/login', 'login')->name('login');

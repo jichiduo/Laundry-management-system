@@ -101,7 +101,7 @@ new class extends Component {
             ['key' => 'customer_tel', 'label' => 'Cust Tel'],
             ['key' => 'grand_total', 'label' => 'Total'],
             ['key' => 'status', 'label' => 'Status'],
-            ['key' => 'pickup_date', 'label' => 'Pickup Date'],
+            ['key' => 'pickup_date', 'label' => 'Pickup Date', 'format' => ['date', 'd/m/Y'], 'class' => 'w-24'],
         ];
     }
 

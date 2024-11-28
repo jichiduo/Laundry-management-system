@@ -17,60 +17,79 @@ new class extends Component {
     {
         $user_id = Auth()->user()->id;
         $division_id = Auth()->user()->division_id;
+        $group_id = Auth()->user()->group_id;
+        $my_id = 0;
         //check if division_id is null
-        if($division_id == null){
-            $this->error("Fetal Err, cannot find Division for the current user.", position: 'toast-top');
+        if($division_id == null || $group_id == null){
+            $this->error("Fetal Err, cannot find basic info for the current user.", position: 'toast-top');
             return;
         }
+
+        if( Auth()->user()->role == 'user'){
+            $my_id = $division_id;
+        } else {
+            $my_id = $group_id;
+        }
         //get job count from work_order 
-        $sql = "select count(*) as cnt from work_orders where division_id = ? and status = '4pickup'";
-        $cnt = DB::select($sql, [$division_id]);
+        if( Auth()->user()->role == 'user'){
+            $sql = "select count(*) as cnt from work_orders where division_id = ? and status = '4pickup'";
+        } else {
+            $sql = "select count(*) as cnt from work_orders where group_id = ? and status = '4pickup'";
+        }
+        $cnt = DB::select($sql, [$my_id]);
         foreach ($cnt as $c) {
             $this->pickup = $c->cnt;
             break;
         }
-        $sql = "select count(*) as cnt from work_orders where division_id = ? and status = 'pending'";
-        $cnt = DB::select($sql, [$division_id]);
+        if( Auth()->user()->role == 'user'){
+            $sql = "select count(*) as cnt from work_orders where division_id = ? and status = 'pending'";
+        } else {
+            $sql = "select count(*) as cnt from work_orders where group_id = ? and status = 'pending'";
+        }
+        $cnt = DB::select($sql, [$my_id]);
         foreach ($cnt as $c) {
             $this->inprogress = $c->cnt;
             break;
         }
         //get today sales from work_order
-        $sql = "select ifnull(sum(total),0) as total from work_orders where division_id = ? and status = 'pending' and created_at >= CURDATE()";
-        $cnt = DB::select($sql, [$division_id]);
+        if( Auth()->user()->role == 'user'){
+            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where division_id = ? and status != 'draft' and created_at >= CURDATE()";
+        } else {
+            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where group_id = ? and status != 'draft' and created_at >= CURDATE()";
+        }
+        $cnt = DB::select($sql, [$my_id]);
         foreach ($cnt as $c) {
             $this->sales = $c->total;
             break;
         }
     }
 
-    public function newWorkOrder(): void
-    {
-        $this->redirect('/workorder/new');
-    }
 }; ?>
 
 <div>
 
     <!-- HEADER -->
-    <x-header title="Home" separator progress-indicator>
+    <x-header title="{{__('Home')}}" separator progress-indicator>
     </x-header>
 
     <!-- TABLE  -->
-    <x-card title="Welcome, {{ Auth()->user()->name }}" subtitle="Current shop: {{ Auth()->user()->division_name }}"
-        separator>
+    <x-card title="{{__('Welcome')}}, {{ Auth()->user()->name }}"
+        subtitle="{{__('Current shop')}}: {{ Auth()->user()->division_name }}" separator>
         <div class="p-4 rounded-xl grid lg:grid-cols-3 gap-4 bg-base-200">
-            <x-stat title="Ready for Pickup" value="{{ $pickup }}" icon="o-truck" />
-            <x-stat title="In Progress" value="{{ $inprogress }}" icon="o-play-circle" />
-            <x-stat title="Today Sales" value="{{ $sales }}" icon="o-banknotes" />
+            <x-stat title="{{__('Ready for customer Pickup')}}" value="{{ $pickup }}" icon="o-truck" />
+            <x-stat title="{{__('In Progress')}}" value="{{ $inprogress }}" icon="o-bolt" />
+            <x-stat title="{{__('Today Sales')}}" value="{{ $sales }}" icon="o-banknotes" />
         </div>
         <div class="p-4 mt-4 rounded-xl grid lg:grid-cols-2 gap-4 bg-base-200">
-            <x-card title="New Work Order" subtitle="create a new job" separator>
-                <x-button label="New Work Order" wire:click="newWorkOrder" class="btn-primary" icon="o-rocket-launch" />
+            <x-card title="{{__('New Work Order')}}"
+                subtitle="{{__('if the customer is new, please create new customer first')}}" separator>
+                <x-button label="{{__('New Work Order')}}" link="/workorder/new" class="btn-primary"
+                    icon="o-rocket-launch" />
+                <x-button label="{{__('New Customer')}}" link="/customer" class="btn-primary" icon="o-user-plus" />
             </x-card>
-            <x-card title="Find Item" subtitle="please enter/scan tracing number/barcode" separator>
-                <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass"
-                    autocomplete="off" />
+            <x-card title="{{__('Find Item')}}" subtitle="{{__('please enter/scan tracing number/barcode')}}" separator>
+                <x-input placeholder="{{__('Search')}}..." wire:model.live.debounce="search" clearable
+                    icon="o-magnifying-glass" autocomplete="off" />
             </x-card>
         </div>
 

@@ -11,11 +11,13 @@ use Livewire\WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Validate;
 use App\Http\Controllers\WorkOrderController;
+use function Livewire\Volt\{state};
 
 
 new class extends Component {
     use Toast;
     use WithPagination;
+    
 
     public string $search = '';
 
@@ -127,6 +129,7 @@ new class extends Component {
 
     public function ConfirmOrder(): void {
         //confirm the order , change the status to pending
+        //status: draft->pending->4pickup->complete
         $this->wo->status = 'pending';
         $this->wo->save();
         $this->success('Work Order Confirmed');

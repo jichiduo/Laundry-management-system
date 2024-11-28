@@ -53,9 +53,12 @@ models:
     description: text nullable
     unit: string:20 nullable
     price: decimal:20,2 default:0.00
+    turnover: decimal:8,2 nullable
+    express_price: decimal:20,2 default:0.00
+    express_turnover: decimal:8,2 nullable
     acc_code: string:50 nullable
     acc_name: string:128 nullable
-    status: string:50 nullable default:"draft"
+    status: string:50 nullable
     remark: string:255 nullable
     equipment: boolean default:0
     brand: string:50 nullable
@@ -66,7 +69,7 @@ models:
     useful_life: string:50 nullable
     life_end_date: datetime nullable
     location: string:50 nullable
-    type: string:50 nullable default:"Luandry"
+    type: string:50 nullable
     group_id: unsignedBigInteger
 
   WorkOrder:
@@ -107,6 +110,7 @@ models:
     tax_rate: decimal:5,2 default:0.00
     tax: decimal:20,2 default:0.00
     sub_total: decimal:20,2 default:0.00
+    turnover: decimal:8,2 nullable
     acc_code: string:50 nullable
     acc_name: string:128 nullable
     status: string:50 default:"draft" index

@@ -15,6 +15,8 @@ class extends Component {
  
     #[Rule('required')]
     public string $password = '';
+
+    public string $locale = '';
  
     public function mount()
     {
@@ -22,6 +24,7 @@ class extends Component {
         if (auth()->user()) {
             return redirect('/');
         }
+        $this->locale = App::currentLocale();
     }
  
     public function login()
@@ -37,22 +40,31 @@ class extends Component {
         $this->addError('email', 'The provided credentials do not match our records.');
     }
 
+
 }; ?>
 
 <div>
     <div class="mt-24 w-80 flex flex-col items-center justify-center mx-auto">
         <div class="mb-10">
             <p class="text-blue-600 text-2xl"> {{ isset($title) ? $title.' - '.config('app.name') : config('app.name')
-                }} System Login </p>
+                }} {{__('System Login')}}</p>
         </div>
 
         <x-form wire:submit="login">
-            <x-input label="E-mail" wire:model="email" icon="o-envelope" inline />
-            <x-input label="Password" wire:model="password" type="password" icon="o-key" inline />
+            <x-input label="{{__('Email')}}" wire:model="email" icon="o-envelope" inline />
+            <x-input label="{{__('Password')}}" wire:model="password" type="password" icon="o-key" inline />
 
             <x-slot:actions>
-                <x-button label="Login" type="submit" icon="o-paper-airplane" class="btn-primary" spinner="login" />
+                <x-button label="{{__('Login')}}" type="submit" icon="o-paper-airplane" class="btn-primary"
+                    spinner="login" />
             </x-slot:actions>
+            <x-dropdown>
+                <x-slot:trigger>
+                    <x-button icon="o-globe-alt" class="btn-ghost" />
+                </x-slot:trigger>
+                <x-menu-item title="EN" link="{{route('language', 'en')}}" />
+                <x-menu-item title="ID" link="{{route('language', 'id')}}" />
+            </x-dropdown>
         </x-form>
     </div>
 </div>
