@@ -25,6 +25,7 @@ return new class extends Migration
             $table->decimal('tax_rate', 5, 2)->default(0.00);
             $table->decimal('tax', 20, 2)->default(0.00);
             $table->decimal('sub_total', 20, 2)->default(0.00);
+            $table->decimal('turnover', 8, 2)->nullable();
             $table->string('acc_code', 50)->nullable();
             $table->string('acc_name', 128)->nullable();
             $table->string('status', 50)->default('draft')->index();

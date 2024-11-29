@@ -38,6 +38,8 @@ class WorkOrderFactory extends Factory
             'grand_total' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
             'status' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'pickup_date' => $this->faker->dateTime(),
+            'collect_date' => $this->faker->dateTime(),
+            'is_express' => $this->faker->boolean(),
             'user_id' => $this->faker->randomNumber(),
             'user_name' => $this->faker->userName(),
             'division_id' => $this->faker->randomNumber(),

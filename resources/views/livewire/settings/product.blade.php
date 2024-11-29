@@ -27,9 +27,14 @@ new class extends Component {
 
     #[Validate('required')]
     public string $uname = '';
-    public string $unit = '';
+    public string $unit = '-';
+    #[Validate('required')]
     public $price = 0.00;
+    public $turnover = 0.00;
+    public $express_price = 0.00;
+    public $express_turnover = 0.00;
     public string $description = '';
+    #[Validate('required')]
     public string $type = '';
     #[Validate('required')]
     public int $group_id = 0;
@@ -63,7 +68,10 @@ new class extends Component {
             $this->myProduct = Product::find($id);
             $this->uname = $this->myProduct->name;
             $this->unit = $this->myProduct->unit;
-            $this->price = $this->myProduct->price;
+            $this->price    = $this->myProduct->price;
+            $this->turnover = $this->myProduct->turnover;
+            $this->express_price    = $this->myProduct->express_price;
+            $this->express_turnover = $this->myProduct->express_turnover;
             $this->description = $this->myProduct->description;
             $this->type = $this->myProduct->type;
             $this->group_id = $this->myProduct->group_id;
@@ -97,6 +105,9 @@ new class extends Component {
         $this->myProduct->name = $this->uname;
         $this->myProduct->unit = $this->unit;
         $this->myProduct->price = $this->price;
+        $this->myProduct->turnover = $this->turnover;
+        $this->myProduct->express_price    = $this->express_price;
+        $this->myProduct->express_turnover = $this->express_turnover;
         $this->myProduct->description = $this->description;
         $this->myProduct->type = $this->type;
         $this->myProduct->group_id = $this->group_id;
@@ -113,10 +124,12 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'],
+            ['key' => 'name', 'label' => 'Name', 'class' => 'w-48'],
             ['key' => 'unit', 'label' => 'Unit'],
             ['key' => 'price', 'label' => 'Price'],
-            ['key' => 'description', 'label' => 'Desc'],
+            ['key' => 'turnover', 'label' => 'Turnover'],
+            ['key' => 'express_price', 'label' => 'Exp Prc'],
+            ['key' => 'express_turnover', 'label' => 'Exp TO'],
             ['key' => 'type', 'label' => 'Type'],
 
         ];
@@ -177,6 +190,9 @@ new class extends Component {
             <x-input label="Name" wire:model='uname' clearable />
             <x-input label="Unit" wire:model='unit' clearable />
             <x-input label="Price" wire:model='price' clearable />
+            <x-input label="Turnover" wire:model='turnover' clearable suffix="day(s)" />
+            <x-input label="Express Price" wire:model='express_price' clearable />
+            <x-input label="Express Turnover" wire:model='express_turnover' clearable suffix="day(s)" />
             <x-input label="Description" wire:model='description' clearable />
             <x-select label="Type" wire:model="type" :options="$types" option-value="name" option-label="name"
                 placeholder="Select one type" />

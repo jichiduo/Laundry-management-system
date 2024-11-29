@@ -16,12 +16,12 @@ class DivisionSeeder extends Seeder
     {
         //
         DB::table('divisions')->insert([
-            'name' => 'Batam Centre Shop',
-            'address' => 'Ruko Grand Niaga MasBlok B No. 53 Batam Centre',
+            'name' => 'Centre Shop',
+            'address' => 'a fake address',
             'tel' => '0778-511811',
-            'remark' => 'Batam Centre shop',
+            'remark' => 'Centre shop',
             'group_id' => 1,
-            'group_name' => 'Batam Group',
+            'group_name' => 'Main Group',
         ]);
     }
 }

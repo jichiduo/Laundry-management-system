@@ -90,6 +90,8 @@ models:
     grand_total: decimal:20,2 default:0.00
     status: string:50 default:"draft" index
     pickup_date: datetime nullable
+    collect_date: datetime nullable
+    is_express: boolean default:0
     user_id: unsignedBigInteger nullable
     user_name: string:50 nullable
     division_id: unsignedBigInteger nullable

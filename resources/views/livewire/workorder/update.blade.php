@@ -2,7 +2,9 @@
 
 use App\Models\Customer;
 use App\Models\WorkOrder;
+use App\Models\WorkOrderItem;
 use App\Models\AppGroup;
+use App\Models\Product;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Volt\Component;
@@ -25,6 +27,7 @@ new class extends Component {
     public bool $myCustomerModal = false;
 
     public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
+    public array $Item_sortBy = ['column' => 'id', 'direction' => 'asc'];
 
     public Customer $myCustomer; //new Customer
     public WorkOrder $wo; //new WorkOrder
@@ -83,9 +86,28 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-36'],
-            ['key' => 'tel', 'label' => 'Tel'],
-            ['key' => 'email', 'label' => 'E-mail' ],
+            ['key' => 'name', 'label' => __('Name'), 'class' => 'w-36'],
+            ['key' => 'tel', 'label' => __('Tel')],
+            ['key' => 'email', 'label' => __('Email') ],
+
+        ];
+    }
+    // Table headers
+    public function WOItemHeaders(): array
+    {
+        return [
+            ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
+            ['key' => 'barcode', 'label' => __('Barcode'), 'class' => 'w-24'],
+            ['key' => 'name', 'label' => __('Name')],
+            ['key' => 'price', 'label' => __('Price') ],
+            ['key' => 'unit', 'label' => __('Unit') ],
+            ['key' => 'quantity', 'label' => __('Quantity') ],
+            ['key' => 'discount', 'label' => __('Discount') ],
+            ['key' => 'tax', 'label' => __('Tax') ],
+            ['key' => 'sub_total', 'label' => __('Sub Total') ],
+            ['key' => 'turnover', 'label' => __('Turnover') ],
+            ['key' => 'remark', 'label' => __('Remark') ],
+            ['key' => 'location', 'label' => __('Location') ],
 
         ];
     }
@@ -106,12 +128,24 @@ new class extends Component {
 
     }
 
+    public function WOItems(): LengthAwarePaginator
+    {
+         return WorkOrderItem::query()
+            ->where('wo_no', $this->wo_no)
+            ->orderBy(...array_values($this->Item_sortBy))
+            ->paginate(10); 
+
+    }
+
 
     public function with(): array
     {
         return [
             'Customers' => $this->Customers(),
             'CustomerHeaders' => $this->CustomerHeaders(),
+            'WOItems' => $this->WOItems(),
+            'WOItemHeaders' => $this->WOItemHeaders(),
+            'products' => Product::all(),
         ];
     }
 
@@ -132,7 +166,7 @@ new class extends Component {
         //status: draft->pending->4pickup->complete
         $this->wo->status = 'pending';
         $this->wo->save();
-        $this->success('Work Order Confirmed');
+        $this->success(__('Work Order Confirmed'));
     }
 
 
@@ -141,42 +175,65 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Work Order" subtitle="Work order number:{{$wo_no}}" separator progress-indicator />
+    <x-header title="{{__('Work Order')}}" subtitle="{{__('Work order number')}}:{{$wo_no}}" separator
+        progress-indicator />
 
     <!-- TABLE  -->
-    <x-card title="Customer" separator>
-        <x-button label="Choose Customer" icon="o-user-plus" wire:click="selectItem(0,'new')"
-            class="btn-ghost btn-xs text-blue-500" tooltip="Choose Customer" />
+    <x-card title="{{__('Customer')}}" separator>
+        <x-button label="{{__('Choose Customer')}}" icon="o-user-plus" wire:click="selectItem(0,'new')"
+            class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Choose Customer')}}" />
         <div class="grid grid-cols-3 gap-2  mt-4">
-            <x-input label="Customer Name" wire:model="customer_name" disabled />
-            <x-input label="Customer Tel" wire:model="customer_tel" disabled />
-            <x-input label="Customer Email" wire:model="customer_email" disabled />
+            <x-input label="{{__('Customer Name')}}" wire:model="customer_name" disabled />
+            <x-input label="{{__('Customer Tel')}}" wire:model="customer_tel" disabled />
+            <x-input label="{{__('Customer Email')}}" wire:model="customer_email" disabled />
         </div>
     </x-card>
-    <x-card title="Work Order" separator>
+    <x-card title="{{__('Basic Information')}}" separator>
         <x-button label="Download" icon="o-arrow-down-tray" wire:click="getDownload()"
             class="btn-ghost btn-xs text-blue-500" tooltip="Download" />
         <x-button label="Print" icon="o-printer" wire:click="getDownload()" class="btn-ghost btn-xs text-blue-500"
             tooltip="Print" />
     </x-card>
+    <x-card title="{{__('Details')}}" separator>
+        <div class="flex justify-end mr-4">
+            <x-button label="{{__('New Item')}}" icon="o-inbox-arrow-down" wire:click="getDownload()"
+                class="btn-ghost btn-xs text-blue-500" tooltip="{{_('New Item')}}" />
+        </div>
+        <x-table :headers="$WOItemHeaders" :rows="$WOItems" :sort-by="$Item_sortBy" with-pagination show-empty-text>
+            @scope('actions', $WOItem)
+            <div class="flex justify-end">
+                <x-button icon="o-trash" wire:click="selectItem({{ $WOItem['id'] }},'remove')"
+                    class="btn-ghost btn-xs text-red-500" tooltip="{{__('Remove')}}" />
+            </div>
+            @endscope
+        </x-table>
+    </x-card>
     <div class="flex justify-center mt-4">
-        <x-button label="Confirm Work Order" class="btn-primary" wire:click="selectItem(0,'new')" />
+        <x-button label="{{__('Confirm Work Order')}}" class="btn-primary" wire:click="selectItem(0,'new')" />
 
     </div>
 
     <!-- New/Edit Customer modal -->
     <x-modal wire:model="myCustomerModal" separator>
         <div>
-            <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass"
-                class="mt-4" />
+            <x-input placeholder="{{__('Search')}}..." wire:model.live.debounce="search" clearable
+                icon="o-magnifying-glass" class="mt-4" />
             <x-table :headers="$CustomerHeaders" :rows="$Customers" :sort-by="$sortBy" with-pagination show-empty-text>
                 @scope('actions', $Customer)
                 <div class="flex justify-end">
                     <x-button icon="o-user-plus" wire:click="selectItem({{ $Customer['id'] }},'choose')"
-                        class="btn-ghost btn-xs text-blue-500" tooltip="Choose" />
+                        class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Choose')}}" />
                 </div>
                 @endscope
             </x-table>
+        </div>
+    </x-modal>
+    <x-modal wire:model="myItemModal" separator>
+        <div class="grid grid-cols-2 gap-2">
+            <x-input label="{{__('Barcode')}}" wire:model="ItemBarcode" />
+            <x-select label="{{__('Select Product')}}" wire:model="role" :options="$products" option-value="name"
+                option-label="name" placeholder="{{__('Select Product')}}" />
+
         </div>
     </x-modal>
 </div>

@@ -23,26 +23,33 @@ new class extends Component {
             Auth()->user()->password = Hash::make($this->new_password);
             Auth()->user()->save();
             $this->reset();
-            $this->success("Password successfully changed.", position: 'toast-top');
+            $this->success(__("Password successfully changed."), position: 'toast-top');
         } else {
-            $this->error("Old password is incorrect.", position: 'toast-top');
+            $this->error(__("Old password is incorrect."), position: 'toast-top');
         }
     }
 }; ?>
 
 <div>
-    <x-card title="{{Auth()->user()->name;}} Profile" shadow separator progress-indicator>
+    <x-card title="{{Auth()->user()->name;}} {{__('Profile')}}" shadow separator progress-indicator>
 
-        <x-input label="Old Password" wire:model='old_password' type="password" clearable />
+        <x-input label="{{__('Old Password')}}" wire:model='old_password' type="password" clearable />
 
-        <x-input label="New Password" wire:model='new_password' type="password" clearable />
+        <x-input label="{{__('New Password')}}" wire:model='new_password' type="password" clearable />
 
-        <x-input label="Confirm Password" wire:model='confirm_password' type="password" clearable />
+        <x-input label="{{__('Confirm Password')}}" wire:model='confirm_password' type="password" clearable />
 
         <div class="flex justify-center">
-            <x-button label="Change Password" wire:confirm="Are you sure?" wire:click="save" class="btn-primary mt-4" />
+            <x-button label="{{__('Change Password')}}" wire:confirm="{{__('Are you sure?')}}" wire:click="save"
+                class="btn-primary mt-4" />
         </div>
-
+        <x-dropdown>
+            <x-slot:trigger>
+                <x-button icon="o-globe-alt" class="btn-ghost" />
+            </x-slot:trigger>
+            <x-menu-item title="EN" link="{{route('language', 'en')}}" />
+            <x-menu-item title="ID" link="{{route('language', 'id')}}" />
+        </x-dropdown>
     </x-card>
 
 

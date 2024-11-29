@@ -33,11 +33,14 @@ class extends Component {
  
         if (auth()->attempt($credentials)) {
             request()->session()->regenerate();
+            //get language from user() then put to session
+            $locale = auth()->user()->language;
+            session()->put('locale', $locale);
  
             return redirect()->intended('/');
         }
  
-        $this->addError('email', 'The provided credentials do not match our records.');
+        $this->addError('email', __('The provided credentials do not match our records.'));
     }
 
 

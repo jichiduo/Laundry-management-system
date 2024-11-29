@@ -17,9 +17,12 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('unit', 20)->nullable();
             $table->decimal('price', 20, 2)->default(0.00);
+            $table->decimal('turnover', 8, 2)->nullable();
+            $table->decimal('express_price', 20, 2)->default(0.00);
+            $table->decimal('express_turnover', 8, 2)->nullable();
             $table->string('acc_code', 50)->nullable();
             $table->string('acc_name', 128)->nullable();
-            $table->string('status', 50)->nullable()->default('draft');
+            $table->string('status', 50)->nullable();
             $table->string('remark', 255)->nullable();
             $table->boolean('equipment')->default(0);
             $table->string('brand', 50)->nullable();
@@ -30,7 +33,7 @@ return new class extends Migration
             $table->string('useful_life', 50)->nullable();
             $table->dateTime('life_end_date')->nullable();
             $table->string('location', 50)->nullable();
-            $table->string('type', 50)->nullable()->default('Luandry');
+            $table->string('type', 50)->nullable();
             $table->unsignedBigInteger('group_id');
             $table->timestamps();
         });

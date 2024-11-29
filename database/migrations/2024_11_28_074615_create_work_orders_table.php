@@ -30,6 +30,8 @@ return new class extends Migration
             $table->decimal('grand_total', 20, 2)->default(0.00);
             $table->string('status', 50)->default('draft')->index();
             $table->dateTime('pickup_date')->nullable();
+            $table->dateTime('collect_date')->nullable();
+            $table->boolean('is_express')->default(0);
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('user_name', 50)->nullable();
             $table->unsignedBigInteger('division_id')->nullable();

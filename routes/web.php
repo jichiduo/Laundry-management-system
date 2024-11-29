@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\DB;
 //multi language
 //set locale
 Route::get('/lang/{locale}', function ($locale) {
+    //save locale to user table
+    if (Auth()->user()) {
+        DB::table('users')->where('id', Auth()->user()->id)
+            ->update(['language' => $locale]);
+    }
     session()->put('locale', $locale);
     return redirect()->back();
 })->name('language');

@@ -19,13 +19,13 @@ class UserSeeder extends Seeder
         //Str::random(10)
         DB::table('users')->insert([
             'name' => 'Morgan',
-            'email' => 'zeng78@gmail.com',
-            'password' => Hash::make('1'),
+            'email' => 'jichiduo@163.com',
+            'password' => Hash::make('12345'),
             'role' => 'admin',
             'division_id' => 1,
-            'division_name' => 'Batam Centre Shop',
+            'division_name' => 'Centre Shop',
             'group_id' => 1,
-            'group_name' => 'Batam Group',
+            'group_name' => 'Main Group',
         ]);
     }
 }

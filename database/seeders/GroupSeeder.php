@@ -17,11 +17,11 @@ class GroupSeeder extends Seeder
     {
         //
         DB::table('app_groups')->insert([
-            'name' => 'Batam Group',
-            'currency' => 'IDR',
+            'name' => 'Main Group',
+            'currency' => 'SGD',
             'tax_rate' => 0,
-            'address' => 'Ruko Grand Niaga MasBlok B No. 53 Batam Centre',
-            'description' => 'Flagship Shop',
+            'address' => 'a fake address',
+            'description' => 'Main group',
             'is_active' => 1,
         ]);
     }

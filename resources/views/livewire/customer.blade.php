@@ -34,12 +34,6 @@ new class extends Component {
     public $action = "new";
     
 
-    // Clear filters
-    public function clear(): void
-    {
-        $this->reset();
-        $this->success('Filters cleared.', position: 'toast-top');
-    }
     //close Modal
     public function closeModal(): void
     {
@@ -77,16 +71,16 @@ new class extends Component {
                 break;
             }
             if($rc > 0){
-                $this->error("This data is used in work order, can't be deleted.", position: 'toast-top');
+                $this->error(__("This data is used in work order, can't be deleted."), position: 'toast-top');
                 return;
             }
             $data = DB::table('customers')->where('id', [$id])->update([
                 'is_active' => 0,
             ]);
             if($data<0){
-                $this->error("Data not deleted.", position: 'toast-top');
+                $this->error(__("Data not deleted."), position: 'toast-top');
             }else{
-                $this->success("Data deleted.", position: 'toast-top');
+                $this->success(__("Data deleted."), position: 'toast-top');
             }
             $this->reset();
             $this->resetPage();
@@ -99,8 +93,8 @@ new class extends Component {
         //add email validation
         $validatedData = $this->validate([
             'uname' => 'required',
-            'email' => 'email|unique:users,email,' . $this->myCustomer->id,
-            'tel' => 'required',
+            'email' => 'email|unique:customers,email,' . $this->myCustomer->email,
+            'tel' => 'required|unique:customers,tel,' . $this->myCustomer->tel,
         ]);
         if ($this->action == 'new') {
             $this->myCustomer->create_by = Auth()->user()->id;     
@@ -113,7 +107,7 @@ new class extends Component {
         $this->myCustomer->remark = $this->remark;
         $this->myCustomer->update_by = Auth()->user()->id;
         $this->myCustomer->save();
-        $this->success("Data saved.", position: 'toast-top');
+        $this->success(__("Data saved."), position: 'toast-top');
         $this->reset();
         $this->resetPage();
         $this->myModal = false;
@@ -125,11 +119,11 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-36'],
-            ['key' => 'tel', 'label' => 'Tel'],
-            ['key' => 'email', 'label' => 'E-mail' ],
-            ['key' => 'address', 'label' => 'Address' ],
-            ['key' => 'remark', 'label' => 'Remark' ],
+            ['key' => 'name', 'label' => __('Name'), 'class' => 'w-36'],
+            ['key' => 'tel', 'label' => __('Tel')],
+            ['key' => 'email', 'label' => __('Email') ],
+            ['key' => 'address', 'label' => __('Address') ],
+            ['key' => 'remark', 'label' => __('Remark') ],
 
         ];
     }
@@ -163,13 +157,13 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Customer" separator progress-indicator>
+    <x-header title="{{__('Customer')}}" separator progress-indicator>
         <x-slot:middle class="!justify-end">
-            <x-input placeholder="name, tel, email..." wire:model.live.debounce="search" clearable
+            <x-input placeholder="{{__('name, tel, email...')}}" wire:model.live.debounce="search" clearable
                 icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
-            <x-button label="New" class="btn-primary" wire:click="selectItem(0,'new')" />
+            <x-button label="{{__('New')}}" class="btn-primary" wire:click="selectItem(0,'new')" />
         </x-slot:actions>
     </x-header>
 
@@ -179,11 +173,12 @@ new class extends Component {
             @scope('actions', $Customer)
             <div class="w-48 flex justify-end">
                 <x-button icon="o-credit-card" wire:click="selectItem({{ $Customer['id'] }},'member')" spinner
-                    class="btn-ghost btn-xs text-yellow-500" tooltip="Member Card" />
+                    class="btn-ghost btn-xs text-yellow-500" tooltip="{{__('Member Card')}}" />
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $Customer['id'] }},'edit')"
-                    class="btn-ghost btn-xs text-blue-500" tooltip="Edit" />
+                    class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Edit')}}" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $Customer['id'] }},'delete')"
-                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-red-500" tooltip="Delete" />
+                    wire:confirm="{{__('Are you sure?')}}" spinner class="btn-ghost btn-xs text-red-500"
+                    tooltip="{{__('Delete')}}" />
             </div>
             @endscope
         </x-table>
@@ -192,17 +187,17 @@ new class extends Component {
     <!-- New/Edit Customer modal -->
     <x-modal wire:model="myModal" separator persistent>
         <div>
-            <x-input label="Name" wire:model='uname' clearable autocomplete="off" />
-            <x-input label="Tel" wire:model='tel' />
-            <x-input label="Email" wire:model='email' type="email" />
-            <x-input label="Address" wire:model='address' />
-            <x-input label="Remark" wire:model='remark' />
+            <x-input label="{{__('Name')}}" wire:model='uname' clearable autocomplete="off" />
+            <x-input label="{{__('Tel')}}" wire:model='tel' />
+            <x-input label="{{__('Email')}}" wire:model='email' type="email" />
+            <x-input label="{{__('Address')}}" wire:model='address' />
+            <x-input label="{{__('Remark')}}" wire:model='remark' />
         </div>
 
 
         <x-slot:actions>
-            <x-button label="Save" wire:click="save" class="btn-primary" />
-            <x-button label="Cancel" wire:click="closeModal" />
+            <x-button label="{{__('Save')}}" wire:click="save" class="btn-primary" />
+            <x-button label="{{__('Cancel')}}" wire:click="closeModal" />
         </x-slot:actions>
     </x-modal>
 </div>

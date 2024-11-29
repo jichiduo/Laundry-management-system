@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role');
+            $table->string('language')->nullable();
             $table->biginteger('division_id');
             $table->string('division_name')->nullable();
             $table->biginteger('group_id');

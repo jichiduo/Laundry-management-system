@@ -27,6 +27,7 @@ class WorkOrderItem extends Model
         'tax_rate',
         'tax',
         'sub_total',
+        'turnover',
         'acc_code',
         'acc_name',
         'status',
@@ -48,5 +49,6 @@ class WorkOrderItem extends Model
         'tax_rate' => 'decimal:2',
         'tax' => 'decimal:2',
         'sub_total' => 'decimal:2',
+        'turnover' => 'decimal:2',
     ];
 }
