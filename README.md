@@ -1,25 +1,25 @@
 ## About System
-The system is a simple laundry management system multilanguage support.
-
-## About Database
-The database is a MySQL/MariaDB database.
-
-## About Frontend
-The frontend is a [MaryUI](https://mary-ui.com/) 1.41
-
-## About Backend
-The backend is a [Laravel](https://laravel.com/) 11.9
+The system is a simple laundry management system with multilanguage support.
+- The database is a MySQL/MariaDB database.
+- The frontend is a [MaryUI](https://mary-ui.com/) 1.41
+- The backend is a [Laravel](https://laravel.com/) 11.9 with [Livewire](https://livewire.laravel.com/) 3.5
 
 ## Installation
-1. Clone the repository
-2. Install the dependencies
-3. Configure the database connection
-4. Run the migrations
-5. Run the seeders
-6. Run the server
+1. Clone the repository 
+    git clone git@github.com:jichiduo/cuci.git
+2. Install the dependencies 
+    Composer install
+3. Configure the database connection, create a database name cuci
+    cp .env.example .env
+4. Run the migrations 
+    php artisan migrate:fresh --seed
+5. Run the server 
+    php artisan server
 
-admin user: jichiduo@163.com 
-password: 12345
+## Login
+
+- admin user: jichiduo@163.com 
+- password: 12345
 
 ## Features
 - User authentication

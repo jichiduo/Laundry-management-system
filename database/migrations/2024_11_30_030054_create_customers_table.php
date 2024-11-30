@@ -22,6 +22,8 @@ return new class extends Migration
             $table->unsignedBigInteger('member_level_id')->nullable();
             $table->string('member_level_name', 255)->nullable();
             $table->decimal('member_discount', 4, 2)->default(1);
+            $table->dateTime('member_expire_date')->nullable();
+            $table->string('last_trans_no', 128)->nullable();
             $table->decimal('balance', 20, 2)->default(0.00);
             $table->string('remark', 255)->nullable();
             $table->string('create_by', 50)->nullable();

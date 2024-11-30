@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('base_currency', 50)->nullable();
             $table->decimal('exchange_rate', 16, 8)->nullable();
             $table->string('explain', 255)->nullable();
-            $table->decimal('weight', 20, 2)->default(0.00);
+            $table->integer('piece')->nullable();
             $table->decimal('total', 20, 2)->default(0.00);
             $table->decimal('discount', 20, 2)->default(0.00);
             $table->decimal('tax', 20, 2)->default(0.00);

@@ -18,7 +18,6 @@ class WorkOrderItem extends Model
         'wo_no',
         'barcode',
         'name',
-        'description',
         'quantity',
         'unit',
         'price',
@@ -28,6 +27,7 @@ class WorkOrderItem extends Model
         'tax',
         'sub_total',
         'turnover',
+        'pickup_date',
         'acc_code',
         'acc_name',
         'status',
@@ -50,5 +50,6 @@ class WorkOrderItem extends Model
         'tax' => 'decimal:2',
         'sub_total' => 'decimal:2',
         'turnover' => 'decimal:2',
+        'pickup_date' => 'datetime',
     ];
 }

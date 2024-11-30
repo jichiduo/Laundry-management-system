@@ -51,32 +51,32 @@ new class extends Component {
             if ($this->myWorkOrder->status == 'draft' ) {
                 return redirect()->route('workorderupdate', $id);
             } else {
-                $this->error("You can only edit draft work orders.", position: 'toast-top');
+                $this->error(__('You can only edit draft work orders.'), position: 'toast-top');
                 return;
             }
         } elseif ($action == 'delete'){
             //check if the work order status is draft and created by current user
             $this->myWorkOrder = WorkOrder::find($id);
-            if ($this->myWorkOrder->status == 'draft' && $this->myWorkOrder->user_id == auth()->user()->id) {
+            if ($this->myWorkOrder->status == 'draft' && ($this->myWorkOrder->user_id == auth()->user()->id || auth()-user()->role != 'user')) {
                 WorkOrder::destroy($id);
                 $sql = "delete from work_order_items where wo_no = ?";
                 $rc = DB::update($sql, [$this->myWorkOrder->wo_no]);
                 if ($rc < 0) { 
-                    $this->error("Work Order Items data not deleted.", position: 'toast-top');
+                    $this->error(__("Work Order Items data not deleted."), position: 'toast-top');
                     return;
                 }
                 $this->success("Data deleted.", position: 'toast-top');
                 $this->reset();
                 $this->resetPage();                
             } else {
-                $this->error("You can only delete draft work orders created by you.", position: 'toast-top');
+                $this->error(__("You can only delete draft work orders created by you."), position: 'toast-top');
                 return;
             }
         } elseif ($action == 'print'){
             $this->myWorkOrder = WorkOrder::find($id);
             //status can not be draft
             if ($this->myWorkOrder->status == 'draft') {
-                $this->error("You can only print confirmed work orders.", position: 'toast-top');
+                $this->error(__("You can only print confirmed work orders."), position: 'toast-top');
                 return;
             } else {
                 $woc = new WorkOrderController();
@@ -96,12 +96,13 @@ new class extends Component {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
             ['key' => 'wo_no', 'label' => 'WO No', 'class' => 'w-24'],
-            ['key' => 'created_at', 'label' => 'WO Date', 'format' => ['date', 'd/m/Y'], 'class' => 'w-24'],
-            ['key' => 'customer_name', 'label' => 'Cust Name'],
-            ['key' => 'customer_tel', 'label' => 'Cust Tel'],
-            ['key' => 'grand_total', 'label' => 'Total'],
-            ['key' => 'status', 'label' => 'Status'],
-            ['key' => 'pickup_date', 'label' => 'Pickup Date', 'format' => ['date', 'd/m/Y'], 'class' => 'w-24'],
+            ['key' => 'created_at', 'label' => __('WO Date'), 'format' => ['date', 'd/m/Y'], 'class' => 'w-24'],
+            ['key' => 'customer_name', 'label' => __('Cust Name')],
+            ['key' => 'customer_tel', 'label' => __('Cust Tel')],
+            ['key' => 'grand_total', 'label' => __('Total')],
+            ['key' => 'piece', 'label' => __('Piece')],
+            ['key' => 'status', 'label' => __('Status')],
+            ['key' => 'pickup_date', 'label' => __('Pickup Date'), 'format' => ['date', 'd/m/Y'], 'class' => 'w-24'],
         ];
     }
 
@@ -129,12 +130,13 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Work Order List" separator progress-indicator>
+    <x-header title="{{__('Work Order List')}}" separator progress-indicator>
         <x-slot:middle class="!justify-end">
-            <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
+            <x-input placeholder="{{__('Search')}}..." wire:model.live.debounce="search" clearable
+                icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
-            <x-button label="New" class="btn-primary" wire:click="selectItem(0,'new')" />
+            <x-button label="{{__('New')}}" class="btn-primary" wire:click="selectItem(0,'new')" />
         </x-slot:actions>
     </x-header>
 
@@ -158,11 +160,12 @@ new class extends Component {
             @scope('actions', $data)
             <div class="w-36 flex justify-end">
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $data['id'] }},'edit')"
-                    class="btn-ghost btn-xs text-blue-500" tooltip="Edit" />
+                    class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Edit')}}" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $data['id'] }},'delete')"
-                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-red-500" tooltip="Delete" />
+                    wire:confirm="{{__('Are you sure?')}}" spinner class="btn-ghost btn-xs text-red-500"
+                    tooltip="{{__('Delete')}}" />
                 <x-button icon="o-printer" wire:click="selectItem({{ $data['id'] }},'print')" spinner
-                    class="btn-ghost btn-xs text-yellow-500" tooltip="Print" />
+                    class="btn-ghost btn-xs text-yellow-500" tooltip="{{__('Print')}}" />
             </div>
             @endscope
         </x-table>
@@ -171,8 +174,8 @@ new class extends Component {
     <!-- New/Edit user modal -->
     <x-modal wire:model="myModal" separator persistent>
         <div>
-            <x-input label="Code" wire:model='code' clearable />
-            <x-input label="Name" wire:model='uname' clearable />
+            <x-input label="{{__('Code')}}" wire:model='code' clearable />
+            <x-input label="{{__('Name')}}" wire:model='uname' clearable />
         </div>
 
 

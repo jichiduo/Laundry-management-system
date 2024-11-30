@@ -18,6 +18,7 @@ class Division extends Model
         'name',
         'address',
         'tel',
+        'license',
         'logo_file_url',
         'remark',
         'group_id',

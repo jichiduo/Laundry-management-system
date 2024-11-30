@@ -37,7 +37,8 @@ new class extends Component {
     public string $customer_name = '';
     public string $customer_email = '';
     public string $customer_tel = '';
-    public string $address = '';
+    public string $explain = '';
+    public int    $is_express = 0;
     public string $remark = '';
     public string $print = '';
     public string $wo_no = '';
@@ -71,10 +72,10 @@ new class extends Component {
         if ($action == 'new') {
             $this->myCustomerModal = true;
         } elseif ($action == 'choose') {
-            $myCustomer = Customer::find($id);
-            $this->customer_name = $myCustomer->name;
-            $this->customer_email = $myCustomer->email;
-            $this->customer_tel = $myCustomer->tel;
+            $this->myCustomer = Customer::find($id);
+            $this->customer_name = $this->myCustomer->name;
+            $this->customer_email = $this->myCustomer->email;
+            $this->customer_tel = $this->myCustomer->tel;
             $this->myCustomerModal = false;
         }
         
@@ -104,8 +105,8 @@ new class extends Component {
             ['key' => 'quantity', 'label' => __('Quantity') ],
             ['key' => 'discount', 'label' => __('Discount') ],
             ['key' => 'tax', 'label' => __('Tax') ],
-            ['key' => 'sub_total', 'label' => __('Sub Total') ],
-            ['key' => 'turnover', 'label' => __('Turnover') ],
+            ['key' => 'sub_total', 'label' => __('SubTotal') ],
+            ['key' => 'pickup_date', 'label' => __('Pickup'), 'format' => ['date', 'd/m/Y'] ],
             ['key' => 'remark', 'label' => __('Remark') ],
             ['key' => 'location', 'label' => __('Location') ],
 
@@ -152,20 +153,50 @@ new class extends Component {
     public function getDownload() {
         // prepare content
         $wo = new WorkOrderController();
-        $this->print = $wo->getReceipt("002");
-        unset($wo);
+        $this->print = $wo->getReceipt($this->wo_no);
+        // unset($wo);
+        $filename = $this->wo_no . '.txt';
         //download the file
         return response()->streamDownload(function () {
             echo $this->print;
-        }, 'receipt.txt');
+        }, $filename);
 
     }
 
     public function ConfirmOrder(): void {
+        //update $this->wo different column
+        //check if myCustomer already choose 
+        if(empty($this->myCustomer)){
+            $this->warning(__('Please choose a customer'));
+            return;
+        }
+        $this->wo->customer_id = $this->myCustomer->id;
+        $this->wo->customer_name = $this->myCustomer->name;
+        $this->wo->customer_tel = $this->myCustomer->tel;
+        $this->wo->customer_email = $this->myCustomer->email;
+        $this->wo->customer_address = $this->myCustomer->address;
+        $this->wo->explain = $this->explain;
+        $this->wo->is_express = $this->is_express;
+        //get aggregate data
+        $sql="select max(pickup_date) as pickup_date, count(pickup_date) as cnt, sum(discount) as discount, sum(tax) as tax, sum(total) as total, sum(sub_total) as sub_total from work_order_items where wo_no=?";
+        $data = DB::select($sql, [$this->wo_no]);
+        $this->wo->piece = $data[0]->cnt;
+        if($data[0]->cnt==0){
+            $this->warning(__('Please add at least one item'));
+            return;
+        }
+
+        $this->wo->pickup_date = $data[0]->pickup_date;
+        $this->wo->discount = $data[0]->discount;
+        $this->wo->tax = $data[0]->tax;
+        $this->wo->total = $data[0]->total;
+        $this->wo->grand_total = $data[0]->sub_total;
+
         //confirm the order , change the status to pending
         //status: draft->pending->4pickup->complete
         $this->wo->status = 'pending';
         $this->wo->save();
+        $this->getDownload();
         $this->success(__('Work Order Confirmed'));
     }
 
@@ -209,7 +240,8 @@ new class extends Component {
         </x-table>
     </x-card>
     <div class="flex justify-center mt-4">
-        <x-button label="{{__('Confirm Work Order')}}" class="btn-primary" wire:click="selectItem(0,'new')" />
+        <x-button label="{{__('Confirm Work Order')}}" class="btn-primary" wire:click="ConfirmOrder"
+            spinner="ConfirmOrder" />
 
     </div>
 

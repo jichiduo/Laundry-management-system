@@ -15,22 +15,22 @@ created:
     - database/factories/MemberLevelFactory.php
     - database/factories/CustomerFactory.php
     - database/factories/TransactionFactory.php
-    - database/migrations/2024_11_28_074605_create_acc_codes_table.php
-    - database/migrations/2024_11_28_074606_create_app_groups_table.php
-    - database/migrations/2024_11_28_074607_create_app_logs_table.php
-    - database/migrations/2024_11_28_074608_create_app_settings_table.php
-    - database/migrations/2024_11_28_074609_create_currencies_table.php
-    - database/migrations/2024_11_28_074610_create_categories_table.php
-    - database/migrations/2024_11_28_074611_create_types_table.php
-    - database/migrations/2024_11_28_074612_create_divisions_table.php
-    - database/migrations/2024_11_28_074613_create_exchange_rates_table.php
-    - database/migrations/2024_11_28_074614_create_products_table.php
-    - database/migrations/2024_11_28_074615_create_work_orders_table.php
-    - database/migrations/2024_11_28_074616_create_work_order_items_table.php
-    - database/migrations/2024_11_28_074617_create_roles_table.php
-    - database/migrations/2024_11_28_074618_create_member_levels_table.php
-    - database/migrations/2024_11_28_074619_create_customers_table.php
-    - database/migrations/2024_11_28_074620_create_transactions_table.php
+    - database/migrations/2024_11_30_030040_create_acc_codes_table.php
+    - database/migrations/2024_11_30_030041_create_app_groups_table.php
+    - database/migrations/2024_11_30_030042_create_app_logs_table.php
+    - database/migrations/2024_11_30_030043_create_app_settings_table.php
+    - database/migrations/2024_11_30_030044_create_currencies_table.php
+    - database/migrations/2024_11_30_030045_create_categories_table.php
+    - database/migrations/2024_11_30_030046_create_types_table.php
+    - database/migrations/2024_11_30_030047_create_divisions_table.php
+    - database/migrations/2024_11_30_030048_create_exchange_rates_table.php
+    - database/migrations/2024_11_30_030049_create_products_table.php
+    - database/migrations/2024_11_30_030050_create_work_orders_table.php
+    - database/migrations/2024_11_30_030051_create_work_order_items_table.php
+    - database/migrations/2024_11_30_030052_create_roles_table.php
+    - database/migrations/2024_11_30_030053_create_member_levels_table.php
+    - database/migrations/2024_11_30_030054_create_customers_table.php
+    - database/migrations/2024_11_30_030055_create_transactions_table.php
     - app/Models/AccCode.php
     - app/Models/AppGroup.php
     - app/Models/AppLog.php
@@ -58,13 +58,13 @@ models:
     Currency: { name: 'string:50' }
     Category: { name: 'string:50' }
     Type: { name: 'string:50', category: 'string:50' }
-    Division: { name: 'string:128', address: 'string:255 nullable', tel: 'string:50 nullable', logo_file_url: 'string:255 nullable', remark: 'string:255 nullable', group_id: 'unsignedBigInteger nullable', group_name: 'string:128 nullable' }
+    Division: { name: 'string:128', address: 'string:255 nullable', tel: 'string:50 nullable', license: 'string:50 nullable', logo_file_url: 'string:255 nullable', remark: 'string:255 nullable', group_id: 'unsignedBigInteger nullable', group_name: 'string:128 nullable' }
     ExchangeRate: { from_currency: 'string:128', to_currency: 'string:128', rate: 'decimal:16,8 default:0.00000000' }
     Asset: { name: 'string:255', description: 'text nullable', unit: 'string:20 nullable', price: 'decimal:20,4 default:0.00', acc_code: 'string:50 nullable', acc_name: 'string:128 nullable', status: 'string:50 nullable default:"draft"', remark: 'string:255 nullable', equipment: 'boolean default:0', brand: 'string:50 nullable', model: 'string:50 nullable', warranty_period: 'string:50 nullable', warranty_start_date: 'datetime nullable', warranty_end_date: 'datetime nullable', useful_life: 'string:50 nullable', life_end_date: 'datetime nullable', location: 'string:50 nullable', Type: 'string:50 nullable default:"cloth"' }
-    WorkOrder: { wo_no: 'string:128 unique', customer_id: 'unsignedBigInteger nullable', customer_name: 'string:128 nullable index', customer_tel: 'string:50 nullable index', customer_email: 'string:50 nullable', customer_address: 'string:255 nullable', currency: 'string:50 nullable', base_currency: 'string:50 nullable', exchange_rate: 'decimal:16,8 nullable', explain: 'string:255 nullable', weight: 'decimal:20,2 default:0.00', total: 'decimal:20,2 default:0.00', discount: 'decimal:20,2 default:0.00', tax: 'decimal:20,2 default:0.00', grand_total: 'decimal:20,2 default:0.00', status: 'string:50 default:"draft" index', pickup_date: 'datetime nullable', collect_date: 'datetime nullable', is_express: 'boolean default:0', user_id: 'unsignedBigInteger nullable', user_name: 'string:50 nullable', division_id: 'unsignedBigInteger nullable', division_name: 'string:128 nullable', group_id: 'unsignedBigInteger nullable', group_name: 'string:128 nullable' }
-    WorkOrderItem: { wo_no: 'string:128 index', barcode: 'string:128 nullable', name: 'string:255 index', description: 'text nullable', quantity: 'decimal:20,2 default:0.00', unit: 'string:20 nullable', price: 'decimal:20,4 default:0.00', total: 'decimal:20,2 default:0.00', discount: 'decimal:20,2 default:0.00', tax_rate: 'decimal:5,2 default:0.00', tax: 'decimal:20,2 default:0.00', sub_total: 'decimal:20,2 default:0.00', turnover: 'decimal:8,2 nullable', acc_code: 'string:50 nullable', acc_name: 'string:128 nullable', status: 'string:50 default:"draft" index', remark: 'string:255 nullable', location: 'string:100 nullable' }
+    WorkOrder: { wo_no: 'string:128 unique', customer_id: 'unsignedBigInteger nullable', customer_name: 'string:128 nullable index', customer_tel: 'string:50 nullable index', customer_email: 'string:50 nullable', customer_address: 'string:255 nullable', currency: 'string:50 nullable', base_currency: 'string:50 nullable', exchange_rate: 'decimal:16,8 nullable', explain: 'string:255 nullable', piece: 'integer:5 nullable', total: 'decimal:20,2 default:0.00', discount: 'decimal:20,2 default:0.00', tax: 'decimal:20,2 default:0.00', grand_total: 'decimal:20,2 default:0.00', status: 'string:50 default:"draft" index', pickup_date: 'datetime nullable', collect_date: 'datetime nullable', is_express: 'boolean default:0', user_id: 'unsignedBigInteger nullable', user_name: 'string:50 nullable', division_id: 'unsignedBigInteger nullable', division_name: 'string:128 nullable', group_id: 'unsignedBigInteger nullable', group_name: 'string:128 nullable' }
+    WorkOrderItem: { wo_no: 'string:128 index', barcode: 'string:128 nullable', name: 'string:255 index', quantity: 'decimal:20,2 default:0.00', unit: 'string:20 nullable', price: 'decimal:20,4 default:0.00', total: 'decimal:20,2 default:0.00', discount: 'decimal:20,2 default:0.00', tax_rate: 'decimal:5,2 default:0.00', tax: 'decimal:20,2 default:0.00', sub_total: 'decimal:20,2 default:0.00', turnover: 'decimal:8,2 nullable', pickup_date: 'datetime nullable', acc_code: 'string:50 nullable', acc_name: 'string:128 nullable', status: 'string:50 default:"draft" index', remark: 'string:255 nullable', location: 'string:100 nullable' }
     Role: { name: 'string:50', is_active: 'boolean default:1' }
     MemberLevel: { name: 'string:255', discount: 'decimal:4,2 default:1' }
-    Customer: { name: 'string:128 index', password: 'string:255 nullable', tel: 'string:50 nullable index', email: 'string:255 nullable index', address: 'string:255 nullable', member_card: 'string:50 nullable', member_level_id: 'unsignedBigInteger nullable', member_level_name: 'string:255 nullable', member_discount: 'decimal:4,2 default:1', balance: 'decimal:20,2 default:0.00', remark: 'string:255 nullable', create_by: 'string:50 nullable', update_by: 'string:50 nullable', is_active: 'boolean default:1', group_id: unsignedBigInteger }
+    Customer: { name: 'string:128 index', password: 'string:255 nullable', tel: 'string:50 nullable index', email: 'string:255 nullable index', address: 'string:255 nullable', member_card: 'string:50 nullable', member_level_id: 'unsignedBigInteger nullable', member_level_name: 'string:255 nullable', member_discount: 'decimal:4,2 default:1', member_expire_date: 'datetime nullable', last_trans_no: 'string:128 nullable', balance: 'decimal:20,2 default:0.00', remark: 'string:255 nullable', create_by: 'string:50 nullable', update_by: 'string:50 nullable', is_active: 'boolean default:1', group_id: unsignedBigInteger }
     Transaction: { trans_no: 'string:128 unique', wo_no: 'string:128 nullable index', customer_id: 'unsignedBigInteger nullable', customer_name: 'string:128 nullable', card_no: 'string:50 nullable', amount: 'decimal:20,2 default:0.00', payment_type: 'string:50 nullable default:"Cash"', remark: 'string:255 nullable', create_by: 'string:50 nullable' }
     Product: { name: 'string:255', description: 'text nullable', unit: 'string:20 nullable', price: 'decimal:20,2 default:0.00', turnover: 'decimal:8,2 nullable', express_price: 'decimal:20,2 default:0.00', express_turnover: 'decimal:8,2 nullable', acc_code: 'string:50 nullable', acc_name: 'string:128 nullable', status: 'string:50 nullable', remark: 'string:255 nullable', equipment: 'boolean default:0', brand: 'string:50 nullable', model: 'string:50 nullable', warranty_period: 'string:50 nullable', warranty_start_date: 'datetime nullable', warranty_end_date: 'datetime nullable', useful_life: 'string:50 nullable', life_end_date: 'datetime nullable', location: 'string:50 nullable', type: 'string:50 nullable', group_id: unsignedBigInteger }

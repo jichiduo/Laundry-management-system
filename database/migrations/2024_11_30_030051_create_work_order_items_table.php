@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('wo_no', 128)->index();
             $table->string('barcode', 128)->nullable();
             $table->string('name', 255)->index();
-            $table->text('description')->nullable();
             $table->decimal('quantity', 20, 2)->default(0.00);
             $table->string('unit', 20)->nullable();
             $table->decimal('price', 20, 4)->default(0.00);
@@ -26,6 +25,7 @@ return new class extends Migration
             $table->decimal('tax', 20, 2)->default(0.00);
             $table->decimal('sub_total', 20, 2)->default(0.00);
             $table->decimal('turnover', 8, 2)->nullable();
+            $table->dateTime('pickup_date')->nullable();
             $table->string('acc_code', 50)->nullable();
             $table->string('acc_name', 128)->nullable();
             $table->string('status', 50)->default('draft')->index();

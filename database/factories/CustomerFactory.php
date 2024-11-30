@@ -30,6 +30,8 @@ class CustomerFactory extends Factory
             'member_level_id' => $this->faker->randomNumber(),
             'member_level_name' => $this->faker->regexify('[A-Za-z0-9]{255}'),
             'member_discount' => $this->faker->randomFloat(2, 0, 99.99),
+            'member_expire_date' => $this->faker->dateTime(),
+            'last_trans_no' => $this->faker->regexify('[A-Za-z0-9]{128}'),
             'balance' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
             'remark' => $this->faker->regexify('[A-Za-z0-9]{255}'),
             'create_by' => $this->faker->regexify('[A-Za-z0-9]{50}'),

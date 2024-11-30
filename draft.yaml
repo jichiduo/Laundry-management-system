@@ -38,6 +38,7 @@ models:
     name: string:128
     address: string:255 nullable
     tel: string:50 nullable
+    license: string:50 nullable
     logo_file_url: string:255 nullable
     remark: string:255 nullable
     group_id: unsignedBigInteger nullable
@@ -83,7 +84,7 @@ models:
     base_currency: string:50 nullable
     exchange_rate: decimal:16,8 nullable
     explain: string:255 nullable
-    weight: decimal:20,2 default:0.00
+    piece: integer:5 nullable
     total: decimal:20,2 default:0.00
     discount: decimal:20,2 default:0.00
     tax: decimal:20,2 default:0.00
@@ -103,7 +104,6 @@ models:
     wo_no: string:128 index
     barcode: string:128 nullable
     name: string:255 index
-    description: text nullable
     quantity: decimal:20,2 default:0.00
     unit: string:20 nullable
     price: decimal:20,4 default:0.00
@@ -113,6 +113,7 @@ models:
     tax: decimal:20,2 default:0.00
     sub_total: decimal:20,2 default:0.00
     turnover: decimal:8,2 nullable
+    pickup_date: datetime nullable
     acc_code: string:50 nullable
     acc_name: string:128 nullable
     status: string:50 default:"draft" index
@@ -137,6 +138,8 @@ models:
     member_level_id: unsignedBigInteger nullable
     member_level_name: string:255 nullable
     member_discount: decimal:4,2 default:1
+    member_expire_date: datetime nullable
+    last_trans_no: string:128 nullable
     balance: decimal:20,2 default:0.00
     remark: string:255 nullable
     create_by: string:50 nullable

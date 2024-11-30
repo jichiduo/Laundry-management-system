@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name', 128);
             $table->string('address', 255)->nullable();
             $table->string('tel', 50)->nullable();
+            $table->string('license', 50)->nullable();
             $table->string('logo_file_url', 255)->nullable();
             $table->string('remark', 255)->nullable();
             $table->unsignedBigInteger('group_id')->nullable();

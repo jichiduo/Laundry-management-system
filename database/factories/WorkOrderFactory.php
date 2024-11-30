@@ -31,7 +31,7 @@ class WorkOrderFactory extends Factory
             'base_currency' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'exchange_rate' => $this->faker->randomFloat(8, 0, 99999999.99999999),
             'explain' => $this->faker->regexify('[A-Za-z0-9]{255}'),
-            'weight' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
+            'piece' => $this->faker->numberBetween(-10000, 10000),
             'total' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
             'discount' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
             'tax' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
