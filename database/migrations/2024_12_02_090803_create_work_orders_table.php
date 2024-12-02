@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('customer_name', 128)->nullable()->index();
             $table->string('customer_tel', 50)->nullable()->index();
             $table->string('customer_email', 50)->nullable();
-            $table->string('customer_address', 255)->nullable();
+            $table->decimal('customer_discount', 4, 2)->nullable();
             $table->string('currency', 50)->nullable();
             $table->string('base_currency', 50)->nullable();
             $table->decimal('exchange_rate', 16, 8)->nullable();

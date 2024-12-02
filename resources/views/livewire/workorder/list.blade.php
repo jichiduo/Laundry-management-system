@@ -143,7 +143,7 @@ new class extends Component {
     <!-- TABLE  -->
     <x-card>
         <x-table :headers="$headers" :rows="$allData" :sort-by="$sortBy" with-pagination show-empty-text
-            link="/workorder/update/{id}">
+            link="/workorder/view/{id}">
             @scope('cell_status', $data)
             @if($data->status == 'draft')
             <x-badge :value="$data->status" />
@@ -171,18 +171,4 @@ new class extends Component {
         </x-table>
     </x-card>
 
-    <!-- New/Edit user modal -->
-    <x-modal wire:model="myModal" separator persistent>
-        <div>
-            <x-input label="{{__('Code')}}" wire:model='code' clearable />
-            <x-input label="{{__('Name')}}" wire:model='uname' clearable />
-        </div>
-
-
-        <x-slot:actions>
-            <x-button label="Save" wire:click="save" class="btn-primary" />
-            <x-button label="Cancel" wire:click="closeModal" />
-
-        </x-slot:actions>
-    </x-modal>
 </div>

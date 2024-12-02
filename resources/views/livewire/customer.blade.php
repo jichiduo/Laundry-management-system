@@ -93,8 +93,8 @@ new class extends Component {
         //add email validation
         $validatedData = $this->validate([
             'uname' => 'required',
-            'email' => 'email|unique:customers,email,' . $this->myCustomer->email,
-            'tel' => 'required|unique:customers,tel,' . $this->myCustomer->tel,
+            'email' => 'email|unique:customers,email,' . $this->myCustomer->id,
+            'tel' => 'required|unique:customers,tel,' . $this->myCustomer->id,
         ]);
         if ($this->action == 'new') {
             $this->myCustomer->create_by = Auth()->user()->id;     

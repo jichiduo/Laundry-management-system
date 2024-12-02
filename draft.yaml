@@ -79,7 +79,7 @@ models:
     customer_name: string:128 nullable index
     customer_tel: string:50 nullable index
     customer_email: string:50 nullable
-    customer_address: string:255 nullable
+    customer_discount: decimal:4,2 nullable
     currency: string:50 nullable
     base_currency: string:50 nullable
     exchange_rate: decimal:16,8 nullable

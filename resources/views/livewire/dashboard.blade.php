@@ -3,14 +3,18 @@
 use Livewire\Volt\Component;
 use Illuminate\Support\Facades\DB;
 use Mary\Traits\Toast;
+use App\Models\WorkOrder;
+use App\Models\WorkOrderItem;
 
 new class extends Component {
+    use Toast;
     //
     public string $division_name = '';
     public $pickup = 0;
     public $inprogress = 0;
     public $sales = 0;
     public string $search = '';
+
 
     //get division name by current user id 
     public function mount(): void 
@@ -64,6 +68,27 @@ new class extends Component {
         }
     }
 
+    public function findItem(){
+        if($this->search != ''){
+            //$woi = DB::table('work_orders_item')->where('barcode', $this->search)->first();
+            $woi = WorkOrderItem::where('barcode', $this->search)->first();
+            //check if get data from DB
+            if($woi){
+                //$wo = DB::table('work_orders')->where('wo_no', $woi->wo_no)->first();
+                $wo = WorkOrder::where('wo_no', $woi->wo_no)->first();
+                //check if get data from DB
+                if($wo){
+                    //redirect to wo_view
+                    return redirect()->route('wo_view', $wo->id);
+                }
+            }
+            //show err message
+            $this->warning(__("Can't find the tracing number/barcode."), position: 'toast-top');
+            $this->search = '';
+        }
+
+    }
+
 }; ?>
 
 <div>
@@ -89,7 +114,7 @@ new class extends Component {
             </x-card>
             <x-card title="{{__('Find Item')}}" subtitle="{{__('please enter/scan tracing number/barcode')}}" separator>
                 <x-input placeholder="{{__('Search')}}..." wire:model.live.debounce="search" clearable
-                    icon="o-magnifying-glass" autocomplete="off" />
+                    icon="o-magnifying-glass" autocomplete="off" wire:keydown.enter='findItem()' />
             </x-card>
         </div>
 

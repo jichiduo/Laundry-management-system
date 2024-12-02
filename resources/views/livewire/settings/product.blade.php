@@ -28,10 +28,13 @@ new class extends Component {
     #[Validate('required')]
     public string $uname = '';
     public string $unit = '-';
-    #[Validate('required')]
+    #[Validate('required|numeric|gt:0')]
     public $price = 0.00;
+    #[Validate('required|numeric|gt:0')]
     public $turnover = 0.00;
+    #[Validate('required|numeric|gte:price')]
     public $express_price = 0.00;
+    #[Validate('required|numeric|lte:turnover')]
     public $express_turnover = 0.00;
     public string $description = '';
     #[Validate('required')]

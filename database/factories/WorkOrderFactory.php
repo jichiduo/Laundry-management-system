@@ -26,7 +26,7 @@ class WorkOrderFactory extends Factory
             'customer_name' => $this->faker->regexify('[A-Za-z0-9]{128}'),
             'customer_tel' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'customer_email' => $this->faker->regexify('[A-Za-z0-9]{50}'),
-            'customer_address' => $this->faker->regexify('[A-Za-z0-9]{255}'),
+            'customer_discount' => $this->faker->randomFloat(2, 0, 99.99),
             'currency' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'base_currency' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'exchange_rate' => $this->faker->randomFloat(8, 0, 99999999.99999999),

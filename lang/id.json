@@ -65,7 +65,7 @@
     "Work Order Confirmed": "Pesanan Kerja Terverifikasi",
     "Work order number": "Nomor pesanan kerja",
     "Basic Information": "Informasi Dasar",
-    "Details": "Detail",
+    "Details": "Terperinci",
     "Remove": "Hapus",
     "New Item": "Barang Baru",
     "Select Product": "Pilih Produk",
@@ -91,7 +91,17 @@
     "Cust Address": "Pelanggan Alamat",
     "Status": "Status",
     "Pickup Date": "Tanggal Pickup",
+    "Collect Date": "Tanggal Pengumpulan",
     "Work Order List": "Daftar Pesanan Kerja",
     "Print": "Cetak",
-    "Piece": "sekeping"
+    "Piece": "sekeping",
+    "Work Order already confirmed": "Pesanan kerja sudah dikonfirmasi",
+    "Express": "Ekspres",
+    "Explain": "Jelaskan",
+    "write explaination here ...": "tulis penjelasan di sini ...",
+    "Max 255 chars": "Maks 255 karakter",
+    "Add Item": "Tambahkan Item",
+    "Item added": "Item ditambahkan",
+    "Fetal Err, cannot find basic info for the current user.": "Kesalahan fatal, tidak dapat menemukan informasi dasar untuk pengguna saat ini.",
+    "Can't find the tracing number/barcode.": "Tidak dapat menemukan nomor pelacakan / barcode."
 }

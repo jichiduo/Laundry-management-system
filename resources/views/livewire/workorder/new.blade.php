@@ -36,7 +36,7 @@ new class extends Component {
         
         $this->myWorkOrder->save();
         $wo_id = $this->myWorkOrder->id;
-        return redirect()->route('workorderupdate', $wo_id);
+        return redirect()->route('wo_update', $wo_id);
     }
     
 }; ?>

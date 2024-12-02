@@ -20,7 +20,7 @@ class WorkOrder extends Model
         'customer_name',
         'customer_tel',
         'customer_email',
-        'customer_address',
+        'customer_discount',
         'currency',
         'base_currency',
         'exchange_rate',
@@ -50,6 +50,7 @@ class WorkOrder extends Model
     protected $casts = [
         'id' => 'integer',
         'customer_id' => 'integer',
+        'customer_discount' => 'decimal:2',
         'exchange_rate' => 'decimal:8',
         'total' => 'decimal:2',
         'discount' => 'decimal:2',

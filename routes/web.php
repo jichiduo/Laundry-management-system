@@ -34,8 +34,9 @@ Route::middleware('auth')->group(function () {
     Volt::route('/profile', 'settings.profile');
     Volt::route('/customer', 'customer');
     Volt::route('/workorder/new', 'workorder.new');
-    Volt::route('/workorder/update/{id}', 'workorder.update')->name('workorderupdate');
+    Volt::route('/workorder/update/{id}', 'workorder.update')->name('wo_update');
     Volt::route('/workorder/list', 'workorder.list');
+    Volt::route('/workorder/view/{id}', 'workorder.view')->name('wo_view');
     //settings
     Volt::route('/user', 'settings.user');
     Volt::route('/app-group', 'settings.app_group');
