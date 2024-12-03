@@ -49,7 +49,7 @@ new class extends Component {
             $this->myWorkOrder = WorkOrder::find($id);
             //check if the staus not in draft 
             if ($this->myWorkOrder->status == 'draft' ) {
-                return redirect()->route('workorderupdate', $id);
+                return redirect()->route('wo_update', $id);
             } else {
                 $this->error(__('You can only edit draft work orders.'), position: 'toast-top');
                 return;
@@ -100,7 +100,7 @@ new class extends Component {
             ['key' => 'customer_name', 'label' => __('Cust Name')],
             ['key' => 'customer_tel', 'label' => __('Cust Tel')],
             ['key' => 'grand_total', 'label' => __('Total')],
-            ['key' => 'piece', 'label' => __('Piece')],
+            ['key' => 'piece', 'label' => __('Piece'),'format' => ['currency', '0,.']],
             ['key' => 'status', 'label' => __('Status')],
             ['key' => 'pickup_date', 'label' => __('Pickup Date'), 'format' => ['date', 'd/m/Y'], 'class' => 'w-24'],
         ];
@@ -142,8 +142,8 @@ new class extends Component {
 
     <!-- TABLE  -->
     <x-card>
-        <x-table :headers="$headers" :rows="$allData" :sort-by="$sortBy" with-pagination show-empty-text
-            link="/workorder/view/{id}">
+        <x-table :headers="$headers" :rows="$allData" :sort-by="$sortBy" class="table-xs" with-pagination
+            show-empty-text link="/workorder/view/{id}/show">
             @scope('cell_status', $data)
             @if($data->status == 'draft')
             <x-badge :value="$data->status" />

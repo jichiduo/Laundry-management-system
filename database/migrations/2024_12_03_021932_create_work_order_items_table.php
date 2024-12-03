@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('work_order_items', function (Blueprint $table) {
             $table->id();
             $table->string('wo_no', 128)->index();
-            $table->string('barcode', 128)->nullable();
+            $table->string('barcode', 128)->nullable()->index();
             $table->string('name', 255)->index();
             $table->decimal('quantity', 20, 2)->default(0.00);
             $table->string('unit', 20)->nullable();

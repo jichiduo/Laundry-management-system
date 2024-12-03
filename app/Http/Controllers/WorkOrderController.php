@@ -14,7 +14,7 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use App\Models\WorkOrder;
 use App\Models\WorkOrderItem;
-use App\Models\Customer;
+use App\Models\Division;
 
 class WorkOrderController extends Controller
 {
@@ -55,15 +55,33 @@ class WorkOrderController extends Controller
     {
         $workOrder = WorkOrder::where('wo_no', $workOrderNumber)->first();
         $workOrderItems = WorkOrderItem::where('wo_no', $workOrderNumber)->get();
-        $totalAmount = 0;
-        $logs = Customer::all();
-        $content = "Customers \n";
-        foreach ($logs as $log) {
-            $content .= $log->name;
-            $content .= "\n";
+        $division = Division::where('id', $workOrder->division_id)->first();
+        $content  = "\t" . $division->name . "\n\n";
+        $content .= $division->address . "\n";
+        $content .= __('Tel') . ':' . $division->tel . "\n\n";
+        $content .= __('WO Date:') . date_format($workOrder->created_at, 'd-m-Y H:i:s') . "\n";
+        $content .= "---------------------------------\n";
+        $content .= "Qty\t" . __('Item Name') . "\t" . __('Amount') . "\n";
+        $content .= "---------------------------------\n";
+        foreach ($workOrderItems as $woi) {
+            $content .= $woi->quantity . "\t" . substr($woi->name, 0, 14) . "\t" . $woi->sub_total . "\n";
         }
-        $content .= "wo:" . $workOrderNumber;
-        //$this->print = $content;
+        $content .= "---------------------------------\n";
+        $content .= __('Grand Total') . "\t" . $workOrder->grand_total . "\n";
+        $content .= "\n\n\n\n";
+        $content .= "\t" . __('Explain') . "\n";
+        $content .= "---------------------------------\n";
+        $content .= __("Collect Date:") . date_format($workOrder->pickup_date, 'd-m-Y') . "\n\n";
+        $content .= $workOrder->explain . "\n\n\n\n";
+        $content .= "---------------------------------\n";
+        $content .= "\t" . __('Thank You') . "\n";
+        $content .= "\t" . __('See You Again') . "\n";
+        $content .= "---------------------------------\n";
+        $content .= __('Powered By:') . $workOrder->group_name . "\n\n\n";
+        $content .= "\t" . __('Attention') . "\n";
+        $content .= "---------------------------------\n";
+
+        $content .= "\n\n\n\n\n\n\n\n";
         return $content;
     }
 

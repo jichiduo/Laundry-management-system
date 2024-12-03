@@ -102,7 +102,7 @@ models:
 
   WorkOrderItem:
     wo_no: string:128 index
-    barcode: string:128 nullable
+    barcode: string:128 nullable index
     name: string:255 index
     quantity: decimal:20,2 default:0.00
     unit: string:20 nullable
@@ -137,7 +137,7 @@ models:
     member_card: string:50 nullable
     member_level_id: unsignedBigInteger nullable
     member_level_name: string:255 nullable
-    member_discount: decimal:4,2 default:1
+    member_discount: decimal:4,2 default:0
     member_expire_date: datetime nullable
     last_trans_no: string:128 nullable
     balance: decimal:20,2 default:0.00

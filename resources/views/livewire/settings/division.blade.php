@@ -61,6 +61,8 @@ new class extends Component {
             $this->address = $this->myDivision->address;
             $this->tel = $this->myDivision->tel;
             $this->remark = $this->myDivision->remark;
+            $this->group_id = $this->myDivision->group_id;
+            $this->group_name = $this->myDivision->group_name;
             
             $this->myModal = true;
         } elseif ($action == 'delete'){

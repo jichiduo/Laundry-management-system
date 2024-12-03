@@ -103,5 +103,16 @@
     "Add Item": "Tambahkan Item",
     "Item added": "Item ditambahkan",
     "Fetal Err, cannot find basic info for the current user.": "Kesalahan fatal, tidak dapat menemukan informasi dasar untuk pengguna saat ini.",
-    "Can't find the tracing number/barcode.": "Tidak dapat menemukan nomor pelacakan / barcode."
+    "Can't find the tracing number/barcode.": "Tidak dapat menemukan nomor pelacakan / barcode.",
+    "Job Status": "Status Pekerjaan",
+    "Work Order Successfully Confirmed": "Pesanan Kerja Berhasil Dikonfirmasi",
+    "WO Date:": "WO Tanggal:",
+    "Item Name": "Nama Item",
+    "Amount": "Jumlah",
+    "Grand Total": "Keseluruhan Jumlah",
+    "Collect Date:": "Tanggal Pengumpulan:",
+    "Thank You": "Terima Kasih",
+    "See You Again": "Lihat Anda Lagi",
+    "Powered By:": "Diberdayakan oleh:",
+    "Attention": "Perhatian"
 }

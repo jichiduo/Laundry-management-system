@@ -349,7 +349,7 @@ new class extends Component {
         $this->wo->save();
         $this->getDownload();
         // $this->success(__('Work Order Confirmed'));
-        return redirect()->route('wo_view', $this->wo->id);
+        return redirect()->route('wo_view', ['id' => $this->wo->id , 'action' => 'new']);
     }
 
 

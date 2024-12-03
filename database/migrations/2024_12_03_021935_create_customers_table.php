@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('member_card', 50)->nullable();
             $table->unsignedBigInteger('member_level_id')->nullable();
             $table->string('member_level_name', 255)->nullable();
-            $table->decimal('member_discount', 4, 2)->default(1);
+            $table->decimal('member_discount', 4, 2)->default(0);
             $table->dateTime('member_expire_date')->nullable();
             $table->string('last_trans_no', 128)->nullable();
             $table->decimal('balance', 20, 2)->default(0.00);

@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 
 new class extends Component {
+    public string $action = '';
     public WorkOrder $wo;
     public string $wo_no = '';
     public string $customer_name = '';
@@ -61,8 +62,12 @@ new class extends Component {
         ];
     }
 
-    public function mount($id): void
+    public function mount($id,$action): void
     {
+        $this->action = $action;
+        if($this->action==null){
+            $this->action = 'view';
+        }
         $this->wo = WorkOrder::findOrFail($id);
         // dd($this->wo);
         $this->wo_no = $this->wo->wo_no;
@@ -93,9 +98,13 @@ new class extends Component {
     <!-- HEADER -->
     <x-header title="{{__('Work Order')}}" subtitle="{{__('Work order number')}}:{{$wo_no}}" separator
         progress-indicator />
-
+    @if($action=='new')
+    <x-alert title="{{__('Work Order Successfully Confirmed')}}" icon="o-rocket-launch" class="bg-lime-500 mb-4"
+        dismissible />
+    @endif
     <x-card title="{{__('Basic Information')}}" separator>
         <div class="grid grid-cols-3 gap-2 mb-4">
+
             @if($status=='draft')
             <x-badge value="{{ strtoupper($status)}}" class="badge-lg" />
             @elseif($status=='pending')

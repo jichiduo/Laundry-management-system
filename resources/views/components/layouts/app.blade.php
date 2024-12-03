@@ -56,6 +56,7 @@
                 <x-menu-sub title="{{__('Work Order')}}" icon="o-archive-box">
                     <x-menu-item title="{{__('New')}}" icon="o-rocket-launch" link="/workorder/new" />
                     <x-menu-item title="{{__('List')}}" icon="o-list-bullet" link="/workorder/list" />
+                    <x-menu-item title="{{__('Job Status')}}" icon="o-gift" link="/workorder/job-status" />
                 </x-menu-sub>
                 <x-menu-item title="{{__('Customer')}}" icon="o-user-group" link="/customer" />
                 @if(auth()->user()->role !='user')
