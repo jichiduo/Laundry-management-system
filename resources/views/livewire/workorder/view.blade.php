@@ -3,8 +3,10 @@
 use Livewire\Volt\Component;
 use App\Models\WorkOrder;
 use App\Models\WorkOrderItem;
+use App\Http\Controllers\WorkOrderController;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 new class extends Component {
     public string $action = '';
@@ -23,7 +25,9 @@ new class extends Component {
     public string $status = '';
     public string $pickup_date = '';
     public string $collect_date = '';
+    public string $print = '';
     public array $Item_sortBy = ['column' => 'id', 'direction' => 'asc'];
+    public string $content='';
 
     // Table headers
     public function WOItemHeaders(): array
@@ -71,6 +75,7 @@ new class extends Component {
         $this->wo = WorkOrder::findOrFail($id);
         // dd($this->wo);
         $this->wo_no = $this->wo->wo_no;
+        // dd($this->wo_no);
         $this->customer_name = $this->wo->customer_name;
         $this->customer_email = $this->wo->customer_email;
         $this->customer_tel = $this->wo->customer_tel;
@@ -89,8 +94,27 @@ new class extends Component {
         if($this->wo->collect_date != null){
             $this->collect_date = date_format($this->wo->collect_date,'Y-m-d');
         }
+        //get download
+        $this->content = json_encode($this->getDownload($this->wo_no));
+        //dd($this->content);
     }
 
+    public function getDownload($wo_no) {
+        // dd($wo_no);
+        // $woc = new WorkOrderController();
+        // $this->print = $woc->getReceipt($wo_no);
+        $filename = substr($wo_no,0,4)."/receipt/".$wo_no.'.txt';
+        //dd($this->print);
+        // return response()->streamDownload(function () {
+        //     echo $this->print;
+        // }, $filename);
+        return Storage::disk('public')->get($filename);
+    }
+
+    public function printReceipt(){
+        //dispatch event to broswer , call WsPrint() in js
+        $this->dispatch('WsPrint');
+    }
 
 }; ?>
 
@@ -100,8 +124,12 @@ new class extends Component {
         progress-indicator />
     @if($action=='new')
     <x-alert title="{{__('Work Order Successfully Confirmed')}}" icon="o-rocket-launch" class="bg-lime-500 mb-4"
-        dismissible />
+        dismissible>
+    </x-alert>
     @endif
+    <div class="flex justify-end mb-4">
+        <x-button label="{{__('Print')}}" icon="o-printer" wire:click="printReceipt" class="btn-sm btn-primary" />
+    </div>
     <x-card title="{{__('Basic Information')}}" separator>
         <div class="grid grid-cols-3 gap-2 mb-4">
 
@@ -146,5 +174,25 @@ new class extends Component {
 
         <x-table :headers="$WOItemHeaders" :rows="$WOItems" show-empty-text />
     </x-card>
+
+    <script>
+        @if($action=='new')
+
+        //setTimeout(function() { WsPrint();}, 1000); 
+        
+        @endif
+
+        function WsPrint() {
+            var conn;
+            var multilineContent = 'send COM3 {{ $content }}';
+            //remove &quot; from multilineContent
+            multilineContent = multilineContent.replace("&quot;", '');
+            conn = new WebSocket("ws://localhost:8989/ws");
+            conn.onopen = function(e) {
+                conn.send(multilineContent);
+                console.log("Message sent...");
+            }            
+        }
+    </script>
 
 </div>

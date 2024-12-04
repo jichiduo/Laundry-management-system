@@ -60,11 +60,13 @@ class WorkOrderController extends Controller
         $content .= $division->address . "\n";
         $content .= __('Tel') . ':' . $division->tel . "\n\n";
         $content .= __('WO Date:') . date_format($workOrder->created_at, 'd-m-Y H:i:s') . "\n";
+        $content .= __('Customer Name') . ":" . $workOrder->customer_name . "\n";
+        $content .= __('Customer Tel') . ":" . $workOrder->customer_tel . "\n";
         $content .= "---------------------------------\n";
         $content .= "Qty\t" . __('Item Name') . "\t" . __('Amount') . "\n";
         $content .= "---------------------------------\n";
         foreach ($workOrderItems as $woi) {
-            $content .= $woi->quantity . "\t" . substr($woi->name, 0, 14) . "\t" . $woi->sub_total . "\n";
+            $content .= $woi->quantity . "\t" . str_pad(substr($woi->name, 0, 14), 14) . "\t" . $woi->sub_total . "\n";
         }
         $content .= "---------------------------------\n";
         $content .= __('Grand Total') . "\t" . $workOrder->grand_total . "\n";
@@ -80,8 +82,15 @@ class WorkOrderController extends Controller
         $content .= __('Powered By:') . $workOrder->group_name . "\n\n\n";
         $content .= "\t" . __('Attention') . "\n";
         $content .= "---------------------------------\n";
+        $content .= __('1. Damage/fade/tear/shrinkage of clothing in the washing and drying process caused by the basic nature of the clothing material is not our responsibility, it is the consumer\'s risk') . "\n";
+        $content .= __('2. The loss of valuables left in clothes is not our responsibility.') . "\n";
+        $content .= __('3. If the amount of clothing has been filled in accurately and correctly, then the amount we calculated is considered correct') . "\n";
+        $content .= __('4. Complaints occur 1x24 hours after the laundry is picked up') . "\n";
 
         $content .= "\n\n\n\n\n\n\n\n";
+        //write content to a file
+        $filename = substr($workOrderNumber, 0, 4) . "/receipt/" . $workOrderNumber . ".txt";
+        Storage::disk('public')->put($filename, $content);
         return $content;
     }
 

@@ -164,6 +164,7 @@ new class extends Component {
             $this->myCustomerModal = true;
         } elseif ($action == 'choose') {
             $this->myCustomer = Customer::find($id);
+            $this->customer_id = $this->myCustomer->id;
             $this->customer_name = $this->myCustomer->name;
             $this->customer_email = $this->myCustomer->email;
             $this->customer_tel = $this->myCustomer->tel;
@@ -184,7 +185,7 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => __('Name'), 'class' => 'w-36'],
+            ['key' => 'name', 'label' => __('Name')],
             ['key' => 'tel', 'label' => __('Tel')],
             ['key' => 'email', 'label' => __('Email') ],
 
@@ -247,18 +248,7 @@ new class extends Component {
         ];
     }
 
-    public function getDownload() {
-        // prepare content
-        $wo = new WorkOrderController();
-        $this->print = $wo->getReceipt($this->wo_no);
-        // unset($wo);
-        $filename = $this->wo_no . '.txt';
-        //download the file
-        return response()->streamDownload(function () {
-            echo $this->print;
-        }, $filename);
 
-    }
 
     public function addItem(): void{
         if($this->wo_status!='draft'){
@@ -320,7 +310,7 @@ new class extends Component {
             return;
         }
         //check if myCustomer already choose 
-        if(empty($this->myCustomer)){
+        if(empty($this->customer_id)){
             $this->warning(__('Please choose a customer'));
             return;
         }
@@ -332,11 +322,11 @@ new class extends Component {
             $this->warning(__('Please add at least one item'));
             return;
         }
-        $this->wo->customer_id = $this->myCustomer->id;
-        $this->wo->customer_name = $this->myCustomer->name;
-        $this->wo->customer_tel = $this->myCustomer->tel;
-        $this->wo->customer_email = $this->myCustomer->email;
-        $this->wo->customer_discount = $this->myCustomer->member_discount;
+        $this->wo->customer_id = $this->customer_id;
+        $this->wo->customer_name = $this->customer_name;
+        $this->wo->customer_tel = $this->customer_tel;
+        $this->wo->customer_email = $this->customer_email;
+        $this->wo->customer_discount = $this->customer_discount;
         $this->wo->explain = $this->explain;
         $this->wo->is_express = $this->is_express;
         $this->wo->pickup_date = $data[0]->pickup_date;
@@ -347,8 +337,10 @@ new class extends Component {
         //status: draft->pending->4pickup->complete
         $this->wo->status = 'pending';
         $this->wo->save();
-        $this->getDownload();
-        // $this->success(__('Work Order Confirmed'));
+        // create receipt file
+        $woc = new WorkOrderController();
+        $this->print = $woc->getReceipt($this->wo->wo_no);
+        //return to view
         return redirect()->route('wo_view', ['id' => $this->wo->id , 'action' => 'new']);
     }
 
@@ -406,7 +398,7 @@ new class extends Component {
     <div class="flex justify-center mt-4">
         @if($wo_status=='draft')
         <x-button label="{{__('Confirm Work Order')}}" class="btn-primary" wire:click="ConfirmOrder"
-            spinner="ConfirmOrder" />
+            wire:confirm="{{__('Are you sure?')}}" spinner="ConfirmOrder" />
         @endif
     </div>
 
@@ -415,7 +407,8 @@ new class extends Component {
         <div>
             <x-input placeholder="{{__('Search')}}..." wire:model.live.debounce="search" clearable
                 icon="o-magnifying-glass" class="mt-4" />
-            <x-table :headers="$CustomerHeaders" :rows="$Customers" :sort-by="$sortBy" with-pagination show-empty-text>
+            <x-table :headers="$CustomerHeaders" :rows="$Customers" :sort-by="$sortBy" with-pagination show-empty-text
+                class="table-xs">
                 @scope('actions', $Customer)
                 <div class="flex justify-end">
                     <x-button icon="o-user-plus" wire:click="selectItem({{ $Customer['id'] }},'choose')"
