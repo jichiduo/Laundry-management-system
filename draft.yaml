@@ -120,6 +120,11 @@ models:
     remark: string:255 nullable
     location: string:100 nullable
 
+  JobStatus:
+    wo_no: string:128 index
+    barcode: string:128 nullable index
+    user_id: unsignedBigInteger nullable
+
   Role:
     name: string:50
     is_active: boolean default:1

@@ -337,6 +337,9 @@ new class extends Component {
         //status: draft->pending->4pickup->complete
         $this->wo->status = 'pending';
         $this->wo->save();
+        //set all work order items status to pending
+        $sql="update work_order_items set status='pending' where wo_no=?";
+        DB::update($sql, [$this->wo_no]);
         // create receipt file
         $woc = new WorkOrderController();
         $this->print = $woc->getReceipt($this->wo->wo_no);

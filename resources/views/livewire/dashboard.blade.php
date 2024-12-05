@@ -13,6 +13,7 @@ new class extends Component {
     public $pickup = 0;
     public $inprogress = 0;
     public $sales = 0;
+    public $month_sales = 0;
     public string $search = '';
 
 
@@ -66,6 +67,17 @@ new class extends Component {
             $this->sales = $c->total;
             break;
         }
+        //get this month sales from work_order
+        if( Auth()->user()->role == 'user'){
+            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where division_id = ? and status != 'draft' and MONTH(created_at) = MONTH(CURDATE())";
+        } else {
+            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where group_id = ? and status != 'draft' and MONTH(created_at) = MONTH(CURDATE())";
+        }
+        $cnt = DB::select($sql, [$my_id]);
+        foreach ($cnt as $c) {
+            $this->month_sales = $c->total;
+            break;
+        }
     }
 
     public function findItem(){
@@ -79,7 +91,7 @@ new class extends Component {
                 //check if get data from DB
                 if($wo){
                     //redirect to wo_view
-                    return redirect()->route('wo_view', $wo->id);
+                    return redirect()->route('wo_view', ['id' => $wo->id , 'action' => 'show' ]);
                 }
             }
             //show err message
@@ -100,10 +112,11 @@ new class extends Component {
     <!-- TABLE  -->
     <x-card title="{{__('Welcome')}}, {{ Auth()->user()->name }}"
         subtitle="{{__('Current shop')}}: {{ Auth()->user()->division_name }}" separator>
-        <div class="p-4 rounded-xl grid lg:grid-cols-3 gap-4 bg-base-200">
-            <x-stat title="{{__('Ready for customer Pickup')}}" value="{{ $pickup }}" icon="o-truck" />
+        <div class="p-4 rounded-xl grid lg:grid-cols-4 gap-4 bg-base-200">
+            <x-stat title="{{__('Ready for Pickup')}}" value="{{ $pickup }}" icon="o-truck" />
             <x-stat title="{{__('In Progress')}}" value="{{ $inprogress }}" icon="o-bolt" />
             <x-stat title="{{__('Today Sales')}}" value="{{ $sales }}" icon="o-banknotes" />
+            <x-stat title="{{__('Month Sales')}}" value="{{ $month_sales }}" icon="o-chart-bar" />
         </div>
         <div class="p-4 mt-4 rounded-xl grid lg:grid-cols-2 gap-4 bg-base-200">
             <x-card title="{{__('New Work Order')}}"

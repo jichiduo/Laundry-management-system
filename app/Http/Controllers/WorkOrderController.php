@@ -59,6 +59,7 @@ class WorkOrderController extends Controller
         $content  = "\t" . $division->name . "\n\n";
         $content .= $division->address . "\n";
         $content .= __('Tel') . ':' . $division->tel . "\n\n";
+        $content .= __('WO No:') . $workOrder->wo_no . "\n";
         $content .= __('WO Date:') . date_format($workOrder->created_at, 'd-m-Y H:i:s') . "\n";
         $content .= __('Customer Name') . ":" . $workOrder->customer_name . "\n";
         $content .= __('Customer Tel') . ":" . $workOrder->customer_tel . "\n";

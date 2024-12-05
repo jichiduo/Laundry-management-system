@@ -45,6 +45,7 @@ new class extends Component {
             ['key' => 'pickup_date', 'label' => __('Pickup'), 'format' => ['date', 'd/m/Y'] ],
             ['key' => 'remark', 'label' => __('Remark') ],
             ['key' => 'location', 'label' => __('Location') ],
+            ['key' => 'status', 'label' => __('Status') ],
 
         ];
     }
@@ -70,33 +71,33 @@ new class extends Component {
     {
         $this->action = $action;
         if($this->action==null){
-            $this->action = 'view';
+            $this->action = 'show';
         }
         $this->wo = WorkOrder::findOrFail($id);
-        // dd($this->wo);
         $this->wo_no = $this->wo->wo_no;
-        // dd($this->wo_no);
-        $this->customer_name = $this->wo->customer_name;
-        $this->customer_email = $this->wo->customer_email;
-        $this->customer_tel = $this->wo->customer_tel;
-        $this->explain = $this->wo->explain;
-        $this->is_express = $this->wo->is_express;
-        $this->piece = $this->wo->piece;
-        $this->total = $this->wo->total;
-        $this->discount = $this->wo->discount;
-        $this->tax = $this->wo->tax;
-        $this->grand_total = $this->wo->grand_total;
         $this->status = $this->wo->status;
-        //format date as Y-m-d
-        if($this->wo->pickup_date != null){
-            $this->pickup_date = date_format($this->wo->pickup_date,'Y-m-d');
+        if($this->status !='draft'){
+            $this->customer_name = $this->wo->customer_name;
+            $this->customer_email = $this->wo->customer_email;
+            $this->customer_tel = $this->wo->customer_tel;
+            $this->explain = $this->wo->explain;
+            $this->is_express = $this->wo->is_express;
+            $this->piece = $this->wo->piece;
+            $this->total = $this->wo->total;
+            $this->discount = $this->wo->discount;
+            $this->tax = $this->wo->tax;
+            $this->grand_total = $this->wo->grand_total;
+            
+            //format date as Y-m-d
+            if($this->wo->pickup_date != null){
+                $this->pickup_date = date_format($this->wo->pickup_date,'Y-m-d');
+            }
+            if($this->wo->collect_date != null){
+                $this->collect_date = date_format($this->wo->collect_date,'Y-m-d');
+            }
+            //get download
+            $this->content = json_encode($this->getDownload($this->wo_no));
         }
-        if($this->wo->collect_date != null){
-            $this->collect_date = date_format($this->wo->collect_date,'Y-m-d');
-        }
-        //get download
-        $this->content = json_encode($this->getDownload($this->wo_no));
-        //dd($this->content);
     }
 
     public function getDownload($wo_no) {
@@ -111,11 +112,6 @@ new class extends Component {
         return Storage::disk('public')->get($filename);
     }
 
-    public function printReceipt(){
-        //dispatch event to broswer , call WsPrint() in js
-        $this->dispatch('WsPrint');
-    }
-
 }; ?>
 
 <div>
@@ -128,7 +124,7 @@ new class extends Component {
     </x-alert>
     @endif
     <div class="flex justify-end mb-4">
-        <x-button label="{{__('Print')}}" icon="o-printer" wire:click="printReceipt" class="btn-sm btn-primary" />
+        <x-button label="{{__('Print Receipt')}}" icon="o-printer" x-on:click="WsPrint()" class="btn-sm btn-primary" />
     </div>
     <x-card title="{{__('Basic Information')}}" separator>
         <div class="grid grid-cols-3 gap-2 mb-4">
@@ -178,20 +174,51 @@ new class extends Component {
     <script>
         @if($action=='new')
 
-        //setTimeout(function() { WsPrint();}, 1000); 
+        setTimeout(function() { WsPrint();}, 1000); 
         
         @endif
 
         function WsPrint() {
             var conn;
+            var command1 = "open COM3 9600";
             var multilineContent = 'send COM3 {{ $content }}';
             //remove &quot; from multilineContent
             multilineContent = multilineContent.replace("&quot;", '');
-            conn = new WebSocket("ws://localhost:8989/ws");
-            conn.onopen = function(e) {
-                conn.send(multilineContent);
-                console.log("Message sent...");
-            }            
+            
+            // conn = new WebSocket("ws://localhost:8989/ws");
+            // conn.onopen = function(e) {
+            //     conn.send(multilineContent);
+            //     console.log("Message sent...");
+            // }
+            async function sendCommands(ws, commands) {
+                for (const command of commands) {
+                    await new Promise(resolve => {
+                        ws.send(command);
+                        ws.onmessage = (event) => {
+                            // 处理服务器返回的信息
+                            //console.log('Received:', event.data);
+                            resolve();
+                        };
+                    });
+                }
+            }
+
+            // 创建 WebSocket 连接
+            const ws = new WebSocket('ws://localhost:8989/ws');
+
+            // 要发送的命令
+            const commands = [command1, multilineContent];
+
+            // 发送命令
+            ws.onopen = () => {
+                sendCommands(ws, commands)
+                .then(() => {
+                    //console.log('All commands sent successfully');
+                })
+                    .catch(error => {
+                    console.error('Error sending commands:', error);
+                });
+            };            
         }
     </script>
 

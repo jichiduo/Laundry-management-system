@@ -18,6 +18,8 @@ new class extends Component {
     use WithPagination;
 
     public string $search = '';
+    public string $start_date = '';
+    public string $end_date = '';
 
     public bool $myModal = false;
 
@@ -25,6 +27,7 @@ new class extends Component {
 
     public WorkOrder $myWorkOrder; //new user
 
+    public string $content = '';
 
     public $action = "new";
     
@@ -72,19 +75,27 @@ new class extends Component {
                 $this->error(__("You can only delete draft work orders created by you."), position: 'toast-top');
                 return;
             }
-        } elseif ($action == 'print'){
+        } elseif ($action == 'collect'){
+            //check if the work order status is draft and created by current user
             $this->myWorkOrder = WorkOrder::find($id);
-            //status can not be draft
-            if ($this->myWorkOrder->status == 'draft') {
-                $this->error(__("You can only print confirmed work orders."), position: 'toast-top');
-                return;
+            if ($this->myWorkOrder->status == '4pickup' && ($this->myWorkOrder->user_id == auth()->user()->id || auth()-user()->role != 'user')) 
+            {
+                //collect_date set to today
+                $this->myWorkOrder->collect_date = now();
+                $this->myWorkOrder->status = 'complete';
+                $this->myWorkOrder->save();
+                $sql = "update work_order_items set status='complete' where wo_no = ?";
+                $rc = DB::update($sql, [$this->myWorkOrder->wo_no]);
+                if ($rc < 0) { 
+                    $this->error(__("Work Order Items data did not updated."), position: 'toast-top');
+                    return;
+                }
+                $this->success("Work Order collected , the collection date is today", position: 'toast-top');
+                $this->reset();
+                $this->resetPage();
             } else {
-                $woc = new WorkOrderController();
-                $this->print = $woc->getReceipt($this->myWorkOrder->wo_no);
-                $filename = $this->myWorkOrder->wo_no.'.txt';
-                return response()->streamDownload(function () {
-                    echo $this->print;
-                }, $filename);
+                $this->warning(__("You can only collect 4pickup work orders."), position: 'toast-top');
+                return;
             }
         }
     }
@@ -109,8 +120,18 @@ new class extends Component {
     // get all data from table
     public function allData(): LengthAwarePaginator
     {
-         return WorkOrder::query()
-            ->when($this->search, fn(Builder $q) => $q->where('wo_no', 'like', "%$this->search%")->orwhere('customer_name','like', "%$this->search%")->orwhere('customer_tel','like', "%$this->search%"))
+        //set the end date equal user input date +1
+        $enddate = date('Y-m-d', strtotime($this->end_date . ' +1 day'));
+        if($this->search){
+            $condition = "created_at between '$this->start_date' and '$enddate' and (wo_no like '%$this->search%' or customer_name like '%$this->search%' or customer_tel like '%$this->search%')";
+
+        }else{
+
+            $condition = "created_at between '$this->start_date' and '$enddate'";
+        }
+        //dd($this->end_date);
+        return WorkOrder::query()
+            ->whereRaw($condition)
             ->orderBy(...array_values($this->sortBy))
             ->paginate(10); 
 
@@ -125,6 +146,14 @@ new class extends Component {
             'headers' => $this->headers(),
         ];
     }
+
+    public function mount(): void
+    {
+        //set start date the today minus 30 days ,end date is today
+        $this->start_date = date('Y-m-d', strtotime('-30 days'));
+        $this->end_date = date('Y-m-d');
+    } 
+
 };
 ?>
 
@@ -142,6 +171,10 @@ new class extends Component {
 
     <!-- TABLE  -->
     <x-card>
+        <div class="grid grid-cols-4 gap-2 bt-4 bm-4">
+            <x-datetime label="Start date" wire:model.live.debounce="start_date" icon="o-calendar" />
+            <x-datetime label="End date" wire:model.live.debounce="end_date" icon="o-calendar" />
+        </div>
         <x-table :headers="$headers" :rows="$allData" :sort-by="$sortBy" class="table-xs" with-pagination
             show-empty-text link="/workorder/view/{id}/show">
             @scope('cell_status', $data)
@@ -164,8 +197,9 @@ new class extends Component {
                 <x-button icon="o-trash" wire:click="selectItem({{ $data['id'] }},'delete')"
                     wire:confirm="{{__('Are you sure?')}}" spinner class="btn-ghost btn-xs text-red-500"
                     tooltip="{{__('Delete')}}" />
-                <x-button icon="o-printer" wire:click="selectItem({{ $data['id'] }},'print')" spinner
-                    class="btn-ghost btn-xs text-yellow-500" tooltip="{{__('Print')}}" />
+                <x-button icon="o-truck" wire:click="selectItem({{ $data['id'] }},'collect')" spinner
+                    wire:confirm="{{__('This job will set to complete, the collect date will set to today, are you sure?')}}"
+                    class="btn-ghost btn-xs text-yellow-500" tooltip="{{__('Collect')}}" />
             </div>
             @endscope
         </x-table>

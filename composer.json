@@ -13,6 +13,7 @@
         "robsontenorio/mary": "^1.41"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.14",
         "fakerphp/faker": "^1.23",
         "laravel-shift/blueprint": "^2.10",
         "laravel/pail": "^1.1",
