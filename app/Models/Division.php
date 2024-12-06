@@ -21,6 +21,7 @@ class Division extends Model
         'license',
         'logo_file_url',
         'remark',
+        'printer_com_port',
         'group_id',
         'group_name',
     ];

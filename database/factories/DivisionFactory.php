@@ -27,6 +27,7 @@ class DivisionFactory extends Factory
             'license' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'logo_file_url' => $this->faker->regexify('[A-Za-z0-9]{255}'),
             'remark' => $this->faker->regexify('[A-Za-z0-9]{255}'),
+            'printer_com_port' => $this->faker->regexify('[A-Za-z0-9]{20}'),
             'group_id' => $this->faker->randomNumber(),
             'group_name' => $this->faker->regexify('[A-Za-z0-9]{128}'),
         ];

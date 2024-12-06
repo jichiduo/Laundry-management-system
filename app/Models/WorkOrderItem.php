@@ -26,6 +26,7 @@ class WorkOrderItem extends Model
         'tax_rate',
         'tax',
         'sub_total',
+        'is_express',
         'turnover',
         'pickup_date',
         'acc_code',
@@ -49,6 +50,7 @@ class WorkOrderItem extends Model
         'tax_rate' => 'decimal:2',
         'tax' => 'decimal:2',
         'sub_total' => 'decimal:2',
+        'is_express' => 'boolean',
         'turnover' => 'decimal:2',
         'pickup_date' => 'datetime',
     ];

@@ -171,7 +171,7 @@ new class extends Component {
 
     <!-- TABLE  -->
     <x-card>
-        <div class="grid grid-cols-4 gap-2 bt-4 bm-4">
+        <div class="grid grid-cols-4 gap-2 mt-4 mb-4">
             <x-datetime label="Start date" wire:model.live.debounce="start_date" icon="o-calendar" />
             <x-datetime label="End date" wire:model.live.debounce="end_date" icon="o-calendar" />
         </div>

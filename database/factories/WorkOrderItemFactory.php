@@ -32,6 +32,7 @@ class WorkOrderItemFactory extends Factory
             'tax_rate' => $this->faker->randomFloat(2, 0, 999.99),
             'tax' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
             'sub_total' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
+            'is_express' => $this->faker->boolean(),
             'turnover' => $this->faker->randomFloat(2, 0, 999999.99),
             'pickup_date' => $this->faker->dateTime(),
             'acc_code' => $this->faker->regexify('[A-Za-z0-9]{50}'),

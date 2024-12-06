@@ -281,6 +281,7 @@ new class extends Component {
         $this->woi->pickup_date = $this->ItemPickup;
         $this->woi->remark = $this->ItemRemark;
         $this->woi->location = $this->ItemLocation;
+        $this->woi->is_express = $this->is_express;
 
         $this->woi->save();
         $this->success(__('Item added'));

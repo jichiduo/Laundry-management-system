@@ -15,9 +15,9 @@ models:
     wo_no: string:128 nullable index
     trans_no: string:128 nullable
     user_id: unsignedBigInteger nullable
-    user_name: string:50
-    action: string:20
-    amount: decimal:20,2
+    user_name: string:50 nullable
+    action: string:20 nullable
+    amount: decimal:20,2 nullable
     remark: string:255 nullable
 
   AppSetting:
@@ -41,6 +41,7 @@ models:
     license: string:50 nullable
     logo_file_url: string:255 nullable
     remark: string:255 nullable
+    printer_com_port: string:20 nullable default:"COM3"
     group_id: unsignedBigInteger nullable
     group_name: string:128 nullable
 
@@ -112,6 +113,7 @@ models:
     tax_rate: decimal:5,2 default:0.00
     tax: decimal:20,2 default:0.00
     sub_total: decimal:20,2 default:0.00
+    is_express: boolean default:0
     turnover: decimal:8,2 nullable
     pickup_date: datetime nullable
     acc_code: string:50 nullable
@@ -121,8 +123,10 @@ models:
     location: string:100 nullable
 
   JobStatus:
-    wo_no: string:128 index
-    barcode: string:128 nullable index
+    wo_no: string:128
+    barcode: string:128 nullable
+    name: string:255 nullable
+    quantity: decimal:20,2 default:0.00
     user_id: unsignedBigInteger nullable
 
   Role:

@@ -96,16 +96,14 @@ new class extends Component {
                 $this->collect_date = date_format($this->wo->collect_date,'Y-m-d');
             }
             //get download
-            $this->content = json_encode($this->getDownload($this->wo_no));
+            $this->content = str_replace('"','',json_encode($this->getDownload($this->wo_no)));
         }
     }
 
     public function getDownload($wo_no) {
-        // dd($wo_no);
+        $filename = substr($wo_no,0,4)."/receipt/".$wo_no.'.txt';
         // $woc = new WorkOrderController();
         // $this->print = $woc->getReceipt($wo_no);
-        $filename = substr($wo_no,0,4)."/receipt/".$wo_no.'.txt';
-        //dd($this->print);
         // return response()->streamDownload(function () {
         //     echo $this->print;
         // }, $filename);
@@ -168,7 +166,21 @@ new class extends Component {
     </x-card>
     <x-card title="{{__('Details')}}" separator>
 
-        <x-table :headers="$WOItemHeaders" :rows="$WOItems" show-empty-text />
+        <x-table :headers="$WOItemHeaders" :rows="$WOItems" show-empty-text>
+            @scope('cell_status', $data)
+            @if($data->status == 'draft')
+            <x-badge :value="$data->status" />
+            @elseif ($data->status == 'pending')
+            <x-badge :value="$data->status" class="text-yellow-500" />
+            @elseif ($data->status == '4pickup')
+            <x-badge :value="$data->status" class="text-blue-500" />
+            @elseif ($data->status == 'complete')
+            <x-badge :value="$data->status" class="text-lime-500" />
+            @else
+            <x-badge :value="$data->status" class="text-red-500" />
+            @endif
+            @endscope
+        </x-table>
     </x-card>
 
     <script>
@@ -182,14 +194,6 @@ new class extends Component {
             var conn;
             var command1 = "open COM3 9600";
             var multilineContent = 'send COM3 {{ $content }}';
-            //remove &quot; from multilineContent
-            multilineContent = multilineContent.replace("&quot;", '');
-            
-            // conn = new WebSocket("ws://localhost:8989/ws");
-            // conn.onopen = function(e) {
-            //     conn.send(multilineContent);
-            //     console.log("Message sent...");
-            // }
             async function sendCommands(ws, commands) {
                 for (const command of commands) {
                     await new Promise(resolve => {

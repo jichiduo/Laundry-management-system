@@ -68,6 +68,8 @@
     "Basic Information": "Informasi Dasar",
     "Details": "Terperinci",
     "Remove": "Hapus",
+    "Remove All": "Hapus Semua",
+    "Change status to 4pickup": "Ubah status menjadi 4pickup",
     "New Item": "Barang Baru",
     "Select Product": "Pilih Produk",
     "Barcode": "Barcode",
@@ -127,5 +129,10 @@
     "Work Order Items data did not updated.": "Data item pesanan kerja tidak diperbarui.",
     "Data updated.": "Data diperbarui.",
     "Work Order collected , the collection date is today": "Pesanan kerja dikumpulkan, tanggal pengumpulan adalah hari ini",
-    "This job will set to complete, the collect date will set to today, are you sure?": "Pekerjaan ini akan diset ke selesai, tanggal pengumpulan akan diset ke hari ini, apakah anda yakin?"
+    "This job will set to complete, the collect date will set to today, are you sure?": "Pekerjaan ini akan diset ke selesai, tanggal pengumpulan akan diset ke hari ini, apakah anda yakin?",
+    "Something wrong, please try again.": "Ada yang salah, silahkan coba lagi.",
+    "No data to update, please add some item first.": "Tidak ada data untuk diperbarui, silahkan tambahkan beberapa item terlebih dahulu.",
+    "Item added to list.": "Item ditambahkan ke daftar.",
+    "Only 'pending' items can be added to list.": "Hanya item 'pending' yang dapat ditambahkan ke daftar.",
+    "Item not found.": "Item tidak ditemukan."
 }
