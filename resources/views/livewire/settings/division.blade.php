@@ -30,6 +30,7 @@ new class extends Component {
     public string $tel = '';
     public string $remark = '';
     public int $group_id = 0;
+    public string $printer_com_port = 'COM3';
 
     public $action = "new";
     
@@ -63,6 +64,7 @@ new class extends Component {
             $this->remark = $this->myDivision->remark;
             $this->group_id = $this->myDivision->group_id;
             $this->group_name = $this->myDivision->group_name;
+            $this->printer_com_port = $this->myDivision->printer_com_port;
             
             $this->myModal = true;
         } elseif ($action == 'delete'){
@@ -98,6 +100,7 @@ new class extends Component {
         $this->myDivision->group_id = $this->group_id;
         //get group_name from database
         $this->myDivision->group_name = AppGroup::find($this->group_id)->name;
+        $this->myDivision->printer_com_port = $this->printer_com_port;
         $this->myDivision->save();
         $this->success("Data saved.", position: 'toast-top');
         $this->reset();
@@ -115,6 +118,7 @@ new class extends Component {
             ['key' => 'tel', 'label' => 'Tel', 'class' => 'w-24'],
             ['key' => 'address', 'label' => 'Address'],
             ['key' => 'remark', 'label' => 'Remark'],
+            ['key' => 'printer_com_port', 'label' => 'Com Port'],
             ['key' => 'group_name', 'label' => 'Group'],
 
         ];
@@ -175,6 +179,7 @@ new class extends Component {
             <x-input label="Tel" wire:model='tel' clearable />
             <x-input label="Address" wire:model='address' clearable />
             <x-input label="Remark" wire:model='remark' clearable />
+            <x-input label="Com Port" wire:model='printer_com_port' clearable />
             <x-select label="Group" wire:model="group_id" :options="$groups" placeholder="Select group" />
         </div>
 

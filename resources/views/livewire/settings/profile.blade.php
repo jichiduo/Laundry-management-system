@@ -52,5 +52,9 @@ new class extends Component {
         </x-dropdown>
     </x-card>
 
+    <x-card title="{{__('Download')}}" shadow separator progress-indicator class="mt-4">
+        <x-button label="{{__('Printer Server')}}" link="/download/spjs.zip" external icon="o-link" class="btn-ghost" />
+    </x-card>
+
 
 </div>

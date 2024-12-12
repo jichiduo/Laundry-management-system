@@ -22,6 +22,7 @@ class Transaction extends Model
         'card_no',
         'amount',
         'payment_type',
+        'type',
         'remark',
         'create_by',
     ];

@@ -28,6 +28,7 @@ class TransactionFactory extends Factory
             'card_no' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'amount' => $this->faker->randomFloat(2, 0, 999999999999999999.99),
             'payment_type' => $this->faker->regexify('[A-Za-z0-9]{50}'),
+            'type' => $this->faker->regexify('[A-Za-z0-9]{50}'),
             'remark' => $this->faker->regexify('[A-Za-z0-9]{255}'),
             'create_by' => $this->faker->regexify('[A-Za-z0-9]{50}'),
         ];

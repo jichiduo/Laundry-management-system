@@ -16,23 +16,23 @@ created:
     - database/factories/MemberLevelFactory.php
     - database/factories/CustomerFactory.php
     - database/factories/TransactionFactory.php
-    - database/migrations/2024_12_06_070646_create_acc_codes_table.php
-    - database/migrations/2024_12_06_070647_create_app_groups_table.php
-    - database/migrations/2024_12_06_070648_create_app_logs_table.php
-    - database/migrations/2024_12_06_070649_create_app_settings_table.php
-    - database/migrations/2024_12_06_070650_create_currencies_table.php
-    - database/migrations/2024_12_06_070651_create_categories_table.php
-    - database/migrations/2024_12_06_070652_create_types_table.php
-    - database/migrations/2024_12_06_070653_create_divisions_table.php
-    - database/migrations/2024_12_06_070654_create_exchange_rates_table.php
-    - database/migrations/2024_12_06_070655_create_products_table.php
-    - database/migrations/2024_12_06_070656_create_work_orders_table.php
-    - database/migrations/2024_12_06_070657_create_work_order_items_table.php
-    - database/migrations/2024_12_06_070658_create_job_statuses_table.php
-    - database/migrations/2024_12_06_070659_create_roles_table.php
-    - database/migrations/2024_12_06_070700_create_member_levels_table.php
-    - database/migrations/2024_12_06_070701_create_customers_table.php
-    - database/migrations/2024_12_06_070702_create_transactions_table.php
+    - database/migrations/2024_12_12_092838_create_acc_codes_table.php
+    - database/migrations/2024_12_12_092839_create_app_groups_table.php
+    - database/migrations/2024_12_12_092840_create_app_logs_table.php
+    - database/migrations/2024_12_12_092841_create_app_settings_table.php
+    - database/migrations/2024_12_12_092842_create_currencies_table.php
+    - database/migrations/2024_12_12_092843_create_categories_table.php
+    - database/migrations/2024_12_12_092844_create_types_table.php
+    - database/migrations/2024_12_12_092845_create_divisions_table.php
+    - database/migrations/2024_12_12_092846_create_exchange_rates_table.php
+    - database/migrations/2024_12_12_092847_create_products_table.php
+    - database/migrations/2024_12_12_092848_create_work_orders_table.php
+    - database/migrations/2024_12_12_092849_create_work_order_items_table.php
+    - database/migrations/2024_12_12_092850_create_job_statuses_table.php
+    - database/migrations/2024_12_12_092851_create_roles_table.php
+    - database/migrations/2024_12_12_092852_create_member_levels_table.php
+    - database/migrations/2024_12_12_092853_create_customers_table.php
+    - database/migrations/2024_12_12_092854_create_transactions_table.php
     - app/Models/AccCode.php
     - app/Models/AppGroup.php
     - app/Models/AppLog.php
@@ -69,6 +69,6 @@ models:
     Role: { name: 'string:50', is_active: 'boolean default:1' }
     MemberLevel: { name: 'string:255', discount: 'decimal:4,2 default:1' }
     Customer: { name: 'string:128 index', password: 'string:255 nullable', tel: 'string:50 nullable index', email: 'string:255 nullable index', address: 'string:255 nullable', member_card: 'string:50 nullable', member_level_id: 'unsignedBigInteger nullable', member_level_name: 'string:255 nullable', member_discount: 'decimal:4,2 default:0', member_expire_date: 'datetime nullable', last_trans_no: 'string:128 nullable', balance: 'decimal:20,2 default:0.00', remark: 'string:255 nullable', create_by: 'string:50 nullable', update_by: 'string:50 nullable', is_active: 'boolean default:1', group_id: unsignedBigInteger }
-    Transaction: { trans_no: 'string:128 unique', wo_no: 'string:128 nullable index', customer_id: 'unsignedBigInteger nullable', customer_name: 'string:128 nullable', card_no: 'string:50 nullable', amount: 'decimal:20,2 default:0.00', payment_type: 'string:50 nullable default:"Cash"', remark: 'string:255 nullable', create_by: 'string:50 nullable' }
+    Transaction: { trans_no: 'string:128 nullable index', wo_no: 'string:128 nullable index', customer_id: 'unsignedBigInteger nullable', customer_name: 'string:128 nullable', card_no: 'string:50 nullable', amount: 'decimal:20,2 default:0.00', payment_type: 'string:50 nullable default:"Cash"', type: 'string:50 nullable', remark: 'string:255 nullable', create_by: 'string:50 nullable' }
     Product: { name: 'string:255', description: 'text nullable', unit: 'string:20 nullable', price: 'decimal:20,2 default:0.00', turnover: 'decimal:8,2 nullable', express_price: 'decimal:20,2 default:0.00', express_turnover: 'decimal:8,2 nullable', acc_code: 'string:50 nullable', acc_name: 'string:128 nullable', status: 'string:50 nullable', remark: 'string:255 nullable', equipment: 'boolean default:0', brand: 'string:50 nullable', model: 'string:50 nullable', warranty_period: 'string:50 nullable', warranty_start_date: 'datetime nullable', warranty_end_date: 'datetime nullable', useful_life: 'string:50 nullable', life_end_date: 'datetime nullable', location: 'string:50 nullable', type: 'string:50 nullable', group_id: unsignedBigInteger }
     JobStatus: { wo_no: 'string:128', barcode: 'string:128 nullable', name: 'string:255 nullable', quantity: 'decimal:20,2 default:0.00', user_id: 'unsignedBigInteger nullable' }

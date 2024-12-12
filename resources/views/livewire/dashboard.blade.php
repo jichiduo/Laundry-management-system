@@ -82,6 +82,18 @@ new class extends Component {
 
     public function findItem(){
         if($this->search != ''){
+            //check the length of the search
+            if(strlen($this->search) == 9 ){
+                $wo = WorkOrder::where('wo_no', $this->search)->first();
+                //check if get data from DB
+                if($wo){
+                    //redirect to wo_view
+                    return redirect()->route('wo_view', ['id' => $wo->id , 'action' => 'show' ]);
+                } 
+                $this->warning(__("Can not find this Work Order Number"), position: 'toast-top');
+                $this->search = '';
+                return;
+            }
             //$woi = DB::table('work_orders_item')->where('barcode', $this->search)->first();
             $woi = WorkOrderItem::where('barcode', $this->search)->first();
             //check if get data from DB

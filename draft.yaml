@@ -157,12 +157,13 @@ models:
     group_id: unsignedBigInteger
 
   Transaction:
-    trans_no: string:128 unique
+    trans_no: string:128 nullable index
     wo_no: string:128 nullable index
     customer_id: unsignedBigInteger nullable
     customer_name: string:128 nullable
     card_no: string:50 nullable
     amount: decimal:20,2 default:0.00
     payment_type: string:50 nullable default:"Cash"
+    type: string:50 nullable
     remark: string:255 nullable
     create_by: string:50 nullable

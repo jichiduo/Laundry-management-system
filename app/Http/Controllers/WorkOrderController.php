@@ -15,6 +15,7 @@ use Illuminate\Routing\Controllers\Middleware;
 use App\Models\WorkOrder;
 use App\Models\WorkOrderItem;
 use App\Models\Division;
+use App\Models\Transaction;
 
 class WorkOrderController extends Controller
 {
@@ -55,6 +56,7 @@ class WorkOrderController extends Controller
     {
         $workOrder = WorkOrder::where('wo_no', $workOrderNumber)->first();
         $workOrderItems = WorkOrderItem::where('wo_no', $workOrderNumber)->get();
+        $txn = Transaction::where('wo_no', $workOrderNumber)->get();
         $division = Division::where('id', $workOrder->division_id)->first();
         $content  = "\t" . $division->name . "\n\n";
         $content .= $division->address . "\n";
@@ -70,7 +72,22 @@ class WorkOrderController extends Controller
             $content .= $woi->quantity . "\t" . str_pad(substr($woi->name, 0, 14), 14) . "\t" . $woi->sub_total . "\n";
         }
         $content .= "---------------------------------\n";
+        $content .= __('Total') . "\t" . $workOrder->total . "\n";
+        $content .= "---------------------------------\n";
+        $content .= __('Included:') .  "\n";
+        $content .= __('-Tax') . "\t\t" . $workOrder->tax . "\n";
+        $content .= __('-Discount') . "\t\t" . $workOrder->discount . "\n";
+        $content .= "---------------------------------\n";
         $content .= __('Grand Total') . "\t" . $workOrder->grand_total . "\n";
+        $content .= "---------------------------------\n";
+        $content .= __('Payments') . "\t" . $workOrder->payment_method . "\n";
+        foreach ($txn as $t) {
+            $content .= "-" . $t->payment_type . "\t" . $t->amount . "\n";
+            if ($t->payment_type != 'Cash') {
+                $content .= __("-Card No:")  . $t->card_no . "\n";
+            }
+        }
+
         $content .= "\n\n\n\n";
         $content .= "\t" . __('Explain') . "\n";
         $content .= "---------------------------------\n";

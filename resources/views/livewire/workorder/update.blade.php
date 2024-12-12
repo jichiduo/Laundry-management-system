@@ -5,6 +5,8 @@ use App\Models\WorkOrder;
 use App\Models\WorkOrderItem;
 use App\Models\AppGroup;
 use App\Models\Product;
+use App\Models\Transaction;
+use App\Models\Type;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Volt\Component;
@@ -26,6 +28,7 @@ new class extends Component {
 
     public bool $myItemModal = false;
     public bool $myCustomerModal = false;
+    public bool $myTxnModal = false;
 
     public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
     public array $Item_sortBy = ['column' => 'id', 'direction' => 'asc'];
@@ -65,6 +68,19 @@ new class extends Component {
     public string $ItemRemark = '';
     public string $ItemLocation = '';
     public $tax_rate = 0;
+    public $balance_due = 0;
+    public $amount_tendered = 0;
+    public $change = 0;
+    public $total = 0;
+    public $sub_total = 0;
+    public $tax = 0;
+    public $discount = 0;
+    public $amount = '';
+    public $data = [];
+    public $txns = [];
+    public string $payment_method = 'Cash';
+    public $can_submit = false;
+
 
     public $action = "new";
     
@@ -211,6 +227,17 @@ new class extends Component {
         ];
     }
 
+    public function TxnHeaders(): array
+    {
+        return [
+            ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
+            ['key' => 'payment_type', 'label' => __('Payment Type')],
+            ['key' => 'card_no', 'label' => __('Card No')],
+            ['key' => 'amount', 'label' => __('Amount') ],
+        
+        ];
+    }
+
     /**
      * For demo purpose, this is a static collection.
      *
@@ -236,6 +263,15 @@ new class extends Component {
 
     }
 
+    public function WOTxns(): LengthAwarePaginator
+    {
+         return Transaction::query()
+            ->where('wo_no', $this->wo_no)
+            ->orderBy(...array_values($this->Item_sortBy))
+            ->paginate(10); 
+
+    }
+
 
     public function with(): array
     {
@@ -244,7 +280,10 @@ new class extends Component {
             'CustomerHeaders' => $this->CustomerHeaders(),
             'WOItems' => $this->WOItems(),
             'WOItemHeaders' => $this->WOItemHeaders(),
+            'Txns' => $this->WOTxns(),
+            'TxnHeaders' => $this->TxnHeaders(),
             'products' => Product::all(),
+            'paymentMethods' => Type::query()->where('category', '=' , 'Payment')->get(),
         ];
     }
 
@@ -317,12 +356,31 @@ new class extends Component {
         }
         //get aggregate data
         $sql="select max(pickup_date) as pickup_date, count(pickup_date) as cnt, sum(discount) as discount, sum(tax) as tax, sum(total) as total, sum(sub_total) as sub_total from work_order_items where wo_no=?";
-        $data = DB::select($sql, [$this->wo_no]);
-        $this->wo->piece = $data[0]->cnt;
-        if($data[0]->cnt==0){
+        $this->data = DB::select($sql, [$this->wo_no]);
+        if($this->data[0]->cnt==0){
             $this->warning(__('Please add at least one item'));
             return;
         }
+        // $sql = "select sum(amount) as amount from transactions where wo_no=?";
+        // $this->txns = DB::select($sql, [$this->wo_no]);
+        // if($this->txns){
+        //     $this->balance_due = $this->data[0]->sub_total - $this->txns[0]->amount;
+        // } else {
+        //     $this->balance_due = $this->data[0]->sub_total;
+        // }
+        $this->balance_due = $this->data[0]->sub_total;
+        $this->amount = $this->balance_due;
+        //open myTxnModal
+        $this->myTxnModal = true;
+
+    }
+    
+    public function submitOrder() {
+        //check
+        if (!$this->calc()) {
+            return false;
+        }
+
         $this->wo->customer_id = $this->customer_id;
         $this->wo->customer_name = $this->customer_name;
         $this->wo->customer_tel = $this->customer_tel;
@@ -330,24 +388,58 @@ new class extends Component {
         $this->wo->customer_discount = $this->customer_discount;
         $this->wo->explain = $this->explain;
         $this->wo->is_express = $this->is_express;
-        $this->wo->pickup_date = $data[0]->pickup_date;
-        $this->wo->discount = $data[0]->discount;
-        $this->wo->tax = $data[0]->tax;
-        $this->wo->total = $data[0]->total;
-        $this->wo->grand_total = $data[0]->sub_total;
+        $this->wo->piece = $this->data[0]->cnt;
+        $this->wo->pickup_date = $this->data[0]->pickup_date;
+        $this->wo->discount = $this->data[0]->discount;
+        $this->wo->tax = $this->data[0]->tax;
+        $this->wo->total = $this->data[0]->total;
+        $this->wo->grand_total = $this->data[0]->sub_total;
         //status: draft->pending->4pickup->complete
         $this->wo->status = 'pending';
         $this->wo->save();
         //set all work order items status to pending
         $sql="update work_order_items set status='pending' where wo_no=?";
         DB::update($sql, [$this->wo_no]);
+        //create transaction
+        $newTxn = new Transaction();
+        $newTxn->wo_no = $this->wo_no;
+        $newTxn->amount = $this->wo->grand_total;
+        $newTxn->customer_id = $this->customer_id;
+        $newTxn->customer_name = $this->customer_name;
+        $newTxn->payment_type = $this->payment_method;
+        $newTxn->type = 'debit';
+        $newTxn->remark = 'CfmOrd';
+
+        $newTxn->save();
+
         // create receipt file
         $woc = new WorkOrderController();
         $this->print = $woc->getReceipt($this->wo->wo_no);
         //return to view
         return redirect()->route('wo_view', ['id' => $this->wo->id , 'action' => 'new']);
+        
     }
 
+    public function calc(): bool {
+        if($this->amount){
+            if(($this->amount  ) >= $this->balance_due){
+                $this->amount_tendered = $this->balance_due;
+                $this->change = $this->amount  - $this->balance_due;
+                $this->can_submit = true;
+                $this->resetErrorBag();
+                return true;
+            }else{
+                $this->addError('amount', __('The amount should not less than balance due.'));
+                //$this->amount_tendered = $this->txns[0]->amount + $this->amount;
+                //$this->change = 0;
+            }
+            
+
+        } else {
+            $this->addError('amount', __('The amount is required.'));
+        }
+        return false;
+    }
 
 };
 ?>
@@ -402,7 +494,7 @@ new class extends Component {
     <div class="flex justify-center mt-4">
         @if($wo_status=='draft')
         <x-button label="{{__('Confirm Work Order')}}" class="btn-primary" wire:click="ConfirmOrder"
-            wire:confirm="{{__('Are you sure?')}}" spinner="ConfirmOrder" />
+            spinner="ConfirmOrder" />
         @endif
     </div>
 
@@ -438,6 +530,22 @@ new class extends Component {
         </div>
         <x-slot:actions>
             <x-button label="{{__('Add Item')}}" wire:click="addItem" spinner="addItem" class="btn-primary" />
+        </x-slot:actions>
+    </x-modal>
+
+    <x-modal wire:model="myTxnModal" separator box-class="w-11/12 max-w-5xl">
+        <div class="grid grid-cols-3 gap-2">
+            <x-input label="{{__('Balance Due')}}" wire:model="balance_due" inline disabled />
+            <x-input label="{{__('Amount Tendered')}}" wire:model="amount_tendered" inline disabled />
+            <x-input label="{{__('Change')}}" wire:model="change" inline disabled />
+        </div>
+        <div class="grid grid-cols-1 gap-2 mt-4">
+            <x-input label="{{__('Amount')}}" wire:model="amount" wire:keydown.enter="calc" />
+            <x-radio label="{{__('Payment Method')}}" :options="$paymentMethods" option-value="name" option-label="name"
+                wire:model="payment_method" />
+        </div>
+        <x-slot:actions>
+            <x-button label="{{__('Confirm')}}" wire:click="submitOrder" spinner class="btn-primary" />
         </x-slot:actions>
     </x-modal>
 </div>

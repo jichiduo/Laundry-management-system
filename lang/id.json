@@ -79,6 +79,10 @@
     "SubTotal": "SubTotal",
     "Total": "Total",
     "Payment": "Pembayaran",
+    "Payments": "Pembayaran",
+    "Payment Type": "Jenis Pembayaran",
+    "Card No:": "Kartu No:",
+    "-Card No:": "-Kartu No:",
     "Turnover": "Omset",
     "Location": "Lokasi",
     "Please choose a customer": "Silakan pilih pelanggan",
@@ -134,5 +138,16 @@
     "No data to update, please add some item first.": "Tidak ada data untuk diperbarui, silahkan tambahkan beberapa item terlebih dahulu.",
     "Item added to list.": "Item ditambahkan ke daftar.",
     "Only 'pending' items can be added to list.": "Hanya item 'pending' yang dapat ditambahkan ke daftar.",
-    "Item not found.": "Item tidak ditemukan."
+    "Item not found.": "Item tidak ditemukan.",
+    "Can not find this Work Order Number": "Tidak dapat menemukan nomor pesanan kerja ini",
+    "Com Port": "Com Port",
+    "Download": "Unduh",
+    "Balance Due": "Saldo yang harus dibayar",
+    "Tendered": "Ditender",
+    "Change": "Perubahan",
+    "Tax": "Pajak",
+    "Discount": "Diskon",
+    "Confirm": "Konfirmasi",
+    "The amount is required.": "Jumlah diperlukan",
+    "The amount should not less than balance due.": "Jumlah tidak boleh kurang dari saldo yang harus dibayar"
 }
