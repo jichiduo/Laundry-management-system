@@ -540,7 +540,7 @@ new class extends Component {
             <x-input label="{{__('Change')}}" wire:model="change" inline disabled />
         </div>
         <div class="grid grid-cols-1 gap-2 mt-4">
-            <x-input label="{{__('Amount')}}" wire:model="amount" wire:keydown.enter="calc" />
+            <x-input label="{{__('Pay Amount')}}" wire:model="amount" wire:keydown.enter="calc" />
             <x-radio label="{{__('Payment Method')}}" :options="$paymentMethods" option-value="name" option-label="name"
                 wire:model="payment_method" />
         </div>

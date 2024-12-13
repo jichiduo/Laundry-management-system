@@ -6,25 +6,28 @@ The system is a simple laundry management system with multilanguage support.
 
 ## Installation
 1. Clone the repository
-
+``` bash
     git clone git@github.com:jichiduo/cuci.git
+```
 
 2. Install the dependencies 
+``` bash
+    Composer install 
 
-    Composer install
-
+    npm run build
+```
 3. Configure the database connection, create a database name cuci
-
+``` bash
     cp .env.example .env
-
+```
 4. Run the migrations 
-
+``` bash
     php artisan migrate:fresh --seed
-    
+```    
 5. Run the server 
-
+``` bash
     php artisan server
-
+```
 ## Login
 
 - admin user: jichiduo@163.com 

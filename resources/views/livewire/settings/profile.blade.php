@@ -49,6 +49,8 @@ new class extends Component {
             </x-slot:trigger>
             <x-menu-item title="EN" link="{{route('language', 'en')}}" />
             <x-menu-item title="ID" link="{{route('language', 'id')}}" />
+            {{--
+            <x-menu-item title="CN" link="{{route('language', 'cn')}}" /> --}}
         </x-dropdown>
     </x-card>
 

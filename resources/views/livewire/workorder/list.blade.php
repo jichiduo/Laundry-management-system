@@ -106,7 +106,7 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'wo_no', 'label' => 'WO No', 'class' => 'w-24'],
+            ['key' => 'wo_no', 'label' => __('WO No'), 'class' => 'w-24'],
             ['key' => 'created_at', 'label' => __('WO Date'), 'format' => ['date', 'd/m/Y'], 'class' => 'w-24'],
             ['key' => 'customer_name', 'label' => __('Cust Name')],
             ['key' => 'customer_tel', 'label' => __('Cust Tel')],
@@ -172,8 +172,8 @@ new class extends Component {
     <!-- TABLE  -->
     <x-card>
         <div class="grid grid-cols-4 gap-2 mt-4 mb-4">
-            <x-datetime label="Start date" wire:model.live.debounce="start_date" icon="o-calendar" />
-            <x-datetime label="End date" wire:model.live.debounce="end_date" icon="o-calendar" />
+            <x-datetime label="{{__('Start date')}}" wire:model.live.debounce="start_date" icon="o-calendar" />
+            <x-datetime label="{{__('End date')}}" wire:model.live.debounce="end_date" icon="o-calendar" />
         </div>
         <x-table :headers="$headers" :rows="$allData" :sort-by="$sortBy" class="table-xs" with-pagination
             show-empty-text link="/workorder/view/{id}/show">

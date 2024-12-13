@@ -131,8 +131,8 @@ new class extends Component {
             ['key' => 'unit', 'label' => __('Unit')],
             ['key' => 'price', 'label' => __('Price')],
             ['key' => 'turnover', 'label' => __('Turnover')],
-            ['key' => 'express_price', 'label' => 'Exp Prc'],
-            ['key' => 'express_turnover', 'label' => 'Exp TO'],
+            ['key' => 'express_price', 'label' => __('Exp Prc')],
+            ['key' => 'express_turnover', 'label' => __('Exp TO')],
             ['key' => 'type', 'label' => __('Type')],
 
         ];
