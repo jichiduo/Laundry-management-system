@@ -80,7 +80,7 @@ new class extends Component {
 
         } elseif ($action == 'delete'){
             if ($id == auth()->user()->id) {
-                $this->warning("You can't delete yourself.", position: 'toast-top');
+                $this->warning(__("You can't delete yourself."), position: 'toast-top');
             } else {
                 $rc=0;
                 $sql = "select count(*) as cnt from work_orders where user_id = ? LIMIT 1";
@@ -90,12 +90,12 @@ new class extends Component {
                     break;
                 }
                 if($rc > 0){
-                    $this->error("This data is used in work order, can't be deleted.", position: 'toast-top');
+                    $this->error(__("This data is used in work order, can't be deleted."), position: 'toast-top');
                     return;
                 }
 
                 User::destroy($id);
-                $this->success("Data deleted.", position: 'toast-top');
+                $this->success(__("Data deleted."), position: 'toast-top');
                 $this->resetPage();
             }
         }
@@ -125,7 +125,7 @@ new class extends Component {
         //get group name from database
         $this->myuser->group_name = AppGroup::where('id', $this->group_id)->value('name');
         $this->myuser->save();
-        $this->success("Data saved.", position: 'toast-top');
+        $this->success(__("Data saved."), position: 'toast-top');
         $this->reset();
         $this->resetPage();
         $this->myModal = false;
@@ -136,11 +136,11 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'],
-            ['key' => 'role', 'label' => 'Role', 'class' => 'w-24'],
-            ['key' => 'email', 'label' => 'E-mail', 'class' => 'w-64'],
-            ['key' => 'division_name', 'label' => 'Division'],
-            ['key' => 'group_name', 'label' => 'Group'],
+            ['key' => 'name', 'label' => __('Name'), 'class' => 'w-64'],
+            ['key' => 'role', 'label' => __('Role'), 'class' => 'w-24'],
+            ['key' => 'email', 'label' => __('Email'), 'class' => 'w-64'],
+            ['key' => 'division_name', 'label' => __('Division')],
+            ['key' => 'group_name', 'label' => __('Group')],
 
         ];
     }
@@ -183,12 +183,13 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="User" separator progress-indicator>
+    <x-header title="{{__('User')}}" separator progress-indicator>
         <x-slot:middle class="!justify-end">
-            <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
+            <x-input placeholder="{{__('Search')}}..." wire:model.live.debounce="search" clearable
+                icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
-            <x-button label="New" class="btn-primary" wire:click="selectItem(0,'new')" />
+            <x-button label="{{__('New')}}" class="btn-primary" wire:click="selectItem(0,'new')" />
         </x-slot:actions>
     </x-header>
 
@@ -198,12 +199,13 @@ new class extends Component {
             @scope('actions', $user)
             <div class="w-24 flex justify-end">
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $user['id'] }},'edit')"
-                    class="btn-ghost btn-xs text-blue-500" tooltip="Edit" />
+                    class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Edit')}}" />
                 <x-button icon="o-arrow-path" wire:click="selectItem({{ $user['id'] }},'reset')"
-                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-yellow-500"
-                    tooltip="Reset Password" />
+                    wire:confirm="{{__('Are you sure?')}}" spinner class="btn-ghost btn-xs text-yellow-500"
+                    tooltip="{{__('Reset Password')}}" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $user['id'] }},'delete')"
-                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-red-500" tooltip="Delete" />
+                    wire:confirm="{{__('Are you sure?')}}" spinner class="btn-ghost btn-xs text-red-500"
+                    tooltip="{{__('Delete')}}" />
             </div>
             @endscope
         </x-table>
@@ -212,22 +214,23 @@ new class extends Component {
     <!-- New/Edit user modal -->
     <x-modal wire:model="myModal" separator persistent>
         <div>
-            <x-input label="Name" wire:model='uname' clearable autocomplete="off" />
+            <x-input label="{{__('Name')}}" wire:model='uname' clearable autocomplete="off" />
             @if($action =='new')
-            <x-input label="Password" wire:model='password' type="password" clearable />
+            <x-input label="{{__('Password')}}" wire:model='password' type="password" clearable />
             @endif
-            <x-input label="Email" wire:model='email' type="email" />
-            <x-select label="Role" wire:model="role" :options="$roles" option-value="name" option-label="name"
-                placeholder="Select role" />
-            <x-select label="Group" wire:model="group_id" wire:change='getDivisions' :options="$groups"
-                placeholder="Select group" />
-            <x-select label="Divison" wire:model="division_id" :options="$mydivisions" placeholder="Select division" />
+            <x-input label="{{__('Email')}}" wire:model='email' type="email" />
+            <x-select label="{{__('Role')}}" wire:model="role" :options="$roles" option-value="name" option-label="name"
+                placeholder="{{__('Select one role')}}" />
+            <x-select label="{{__('Group')}}" wire:model="group_id" wire:change='getDivisions' :options="$groups"
+                placeholder="{{__('Select one group')}}" />
+            <x-select label="{{__('Divison')}}" wire:model="division_id" :options="$mydivisions"
+                placeholder="{{__('Select one division')}}" />
         </div>
 
 
         <x-slot:actions>
-            <x-button label="Save" wire:click="save" class="btn-primary" />
-            <x-button label="Cancel" wire:click="closeModal" />
+            <x-button label="{{__('Save')}}" wire:click="save" class="btn-primary" />
+            <x-button label="{{__('Cancel')}}" wire:click="closeModal" />
         </x-slot:actions>
     </x-modal>
 </div>

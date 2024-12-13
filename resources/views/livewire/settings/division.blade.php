@@ -114,12 +114,12 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-48'],
-            ['key' => 'tel', 'label' => 'Tel', 'class' => 'w-24'],
-            ['key' => 'address', 'label' => 'Address'],
-            ['key' => 'remark', 'label' => 'Remark'],
-            ['key' => 'printer_com_port', 'label' => 'Com Port'],
-            ['key' => 'group_name', 'label' => 'Group'],
+            ['key' => 'name', 'label' => __('Name'), 'class' => 'w-48'],
+            ['key' => 'tel', 'label' => __('Tel'), 'class' => 'w-24'],
+            ['key' => 'address', 'label' => __('Address')],
+            ['key' => 'remark', 'label' => __('Remark')],
+            ['key' => 'printer_com_port', 'label' => __('Com Port')],
+            ['key' => 'group_name', 'label' => __('Group')],
 
         ];
     }
@@ -149,12 +149,13 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Division" separator progress-indicator>
+    <x-header title="{{__('Division')}}" separator progress-indicator>
         <x-slot:middle class="!justify-end">
-            <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
+            <x-input placeholder="{{__('Search')}}..." wire:model.live.debounce="search" clearable
+                icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
-            <x-button label="New" class="btn-primary" wire:click="selectItem(0,'new')" />
+            <x-button label="{{__('New')}}" class="btn-primary" wire:click="selectItem(0,'new')" />
         </x-slot:actions>
     </x-header>
 
@@ -164,9 +165,10 @@ new class extends Component {
             @scope('actions', $user)
             <div class="w-24 flex justify-end">
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $user['id'] }},'edit')"
-                    class="btn-ghost btn-xs text-blue-500" tooltip="Edit" />
+                    class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Edit')}}" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $user['id'] }},'delete')"
-                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-red-500" tooltip="Delete" />
+                    wire:confirm="{{__('Are you sure?')}}" spinner class="btn-ghost btn-xs text-red-500"
+                    tooltip="{{__('Delete')}}" />
             </div>
             @endscope
         </x-table>
@@ -175,18 +177,19 @@ new class extends Component {
     <!-- New/Edit user modal -->
     <x-modal wire:model="myModal" separator persistent>
         <div>
-            <x-input label="Name" wire:model='uname' clearable />
-            <x-input label="Tel" wire:model='tel' clearable />
-            <x-input label="Address" wire:model='address' clearable />
-            <x-input label="Remark" wire:model='remark' clearable />
-            <x-input label="Com Port" wire:model='printer_com_port' clearable />
-            <x-select label="Group" wire:model="group_id" :options="$groups" placeholder="Select group" />
+            <x-input label="{{__('Name')}}" wire:model='uname' clearable />
+            <x-input label="{{__('Tel')}}" wire:model='tel' clearable />
+            <x-input label="{{__('Address')}}" wire:model='address' clearable />
+            <x-input label="{{__('Remark')}}" wire:model='remark' clearable />
+            <x-input label="{{__('Com Port')}}" wire:model='printer_com_port' clearable />
+            <x-select label="{{__('Group')}}" wire:model="group_id" :options="$groups"
+                placeholder="{{__('Select one group')}}" />
         </div>
 
 
         <x-slot:actions>
-            <x-button label="Save" wire:click="save" class="btn-primary" />
-            <x-button label="Cancel" wire:click="closeModal" />
+            <x-button label="{{__('Save')}}" wire:click="save" class="btn-primary" />
+            <x-button label="{{__('Cancel')}}" wire:click="closeModal" />
 
         </x-slot:actions>
     </x-modal>

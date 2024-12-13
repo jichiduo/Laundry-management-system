@@ -43,9 +43,9 @@ class TypeSeeder extends Seeder
             'name' => 'QR Code',
             'category' => 'Payment',
         ]);
-        DB::table('types')->insert([
-            'name' => 'Member Card',
-            'category' => 'Payment',
-        ]);
+        // DB::table('types')->insert([
+        //     'name' => 'Member Card',
+        //     'category' => 'Payment',
+        // ]);
     }
 }

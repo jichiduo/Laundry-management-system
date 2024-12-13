@@ -172,8 +172,9 @@ new class extends Component {
         <x-table :headers="$headers" :rows="$Customers" :sort-by="$sortBy" with-pagination show-empty-text>
             @scope('actions', $Customer)
             <div class="w-48 flex justify-end">
+                {{--
                 <x-button icon="o-credit-card" wire:click="selectItem({{ $Customer['id'] }},'member')" spinner
-                    class="btn-ghost btn-xs text-yellow-500" tooltip="{{__('Member Card')}}" />
+                    class="btn-ghost btn-xs text-yellow-500" tooltip="{{__('Member Card')}}" /> --}}
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $Customer['id'] }},'edit')"
                     class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Edit')}}" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $Customer['id'] }},'delete')"

@@ -127,13 +127,13 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-48'],
-            ['key' => 'unit', 'label' => 'Unit'],
-            ['key' => 'price', 'label' => 'Price'],
-            ['key' => 'turnover', 'label' => 'Turnover'],
+            ['key' => 'name', 'label' => __('Name'), 'class' => 'w-48'],
+            ['key' => 'unit', 'label' => __('Unit')],
+            ['key' => 'price', 'label' => __('Price')],
+            ['key' => 'turnover', 'label' => __('Turnover')],
             ['key' => 'express_price', 'label' => 'Exp Prc'],
             ['key' => 'express_turnover', 'label' => 'Exp TO'],
-            ['key' => 'type', 'label' => 'Type'],
+            ['key' => 'type', 'label' => __('Type')],
 
         ];
     }
@@ -164,12 +164,13 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Product" separator progress-indicator>
+    <x-header title="{{__('Product')}}" separator progress-indicator>
         <x-slot:middle class="!justify-end">
-            <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
+            <x-input placeholder="{{__('Search')}}..." wire:model.live.debounce="search" clearable
+                icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
-            <x-button label="New" class="btn-primary" wire:click="selectItem(0,'new')" />
+            <x-button label="{{__('New')}}" class="btn-primary" wire:click="selectItem(0,'new')" />
         </x-slot:actions>
     </x-header>
 
@@ -179,9 +180,10 @@ new class extends Component {
             @scope('actions', $user)
             <div class="w-24 flex justify-end">
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $user['id'] }},'edit')"
-                    class="btn-ghost btn-xs text-blue-500" tooltip="Edit" />
+                    class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Edit')}}" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $user['id'] }},'delete')"
-                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-red-500" tooltip="Delete" />
+                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-red-500"
+                    tooltip="{{__('Delete')}}" />
             </div>
             @endscope
         </x-table>
@@ -190,22 +192,25 @@ new class extends Component {
     <!-- New/Edit user modal -->
     <x-modal wire:model="myModal" separator persistent>
         <div>
-            <x-input label="Name" wire:model='uname' clearable />
-            <x-input label="Unit" wire:model='unit' clearable />
-            <x-input label="Price" wire:model='price' clearable />
-            <x-input label="Turnover" wire:model='turnover' clearable suffix="day(s)" />
-            <x-input label="Express Price" wire:model='express_price' clearable />
-            <x-input label="Express Turnover" wire:model='express_turnover' clearable suffix="day(s)" />
-            <x-input label="Description" wire:model='description' clearable />
-            <x-select label="Type" wire:model="type" :options="$types" option-value="name" option-label="name"
-                placeholder="Select one type" />
-            <x-select label="Group Name" wire:model="group_id" :options="$groups" placeholder="Select one group" />
+            <x-input label="{{__('Name')}}" wire:model='uname' clearable
+                hint="{{__('The receipt displays a maximum of the first 14 digits of the name')}}" />
+            <x-input label="{{__('Unit')}}" wire:model='unit' clearable />
+            <x-input label="{{__('Price')}}" wire:model='price' clearable />
+            <x-input label="{{__('Turnover')}}" wire:model='turnover' clearable suffix="{{__('day(s)')}}" />
+            <x-input label="{{__('Express Price')}}" wire:model='express_price' clearable />
+            <x-input label="{{__('Express Turnover')}}" wire:model='express_turnover' clearable
+                suffix="{{__('day(s)')}}" />
+            <x-input label="{{__('Description')}}" wire:model='description' clearable />
+            <x-select label="{{__('Type')}}" wire:model="type" :options="$types" option-value="name" option-label="name"
+                placeholder="{{__('Select one type')}}" />
+            <x-select label="{{__('Group Name')}}" wire:model="group_id" :options="$groups"
+                placeholder="{{__('Select one group')}}" />
         </div>
 
 
         <x-slot:actions>
-            <x-button label="Save" wire:click="save" class="btn-primary" />
-            <x-button label="Cancel" wire:click="closeModal" />
+            <x-button label="{{__('Save')}}" wire:click="save" class="btn-primary" />
+            <x-button label="{{__('Cancel')}}" wire:click="closeModal" />
 
         </x-slot:actions>
     </x-modal>

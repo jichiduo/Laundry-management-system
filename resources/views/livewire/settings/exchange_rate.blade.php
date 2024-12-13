@@ -45,7 +45,7 @@ new class extends Component {
     public function selectItem($id, $action)
     {
         if (auth()->user()->role == 'user') {
-            $this->error("This action is unauthorized.", position: 'toast-top');
+            $this->error(__("This action is unauthorized."), position: 'toast-top');
             return;
         }
         
@@ -63,7 +63,7 @@ new class extends Component {
             $this->myModal = true;
         } elseif ($action == 'delete'){
                 ExchangeRate::destroy($id);
-                $this->success("Data deleted.", position: 'toast-top');
+                $this->success(__("Data deleted."), position: 'toast-top');
                 $this->reset();
                 $this->resetPage();
         }
@@ -78,7 +78,7 @@ new class extends Component {
         $this->myExchangeRate->to_currency = $this->to_currency;
         $this->myExchangeRate->rate = $this->rate;
         $this->myExchangeRate->save();
-        $this->success("Data saved.", position: 'toast-top');
+        $this->success(__("Data saved."), position: 'toast-top');
         $this->reset();
         $this->resetPage();
         $this->myModal = false;
@@ -90,9 +90,9 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'from_currency', 'label' => 'From Currency', 'class' => 'w-64'],
-            ['key' => 'to_currency', 'label' => 'To Currency', 'class' => 'w-64'],
-            ['key' => 'rate', 'label' => 'Rate'],
+            ['key' => 'from_currency', 'label' => __('From Currency'), 'class' => 'w-64'],
+            ['key' => 'to_currency', 'label' => __('To Currency'), 'class' => 'w-64'],
+            ['key' => 'rate', 'label' => __('Rate')],
         ];
     }
 
@@ -121,12 +121,13 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Exchange Rate" separator progress-indicator>
+    <x-header title="{{__('Exchange Rate')}}" separator progress-indicator>
         <x-slot:middle class="!justify-end">
-            <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
+            <x-input placeholder="{{__('Search')}}..." wire:model.live.debounce="search" clearable
+                icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
-            <x-button label="New" class="btn-primary" wire:click="selectItem(0,'new')" />
+            <x-button label="{{__('New')}}" class="btn-primary" wire:click="selectItem(0,'new')" />
         </x-slot:actions>
     </x-header>
 
@@ -136,9 +137,10 @@ new class extends Component {
             @scope('actions', $user)
             <div class="w-24 flex justify-end">
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $user['id'] }},'edit')"
-                    class="btn-ghost btn-xs text-blue-500" tooltip="Edit" />
+                    class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Edit')}}" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $user['id'] }},'delete')"
-                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-red-500" tooltip="Delete" />
+                    wire:confirm="{{__('Are you sure?')}}" spinner class="btn-ghost btn-xs text-red-500"
+                    tooltip="{{__('Delete')}}" />
             </div>
             @endscope
         </x-table>
@@ -147,17 +149,17 @@ new class extends Component {
     <!-- New/Edit user modal -->
     <x-modal wire:model="myModal" separator persistent>
         <div>
-            <x-select label="From Currency" wire:model="from_currency" :options="$currencies" option-value="name"
+            <x-select label="{{__('From Currency')}}" wire:model="from_currency" :options="$currencies"
+                option-value="name" option-label="name" placeholder="Select Currency" />
+            <x-select label="{{__('To Currency')}}" wire:model="to_currency" :options="$currencies" option-value="name"
                 option-label="name" placeholder="Select Currency" />
-            <x-select label="To Currency" wire:model="to_currency" :options="$currencies" option-value="name"
-                option-label="name" placeholder="Select Currency" />
-            <x-input label="Rate" wire:model='rate' clearable />
+            <x-input label="{{__('Rate')}}" wire:model='rate' clearable />
         </div>
 
 
         <x-slot:actions>
-            <x-button label="Save" wire:click="save" class="btn-primary" />
-            <x-button label="Cancel" wire:click="closeModal" />
+            <x-button label="{{__('Save')}}" wire:click="save" class="btn-primary" />
+            <x-button label="{{__('Cancel')}}" wire:click="closeModal" />
 
         </x-slot:actions>
     </x-modal>

@@ -32,12 +32,6 @@ new class extends Component {
     public $action = "new";
     
 
-    // Clear filters
-    public function clear(): void
-    {
-        $this->reset();
-        $this->success('Filters cleared.', position: 'toast-top');
-    }
     //close Modal
     public function closeModal(): void
     {
@@ -49,7 +43,7 @@ new class extends Component {
     public function selectItem($id, $action)
     {
         if (auth()->user()->role != 'admin') {
-            $this->error("This action is unauthorized.", position: 'toast-top');
+            $this->error(__("This action is unauthorized."), position: 'toast-top');
             return;
         }
         
@@ -66,7 +60,7 @@ new class extends Component {
             $this->myModal = true;
         } elseif ($action == 'delete'){
                 AccCode::destroy($id);
-                $this->success("Data deleted.", position: 'toast-top');
+                $this->success(__("Data deleted."), position: 'toast-top');
                 $this->reset();
                 $this->resetPage();
         }
@@ -80,7 +74,7 @@ new class extends Component {
         $this->myaccCode->name = $this->uname;
         $this->myaccCode->code = $this->code;
         $this->myaccCode->save();
-        $this->success("Data saved.", position: 'toast-top');
+        $this->success(__("Data saved."), position: 'toast-top');
         $this->reset();
         $this->resetPage();
         $this->myModal = false;
@@ -92,8 +86,8 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'code', 'label' => 'Code', 'class' => 'w-24'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'],
+            ['key' => 'code', 'label' => __('Code'), 'class' => 'w-24'],
+            ['key' => 'name', 'label' => __('Name'), 'class' => 'w-64'],
         ];
     }
 
@@ -121,12 +115,13 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Account Code" separator progress-indicator>
+    <x-header title="{{__('Account Code')}}" separator progress-indicator>
         <x-slot:middle class="!justify-end">
-            <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
+            <x-input placeholder="{{__('Search')}}..." wire:model.live.debounce="search" clearable
+                icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
-            <x-button label="New" class="btn-primary" wire:click="selectItem(0,'new')" />
+            <x-button label="{{__('New')}}" class="btn-primary" wire:click="selectItem(0,'new')" />
         </x-slot:actions>
     </x-header>
 
@@ -136,9 +131,10 @@ new class extends Component {
             @scope('actions', $user)
             <div class="w-48 flex justify-end">
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $user['id'] }},'edit')"
-                    class="btn-ghost btn-xs text-blue-500" tooltip="Edit" />
+                    class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Edit')}}" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $user['id'] }},'delete')"
-                    wire:confirm="Are you sure?" spinner class="btn-ghost btn-xs text-red-500" tooltip="Delete" />
+                    wire:confirm="{{__('Are you sure?')}}" spinner class="btn-ghost btn-xs text-red-500"
+                    tooltip="{{__('Delete')}}" />
             </div>
             @endscope
         </x-table>
@@ -147,14 +143,14 @@ new class extends Component {
     <!-- New/Edit user modal -->
     <x-modal wire:model="myModal" separator persistent>
         <div>
-            <x-input label="Code" wire:model='code' clearable />
-            <x-input label="Name" wire:model='uname' clearable />
+            <x-input label="{{__('Code')}}" wire:model='code' clearable />
+            <x-input label="{{__('Name')}}" wire:model='uname' clearable />
         </div>
 
 
         <x-slot:actions>
-            <x-button label="Save" wire:click="save" class="btn-primary" />
-            <x-button label="Cancel" wire:click="closeModal" />
+            <x-button label="{{__('Save')}}" wire:click="save" class="btn-primary" />
+            <x-button label="{{__('Cancel')}}" wire:click="closeModal" />
 
         </x-slot:actions>
     </x-modal>
