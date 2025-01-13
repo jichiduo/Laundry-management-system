@@ -76,7 +76,7 @@ class WorkOrderController extends Controller
         $content .= "---------------------------------\n";
         $content .= __('Included:') .  "\n";
         $content .= __('-Tax') . "\t\t\t" . $workOrder->tax . "\n";
-        $content .= __('-Discount') . "\t\t" . $workOrder->discount . "\n";
+        $content .= __('-Discount') . "\t\t\t" . $workOrder->discount . "\n";
         $content .= "---------------------------------\n";
         $content .= __('Grand Total') . "\t" . $workOrder->grand_total . "\n";
         $content .= "---------------------------------\n";
