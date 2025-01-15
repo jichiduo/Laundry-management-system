@@ -31,14 +31,15 @@ Route::get('/logout', function () {
 // Protected routes here
 Route::middleware('auth')->group(function () {
     Volt::route('/', 'dashboard');
-    Volt::route('/profile', 'settings.profile');
-    Volt::route('/customer', 'customer');
+    //work order
     Volt::route('/workorder/new', 'workorder.new');
     Volt::route('/workorder/update/{id}', 'workorder.update')->name('wo_update');
     Volt::route('/workorder/list', 'workorder.list');
     Volt::route('/workorder/view/{id}/{action}', 'workorder.view')->name('wo_view');
     Volt::route('/workorder/job-status', 'workorder.job_status');
     //settings
+    Volt::route('/profile', 'settings.profile');
+    Volt::route('/customer', 'customer');
     Volt::route('/user', 'settings.user');
     Volt::route('/app-group', 'settings.app_group');
     Volt::route('/division', 'settings.division');

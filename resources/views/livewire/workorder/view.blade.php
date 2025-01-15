@@ -107,6 +107,7 @@ new class extends Component {
         // return response()->streamDownload(function () {
         //     echo $this->print;
         // }, $filename);
+
         return Storage::disk('public')->get($filename);
     }
 
@@ -192,14 +193,16 @@ new class extends Component {
 
         function WsPrint() {
             var conn;
-            var command1 = "open COM3 9600";
-            var multilineContent = 'send COM3 {{ $content }}';
+            //var command1 = "open COM3 9600";
+            //var multilineContent = 'send COM3 {{ $content }}';
+            //set up WebApp Hardware Bridge Configuration, add your serial port and Serial Type set to KEY
+            var PrntContent = '{{ $content }}';
             async function sendCommands(ws, commands) {
                 for (const command of commands) {
                     await new Promise(resolve => {
                         ws.send(command);
                         ws.onmessage = (event) => {
-                            // 处理服务器返回的信息
+                            //server return message
                             //console.log('Received:', event.data);
                             resolve();
                         };
@@ -207,13 +210,15 @@ new class extends Component {
                 }
             }
 
-            // 创建 WebSocket 连接
-            const ws = new WebSocket('ws://localhost:8989/ws');
+            // create WebSocket 
+            //const ws = new WebSocket('ws://localhost:8989/ws');
+            const ws = new WebSocket('ws://127.0.0.1:12212/serial/KEY');
 
-            // 要发送的命令
-            const commands = [command1, multilineContent];
+            // send commands
+            //const commands = [command1, multilineContent];
+            const commands = [PrntContent];
 
-            // 发送命令
+            // send commands to server
             ws.onopen = () => {
                 sendCommands(ws, commands)
                 .then(() => {
