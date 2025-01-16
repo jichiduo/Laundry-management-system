@@ -72,18 +72,18 @@ class WorkOrderController extends Controller
             $content .= $woi->quantity . "\t" . str_pad(substr($woi->name, 0, 14), 14) . "\t" . $woi->sub_total . "\n";
         }
         $content .= "---------------------------------\n";
-        $content .= __('Total') . "\t\t" . $workOrder->total . "\n";
+        $content .= __('Total') . "\t" . $workOrder->total . "\n";
         $content .= "---------------------------------\n";
         $content .= __('Included:') .  "\n";
-        $content .= __('-Tax') . "\t\t\t" . $workOrder->tax . "\n";
-        $content .= __('-Discount') . "\t\t\t" . $workOrder->discount . "\n";
+        $content .= __('-Tax') . "\t" . $workOrder->tax . "\n";
+        $content .= __('-Discount') . "\t" . $workOrder->discount . "\n";
         $content .= "---------------------------------\n";
         $content .= __('Grand Total') . "\t" . $workOrder->grand_total . "\n";
         $content .= "---------------------------------\n";
         $content .= __('Payments') . "\t" . $workOrder->payment_method . "\n";
         foreach ($txn as $t) {
             $content .= "-" . $t->payment_type . "\t" . $t->amount . "\n";
-            if ($t->payment_type != 'Cash') {
+            if ($t->payment_type == 'Member Card') {
                 $content .= __("-Card No:")  . $t->card_no . "\n";
             }
         }

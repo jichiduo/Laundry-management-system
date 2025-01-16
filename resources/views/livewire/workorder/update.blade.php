@@ -297,9 +297,11 @@ new class extends Component {
         $validatedData = $this->validate();
         //calc tax
         $this->ItemTotal    = $this->ItemPrice * $this->ItemQty;
+        $this->ItemTotal    = $this->roundUpToThousand($this->ItemTotal);
         $this->ItemTax      = $this->ItemTotal * $this->tax_rate;
         $this->ItemDiscount = $this->ItemTotal * $this->customer_discount;
         $this->ItemSubTotal = $this->ItemTotal - $this->ItemDiscount + $this->ItemTax;
+        $this->ItemSubTotal = $this->roundUpToThousand($this->ItemSubTotal);
         //dd($this->ItemTurnover);
         //calc pickup date by today+turnover
         //$this->ItemPickup = date('Y-m-d', strtotime("+".$this->ItemTurnover." day"));
@@ -342,6 +344,10 @@ new class extends Component {
         //close modal
         $this->myItemModal = false;
 
+    }
+
+    public function roundUpToThousand($number) {
+        return ceil($number / 1000) * 1000;
     }
 
     public function ConfirmOrder() {

@@ -107,8 +107,14 @@ new class extends Component {
         // return response()->streamDownload(function () {
         //     echo $this->print;
         // }, $filename);
-
-        return Storage::disk('public')->get($filename);
+        //check the file exist or not
+        if(Storage::disk('public')->exists($filename)){
+            return Storage::disk('public')->get($filename);
+        } else {
+           //re-create the print file
+           $woc = new WorkOrderController();
+           return $woc->getReceipt($wo_no);
+        }
     }
 
 }; ?>
