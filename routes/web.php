@@ -37,6 +37,9 @@ Route::middleware('auth')->group(function () {
     Volt::route('/workorder/list', 'workorder.list');
     Volt::route('/workorder/view/{id}/{action}', 'workorder.view')->name('wo_view');
     Volt::route('/workorder/job-status', 'workorder.job_status');
+    //report
+    Volt::route('/report/daily', 'report.daily');
+
     //settings
     Volt::route('/profile', 'settings.profile');
     Volt::route('/customer', 'customer');

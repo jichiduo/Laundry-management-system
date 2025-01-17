@@ -59,6 +59,10 @@
                     <x-menu-item title="{{__('Job Status')}}" icon="o-gift" link="/workorder/job-status" />
                 </x-menu-sub>
                 <x-menu-item title="{{__('Customer')}}" icon="o-user-group" link="/customer" />
+                <x-menu-sub title="{{__('Report')}}" icon="o-document-text">
+                    <x-menu-item title="{{__('Daily')}}" icon="o-newspaper" link="/report/daily" />
+                </x-menu-sub>
+
                 @if(auth()->user()->role !='user')
                 <x-menu-sub title="{{__('Settings')}}" icon="o-cog-6-tooth">
                     <x-menu-item title="{{__('Product')}}" icon="o-shopping-bag" link="/product" />

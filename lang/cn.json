@@ -183,5 +183,10 @@
     "Category": "类别",
     "From Currency": "从货币",
     "To Currency": "到货币",
-    "Rate": "汇率"
+    "Rate": "汇率",
+    "Report": "报表",
+    "Daily": "每日",
+    "Daily Report": "每日报表",
+    "Report date": "报表日期",
+    "Query": "查询"
 }

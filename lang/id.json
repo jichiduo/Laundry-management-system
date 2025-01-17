@@ -183,5 +183,10 @@
     "Category": "Kategori",
     "From Currency": "Dari Mata Uang",
     "To Currency": "Ke Mata Uang",
-    "Rate": "Tingkat"
+    "Rate": "Tingkat",
+    "Report": "Laporan",
+    "Daily": "Harian",
+    "Daily Report": "Laporan Harian",
+    "Report date": "Tanggal Laporan",
+    "Query": "Kueri"
 }
