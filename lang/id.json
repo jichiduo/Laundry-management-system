@@ -186,7 +186,12 @@
     "Rate": "Tingkat",
     "Report": "Laporan",
     "Daily": "Harian",
+    "Monthly": "Bulanan",
     "Daily Report": "Laporan Harian",
+    "Monthly Report": "Laporan Bulanan",
     "Report date": "Tanggal Laporan",
-    "Query": "Kueri"
+    "Query": "Kueri",
+    "Date": "Tanggal",
+    "End date cannot be before start date.": "Tanggal akhir tidak boleh sebelum tanggal mulai.",
+    "Duration cannot be more than 1 month.": "Durasi tidak boleh lebih dari 1 bulan."
 }

@@ -137,7 +137,7 @@
     "Can't find the tracing number/barcode.": "找不到跟踪号/条形码",
     "Job Status": "作业状态",
     "Work Order Successfully Confirmed": "工单确认成功",
-    "WO Date:": "WO日期:",
+    "WO Date:": "工单日期:",
     "Item Name": "项目名称",
     "Amount": "数量",
     "Grand Total": "总计",
@@ -186,7 +186,10 @@
     "Rate": "汇率",
     "Report": "报表",
     "Daily": "每日",
+    "Monthly": "每月",
     "Daily Report": "每日报表",
+    "Monthly Report": "每月报表",
     "Report date": "报表日期",
-    "Query": "查询"
+    "Query": "查询",
+    "Date": "日期"
 }

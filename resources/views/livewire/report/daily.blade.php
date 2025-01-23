@@ -29,6 +29,7 @@ new class extends Component {
     public function headers(): array
     {
         return [
+            ['key' => 'division_name', 'label' => __('Name')],
             ['key' => 'payment_type', 'label' => __('Payment Type')],
             ['key' => 'amount', 'label' => __('Amount'),'format' => ['currency', '0,.']],
         ];
@@ -37,8 +38,28 @@ new class extends Component {
     public function allData(): array
     {
         $this->end_date = date('Y-m-d', strtotime($this->start_date . ' +1 day'));
-        $sql = "select payment_type, sum(amount) as amount from transactions where remark='CfmOrd' and created_at between ? and ? group by payment_type";
-        $data= DB::select($sql, [$this->start_date, $this->end_date]);
+        $user_id = Auth()->user()->id;
+        $division_id = Auth()->user()->division_id;
+        $group_id = Auth()->user()->group_id;
+        $my_id = 0;
+        //check if division_id is null
+        if($division_id == null || $group_id == null){
+            $this->error(__("Fetal Err, cannot find basic info for the current user."), position: 'toast-top');
+            return null;
+        }
+
+        if( Auth()->user()->role == 'user'){
+            $my_id = $division_id;
+        } else {
+            $my_id = $group_id;
+        }
+        
+        if( Auth()->user()->role == 'user'){
+            $sql = "select a.division_name,b.payment_type, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.division_id = ? and b.created_at between ? and ? group by division_name, payment_type";
+        } else {
+            $sql = "select a.division_name,b.payment_type, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.group_id = ? and b.created_at between ? and ? group by division_name, payment_type";
+        }
+        $data= DB::select($sql, [$my_id, $this->start_date, $this->end_date]);
         //dd($data);
         return $data;
     }

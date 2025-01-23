@@ -26,7 +26,7 @@ new class extends Component {
         $my_id = 0;
         //check if division_id is null
         if($division_id == null || $group_id == null){
-            $this->error("Fetal Err, cannot find basic info for the current user.", position: 'toast-top');
+            $this->error(__("Fetal Err, cannot find basic info for the current user."), position: 'toast-top');
             return;
         }
 
@@ -58,9 +58,9 @@ new class extends Component {
         }
         //get today sales from work_order
         if( Auth()->user()->role == 'user'){
-            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where division_id = ? and status != 'draft' and created_at >= CURDATE()";
+            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where division_id = ? and status != 'draft' and date(created_at) = CURDATE()";
         } else {
-            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where group_id = ? and status != 'draft' and created_at >= CURDATE()";
+            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where group_id = ? and status != 'draft' and date(created_at) = CURDATE()";
         }
         $cnt = DB::select($sql, [$my_id]);
         foreach ($cnt as $c) {
