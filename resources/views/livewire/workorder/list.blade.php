@@ -60,7 +60,7 @@ new class extends Component {
         } elseif ($action == 'delete'){
             //check if the work order status is draft and created by current user
             $this->myWorkOrder = WorkOrder::find($id);
-            if ($this->myWorkOrder->status == 'draft' && ($this->myWorkOrder->user_id == auth()->user()->id || auth()-user()->role != 'user')) {
+            if ($this->myWorkOrder->status == 'draft' && ($this->myWorkOrder->user_id == auth()->user()->id || auth()->user()->role != 'user')) {
                 WorkOrder::destroy($id);
                 $sql = "delete from work_order_items where wo_no = ?";
                 $rc = DB::update($sql, [$this->myWorkOrder->wo_no]);
@@ -88,7 +88,7 @@ new class extends Component {
         } elseif ($action == 'collect'){
             //check if the work order status is draft and created by current user
             $this->myWorkOrder = WorkOrder::find($id);
-            if ( $this->myWorkOrder->user_id == auth()->user()->id || auth()-user()->role != 'user') 
+            if ( $this->myWorkOrder->user_id == auth()->user()->id || auth()->user()->role != 'user') 
             {
                 //collect_date set to today
                 $this->myWorkOrder->collect_date = now();
