@@ -88,7 +88,7 @@ new class extends Component {
         } elseif ($action == 'collect'){
             //check if the work order status is draft and created by current user
             $this->myWorkOrder = WorkOrder::find($id);
-            if ( ($this->myWorkOrder->user_id == auth()->user()->id || auth()-user()->role != 'user')) 
+            if ( $this->myWorkOrder->user_id == auth()->user()->id || auth()-user()->role != 'user') 
             {
                 //collect_date set to today
                 $this->myWorkOrder->collect_date = now();

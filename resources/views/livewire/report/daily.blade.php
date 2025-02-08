@@ -55,9 +55,9 @@ new class extends Component {
         }
         
         if( Auth()->user()->role == 'user'){
-            $sql = "select a.division_name,b.payment_type, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.division_id = ? and b.created_at between ? and ? group by division_name, payment_type";
+            $sql = "select a.division_name,b.payment_type, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by division_name, payment_type";
         } else {
-            $sql = "select a.division_name,b.payment_type, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.group_id = ? and b.created_at between ? and ? group by division_name, payment_type";
+            $sql = "select a.division_name,b.payment_type, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by division_name, payment_type";
         }
         $data= DB::select($sql, [$my_id, $this->start_date, $this->end_date]);
         //dd($data);
