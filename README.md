@@ -41,7 +41,7 @@ The system is a simple laundry management system with multilanguage support.
 - Laundry pricing management
 - Laundry transaction management
 - Laundry customer management
-- Print to local printer via https://github.com/imTigger/webapp-hardware-bridge
+- Silent print to local printer via https://github.com/imTigger/webapp-hardware-bridge
 
 ## Contact
 For any questions or issues, please contact us at [jichiduo@163.com](mailto:jichiduo@163.com).

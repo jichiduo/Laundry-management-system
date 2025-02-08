@@ -71,6 +71,16 @@ new class extends Component {
                 $this->success("Data deleted.", position: 'toast-top');
                 $this->reset();
                 $this->resetPage();                
+            } elseif (auth()->user()->role == 'admin') {
+                //update work order status to cancel
+                $this->myWorkOrder->status = 'cancel';
+                $this->myWorkOrder->save();
+                $sql = "update work_order_items set status='cancel' where wo_no = ?";
+                $rc = DB::update($sql, [$this->myWorkOrder->wo_no]);
+                if ($rc < 0) { 
+                    $this->error(__("Work Order Items data did not updated."), position: 'toast-top');
+                    return;
+                }
             } else {
                 $this->error(__("You can only delete draft work orders created by you."), position: 'toast-top');
                 return;
@@ -78,7 +88,7 @@ new class extends Component {
         } elseif ($action == 'collect'){
             //check if the work order status is draft and created by current user
             $this->myWorkOrder = WorkOrder::find($id);
-            if ($this->myWorkOrder->status == '4pickup' && ($this->myWorkOrder->user_id == auth()->user()->id || auth()-user()->role != 'user')) 
+            if ( ($this->myWorkOrder->user_id == auth()->user()->id || auth()-user()->role != 'user')) 
             {
                 //collect_date set to today
                 $this->myWorkOrder->collect_date = now();

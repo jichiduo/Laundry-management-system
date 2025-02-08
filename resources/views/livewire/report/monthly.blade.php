@@ -63,9 +63,9 @@ new class extends Component {
         }
         
         if( Auth()->user()->role == 'user'){
-            $sql = "select a.division_name,date(b.created_at) as payment_date, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.division_id = ? and b.created_at between ? and ? group by division_name, payment_date";
+            $sql = "select a.division_name,date(b.created_at) as payment_date, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by division_name, payment_date";
         } else {
-            $sql = "select a.division_name,date(b.created_at) as payment_date, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.group_id = ? and b.created_at between ? and ? group by division_name, payment_date order by division_name, payment_date";
+            $sql = "select a.division_name,date(b.created_at) as payment_date, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by division_name, payment_date order by division_name, payment_date";
         }
         $data= DB::select($sql, [$my_id, $this->start_date, $this->end_date]);
         //dd($data);
@@ -92,9 +92,9 @@ new class extends Component {
         }
         
         if( Auth()->user()->role == 'user'){
-            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.division_id = ? and b.created_at between ? and ? group by division_name";
+            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by division_name";
         } else {
-            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.group_id = ? and b.created_at between ? and ? group by division_name order by division_name";
+            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by division_name order by division_name";
         }
         $data= DB::select($sql, [$my_id, $this->start_date, $this->end_date]);
         //dd($data);
