@@ -123,8 +123,8 @@ new class extends Component {
             return [
                 'allData' => [],
                 'headers' => [],
-                'allDataTotal' => $this->allDataTotal(),
-                'headersTotal' => $this->headersTotal(),
+                'allDataTotal' => [],
+                'headersTotal' => [],
             ];
         }else {
             $this->resetErrorBag();

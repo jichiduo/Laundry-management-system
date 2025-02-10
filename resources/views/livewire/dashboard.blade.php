@@ -35,7 +35,8 @@ new class extends Component {
         } else {
             $my_id = $group_id;
         }
-        //get job count from work_order 
+        //get 4pickup job count from work_order 
+        /*
         if( Auth()->user()->role == 'user'){
             $sql = "select count(*) as cnt from work_orders where division_id = ? and status = '4pickup'";
         } else {
@@ -46,6 +47,7 @@ new class extends Component {
             $this->pickup = $c->cnt;
             break;
         }
+        */
         if( Auth()->user()->role == 'user'){
             $sql = "select count(*) as cnt from work_orders where division_id = ? and status = 'pending'";
         } else {
@@ -124,11 +126,11 @@ new class extends Component {
     <!-- TABLE  -->
     <x-card title="{{__('Welcome')}}, {{ Auth()->user()->name }}"
         subtitle="{{__('Current shop')}}: {{ Auth()->user()->division_name }}" separator>
-        <div class="p-4 rounded-xl grid lg:grid-cols-4 gap-4 bg-base-200">
-            <x-stat title="{{__('Ready for Pickup')}}" value="{{ $pickup }}" icon="o-truck" />
-            <x-stat title="{{__('In Progress')}}" value="{{ $inprogress }}" icon="o-bolt" />
-            <x-stat title="{{__('Today Sales')}}" value="{{ $sales }}" icon="o-banknotes" />
-            <x-stat title="{{__('Month Sales')}}" value="{{ $month_sales }}" icon="o-chart-bar" />
+        <div class="p-4 rounded-xl grid lg:grid-cols-3 gap-4 bg-base-200">
+            {{-- <x-stat title="{{__('Ready for Pickup')}}" value="{{ $pickup }}" icon="o-truck" /> --}}
+            <a href="/workorder/list"><x-stat title="{{__('In Progress')}}" value="{{ $inprogress }}" icon="o-bolt" /></a>
+            <a href="/report/daily"><x-stat title="{{__('Today Sales')}}" value="{{ number_format($sales,0,',','.') }}" icon="o-banknotes" /></a>
+            <a href="/report/monthly"><x-stat title="{{__('Month Sales')}}" value="{{ number_format($month_sales,0,',','.') }}" icon="o-chart-bar" /></a>
         </div>
         <div class="p-4 mt-4 rounded-xl grid lg:grid-cols-2 gap-4 bg-base-200">
             <x-card title="{{__('New Work Order')}}"

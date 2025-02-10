@@ -34,6 +34,13 @@ new class extends Component {
             ['key' => 'amount', 'label' => __('Amount'),'format' => ['currency', '0,.']],
         ];
     }
+    public function headersTotal(): array
+    {
+        return [
+            ['key' => 'division_name', 'label' => __('Name')],
+            ['key' => 'amount', 'label' => __('Total'),'format' => ['currency', '0,.']],
+        ];
+    }
 
     public function allData(): array
     {
@@ -64,12 +71,44 @@ new class extends Component {
         return $data;
     }
 
+    public function allDataTotal(): array
+    {
+        //$this->resetErrorBag();
+        $user_id = Auth()->user()->id;
+        $division_id = Auth()->user()->division_id;
+        $group_id = Auth()->user()->group_id;
+        $my_id = 0;
+        //check if division_id is null
+        if($division_id == null || $group_id == null){
+            $this->addError('start_date', __('Fetal Err, cannot find basic info for the current user.'));
+            return [];
+        }
+
+        if( Auth()->user()->role == 'user'){
+            $my_id = $division_id;
+        } else {
+            $my_id = $group_id;
+        }
+        
+        if( Auth()->user()->role == 'user'){
+            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by division_name";
+        } else {
+            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by division_name order by division_name";
+        }
+        $data= DB::select($sql, [$my_id, $this->start_date, $this->end_date]);
+        //dd($data);
+        return $data;
+    }
+
+
     public function with(): array
     {
  
         return [
             'allData' => $this->allData(),
             'headers' => $this->headers(),
+            'allDataTotal' => $this->allDataTotal(),
+            'headersTotal' => $this->headersTotal(),
         ];
     }
 
@@ -94,7 +133,12 @@ new class extends Component {
         <div class="grid grid-cols-4 content-end gap-2 mt-4 mb-4">
             <x-datetime label="{{__('Report date')}}" wire:model.live.debounce="start_date" icon="o-calendar" />
         </div>
-        <x-table :headers="$headers" :rows="$allData" show-empty-text />
+        <div class="mt-4 mb-4">
+            <x-header title="{{__('Details')}}" size="text-xl" separator />
+            <x-table :headers="$headers" :rows="$allData" show-empty-text />
+        </div>
+        <x-header title="{{__('Total')}}" size="text-xl" separator />
+        <x-table :headers="$headersTotal" :rows="$allDataTotal" show-empty-text />
     </x-card>
 
 </div>
