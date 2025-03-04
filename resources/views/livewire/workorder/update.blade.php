@@ -17,7 +17,8 @@ use Livewire\Attributes\Validate;
 use App\Http\Controllers\WorkOrderController;
 use Carbon\Carbon;
 use function Livewire\Volt\{state};
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 new class extends Component {
     use Toast;
@@ -88,7 +89,7 @@ new class extends Component {
     public function mount($id): void
     {
         //get tax rate from AppGroup
-        $this->tax_rate = AppGroup::where('id', auth()->user()->group_id)->first()->tax_rate;
+        $this->tax_rate = AppGroup::where('id', Auth::user()->group_id)->first()->tax_rate;
         //get user name from session
         $this->wo = WorkOrder::findOrFail($id);
         // dd($this->wo);

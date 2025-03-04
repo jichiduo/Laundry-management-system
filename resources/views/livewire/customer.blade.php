@@ -2,6 +2,8 @@
 
 use App\Models\Customer;
 use App\Models\AppGroup;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Volt\Component;
@@ -32,7 +34,7 @@ new class extends Component {
     public string $remark = '';
 
     public $action = "new";
-    
+
 
     //close Modal
     public function closeModal(): void
@@ -44,7 +46,7 @@ new class extends Component {
     //select Item
     public function selectItem($id, $action)
     {
-        
+
         $this->selectedItemID = $id;
         $this->action = $action;
 
@@ -62,30 +64,29 @@ new class extends Component {
         } elseif ($action == 'member') {
             $this->info("Coming soon", position: 'toast-top');
             return;
-        } elseif ($action == 'delete'){
-            $rc=0;
+        } elseif ($action == 'delete') {
+            $rc = 0;
             $sql = "select count(*) as cnt from work_orders where customer_id = ? LIMIT 1";
             $cnt = DB::select($sql, [$id]);
             foreach ($cnt as $c) {
                 $rc = $c->cnt;
                 break;
             }
-            if($rc > 0){
+            if ($rc > 0) {
                 $this->error(__("This data is used in work order, can't be deleted."), position: 'toast-top');
                 return;
             }
             $data = DB::table('customers')->where('id', [$id])->update([
                 'is_active' => 0,
             ]);
-            if($data<0){
+            if ($data < 0) {
                 $this->error(__("Data not deleted."), position: 'toast-top');
-            }else{
+            } else {
                 $this->success(__("Data deleted."), position: 'toast-top');
             }
             $this->reset();
             $this->resetPage();
         }
-        
     }
     //save 
     public function save()
@@ -97,15 +98,15 @@ new class extends Component {
             'tel' => 'required|unique:customers,tel,' . $this->myCustomer->id,
         ]);
         if ($this->action == 'new') {
-            $this->myCustomer->create_by = Auth()->user()->id;     
-            $this->myCustomer->group_id = Auth()->user()->group_id;      
+            $this->myCustomer->create_by = Auth::user()->id;
+            $this->myCustomer->group_id = Auth::user()->group_id;
         }
         $this->myCustomer->name = $this->uname;
         $this->myCustomer->email = $this->email;
         $this->myCustomer->tel = $this->tel;
         $this->myCustomer->address = $this->address;
         $this->myCustomer->remark = $this->remark;
-        $this->myCustomer->update_by = Auth()->user()->id;
+        $this->myCustomer->update_by = Auth::user()->id;
         $this->myCustomer->save();
         $this->success(__("Data saved."), position: 'toast-top');
         $this->reset();
@@ -121,9 +122,9 @@ new class extends Component {
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
             ['key' => 'name', 'label' => __('Name'), 'class' => 'w-36'],
             ['key' => 'tel', 'label' => __('Tel')],
-            ['key' => 'email', 'label' => __('Email') ],
-            ['key' => 'address', 'label' => __('Address') ],
-            ['key' => 'remark', 'label' => __('Remark') ],
+            ['key' => 'email', 'label' => __('Email')],
+            ['key' => 'address', 'label' => __('Address')],
+            ['key' => 'remark', 'label' => __('Remark')],
 
         ];
     }
@@ -136,12 +137,11 @@ new class extends Component {
      */
     public function Customers(): LengthAwarePaginator
     {
-         return Customer::query()
+        return Customer::query()
             ->where('is_active', 1)
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%")->orwhere('tel', 'like', "%$this->search%")->orWhere('email', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
-            ->paginate(10); 
-
+            ->paginate(10);
     }
 
 
@@ -174,7 +174,7 @@ new class extends Component {
             <div class="w-48 flex justify-end">
                 {{--
                 <x-button icon="o-credit-card" wire:click="selectItem({{ $Customer['id'] }},'member')" spinner
-                    class="btn-ghost btn-xs text-yellow-500" tooltip="{{__('Member Card')}}" /> --}}
+                class="btn-ghost btn-xs text-yellow-500" tooltip="{{__('Member Card')}}" /> --}}
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $Customer['id'] }},'edit')"
                     class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Edit')}}" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $Customer['id'] }},'delete')"

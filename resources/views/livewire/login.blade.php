@@ -4,47 +4,47 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
- 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
 new
-#[Layout('components.layouts.empty')]       // <-- Here is the `empty` layout
-#[Title('Login')]
-class extends Component {
- 
-    #[Rule('required|email')]
-    public string $email = '';
- 
-    #[Rule('required')]
-    public string $password = '';
+    #[Layout('components.layouts.empty')]       // <-- Here is the `empty` layout
+    #[Title('Login')]
+    class extends Component {
 
-    public string $locale = '';
- 
-    public function mount()
-    {
-        // It is logged in
-        if (auth()->user()) {
-            return redirect('/');
+        #[Rule('required|email')]
+        public string $email = '';
+
+        #[Rule('required')]
+        public string $password = '';
+
+        public string $locale = '';
+
+        public function mount()
+        {
+            // It is logged in
+            if (Auth::user()) {
+                return redirect('/');
+            }
+            $this->locale = App::currentLocale();
         }
-        $this->locale = App::currentLocale();
-    }
- 
-    public function login()
-    {
-        $credentials = $this->validate();
- 
-        if (auth()->attempt($credentials)) {
-            request()->session()->regenerate();
-            //get language from user() then put to session
-            $locale = auth()->user()->language;
-            session()->put('locale', $locale);
- 
-            return redirect()->intended('/');
+
+        public function login()
+        {
+            $credentials = $this->validate();
+
+            if (auth()->attempt($credentials)) {
+                request()->session()->regenerate();
+                //get language from user() then put to session
+                $locale = Auth::user()->language;
+                session()->put('locale', $locale);
+
+                return redirect()->intended('/');
+            }
+
+            $this->addError('email', __('The provided credentials do not match our records.'));
         }
- 
-        $this->addError('email', __('The provided credentials do not match our records.'));
-    }
-
-
-}; ?>
+    }; ?>
 
 <div>
     <div class="mt-24 w-80 flex flex-col items-center justify-center mx-auto">

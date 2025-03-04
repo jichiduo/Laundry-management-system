@@ -5,6 +5,8 @@ use App\Models\WorkOrderItem;
 use App\Models\AppGroup;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 use Mary\Traits\Toast;
 use Livewire\WithPagination;
@@ -30,7 +32,7 @@ new class extends Component {
     public string $content = '';
 
     public $action = "new";
-    
+
 
     //close Modal
     public function closeModal(): void
@@ -42,42 +44,42 @@ new class extends Component {
     //select Item
     public function selectItem($id, $action)
     {
-       
+
         $this->selectedItemID = $id;
         $this->action = $action;
-        
+
         if ($action == 'new') {
             $this->redirect('/workorder/new');
         } elseif ($action == 'edit') {
             $this->myWorkOrder = WorkOrder::find($id);
             //check if the staus not in draft 
-            if ($this->myWorkOrder->status == 'draft' ) {
+            if ($this->myWorkOrder->status == 'draft') {
                 return redirect()->route('wo_update', $id);
             } else {
                 $this->error(__('You can only edit draft work orders.'), position: 'toast-top');
                 return;
             }
-        } elseif ($action == 'delete'){
+        } elseif ($action == 'delete') {
             //check if the work order status is draft and created by current user
             $this->myWorkOrder = WorkOrder::find($id);
-            if ($this->myWorkOrder->status == 'draft' && ($this->myWorkOrder->user_id == auth()->user()->id || auth()->user()->role != 'user')) {
+            if ($this->myWorkOrder->status == 'draft' && $this->myWorkOrder->user_id == Auth::user()->id) {
                 WorkOrder::destroy($id);
                 $sql = "delete from work_order_items where wo_no = ?";
                 $rc = DB::update($sql, [$this->myWorkOrder->wo_no]);
-                if ($rc < 0) { 
+                if ($rc < 0) {
                     $this->error(__("Work Order Items data not deleted."), position: 'toast-top');
                     return;
                 }
                 $this->success("Data deleted.", position: 'toast-top');
                 $this->reset();
-                $this->resetPage();                
-            } elseif (auth()->user()->role == 'admin') {
+                $this->resetPage();
+            } elseif ($this->myWorkOrder->status == 'draft' && Auth::user()->role != 'user') {
                 //update work order status to cancel
                 $this->myWorkOrder->status = 'cancel';
                 $this->myWorkOrder->save();
                 $sql = "update work_order_items set status='cancel' where wo_no = ?";
                 $rc = DB::update($sql, [$this->myWorkOrder->wo_no]);
-                if ($rc < 0) { 
+                if ($rc < 0) {
                     $this->error(__("Work Order Items data did not updated."), position: 'toast-top');
                     return;
                 }
@@ -85,18 +87,17 @@ new class extends Component {
                 $this->error(__("You can only delete draft work orders created by you."), position: 'toast-top');
                 return;
             }
-        } elseif ($action == 'collect'){
+        } elseif ($action == 'collect') {
             //check if the work order status is draft and created by current user
             $this->myWorkOrder = WorkOrder::find($id);
-            if ( $this->myWorkOrder->user_id == auth()->user()->id || auth()->user()->role != 'user') 
-            {
+            if (($this->myWorkOrder->status == '4pickup' || $this->myWorkOrder->status == 'pending') && ($this->myWorkOrder->user_id == Auth::user()->id || Auth::user()->role != 'user')) {
                 //collect_date set to today
                 $this->myWorkOrder->collect_date = now();
                 $this->myWorkOrder->status = 'complete';
                 $this->myWorkOrder->save();
                 $sql = "update work_order_items set status='complete' where wo_no = ?";
                 $rc = DB::update($sql, [$this->myWorkOrder->wo_no]);
-                if ($rc < 0) { 
+                if ($rc < 0) {
                     $this->error(__("Work Order Items data did not updated."), position: 'toast-top');
                     return;
                 }
@@ -121,7 +122,7 @@ new class extends Component {
             ['key' => 'customer_name', 'label' => __('Cust Name')],
             ['key' => 'customer_tel', 'label' => __('Cust Tel')],
             ['key' => 'grand_total', 'label' => __('Total')],
-            ['key' => 'piece', 'label' => __('Piece'),'format' => ['currency', '0,.']],
+            ['key' => 'piece', 'label' => __('Piece'), 'format' => ['currency', '0,.']],
             ['key' => 'status', 'label' => __('Status')],
             ['key' => 'pickup_date', 'label' => __('Pickup Date'), 'format' => ['date', 'd/m/Y'], 'class' => 'w-24'],
         ];
@@ -132,10 +133,9 @@ new class extends Component {
     {
         //set the end date equal user input date +1
         $enddate = date('Y-m-d', strtotime($this->end_date . ' +1 day'));
-        if($this->search){
+        if ($this->search) {
             $condition = "created_at between '$this->start_date' and '$enddate' and (wo_no like '%$this->search%' or customer_name like '%$this->search%' or customer_tel like '%$this->search%')";
-
-        }else{
+        } else {
 
             $condition = "created_at between '$this->start_date' and '$enddate'";
         }
@@ -143,14 +143,13 @@ new class extends Component {
         return WorkOrder::query()
             ->whereRaw($condition)
             ->orderBy(...array_values($this->sortBy))
-            ->paginate(10); 
-
+            ->paginate(10);
     }
 
 
     public function with(): array
     {
- 
+
         return [
             'allData' => $this->allData(),
             'headers' => $this->headers(),
@@ -162,8 +161,7 @@ new class extends Component {
         //set start date the today minus 30 days ,end date is today
         $this->start_date = date('Y-m-d', strtotime('-30 days'));
         $this->end_date = date('Y-m-d');
-    } 
-
+    }
 };
 ?>
 

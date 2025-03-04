@@ -2,7 +2,8 @@
 
 use Livewire\Volt\Component;
 use Mary\Traits\Toast;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 new class extends Component {
     use Toast;
@@ -11,17 +12,17 @@ new class extends Component {
     public $new_password;
     public $confirm_password;
 
-    public function save() {
+    public function save()
+    {
         $this->validate([
             'old_password' => 'required',
             'new_password' => 'required',
             'confirm_password' => 'required|same:new_password',
         ]);
 
-        if (Hash::check($this->old_password, Auth::user()->password)) 
-        {
-            Auth()->user()->password = Hash::make($this->new_password);
-            Auth()->user()->save();
+        if (Hash::check($this->old_password, Auth::user()->password)) {
+            Auth::user()->password = Hash::make($this->new_password);
+            Auth::user()->save();
             $this->reset();
             $this->success(__("Password successfully changed."), position: 'toast-top');
         } else {
@@ -31,7 +32,7 @@ new class extends Component {
 }; ?>
 
 <div>
-    <x-card title="{{Auth()->user()->name;}} {{__('Profile')}}" shadow separator progress-indicator>
+    <x-card title="{{Auth::user()->name;}} {{__('Profile')}}" shadow separator progress-indicator>
 
         <x-input label="{{__('Old Password')}}" wire:model='old_password' type="password" clearable />
 

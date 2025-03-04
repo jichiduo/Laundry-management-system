@@ -11,7 +11,8 @@ use Mary\Traits\Toast;
 use Livewire\WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Validate;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 
 new class extends Component {
@@ -38,7 +39,7 @@ new class extends Component {
 
 
     public $action = "new";
-    
+
 
     //close Modal
     public function closeModal(): void
@@ -50,11 +51,11 @@ new class extends Component {
     //select Item
     public function selectItem($id, $action)
     {
-        if (auth()->user()->role != 'admin') {
+        if (Auth::user()->role != 'admin') {
             $this->error("This action is unauthorized.", position: 'toast-top');
             return;
         }
-        
+
         $this->selectedItemID = $id;
         $this->action = $action;
 
@@ -72,24 +73,23 @@ new class extends Component {
             $this->myModal = true;
         } elseif ($action == 'reset') {
             //reset password to a random password and copy new password to clipboard
-            $newPassword = Str::lower(rand(1000,9999));
+            $newPassword = Str::lower(rand(1000, 9999));
             $this->myuser = User::find($id);
             $this->myuser->password = bcrypt($newPassword);
             $this->myuser->save();
             $this->success("Password reset to " . $newPassword, position: 'toast-top');
-
-        } elseif ($action == 'delete'){
-            if ($id == auth()->user()->id) {
+        } elseif ($action == 'delete') {
+            if ($id == Auth::user()->id) {
                 $this->warning(__("You can't delete yourself."), position: 'toast-top');
             } else {
-                $rc=0;
+                $rc = 0;
                 $sql = "select count(*) as cnt from work_orders where user_id = ? LIMIT 1";
                 $cnt = DB::select($sql, [$id]);
                 foreach ($cnt as $c) {
                     $rc = $c->cnt;
                     break;
                 }
-                if($rc > 0){
+                if ($rc > 0) {
                     $this->error(__("This data is used in work order, can't be deleted."), position: 'toast-top');
                     return;
                 }
@@ -113,7 +113,7 @@ new class extends Component {
             'group_id' => 'required',
         ]);
         if ($this->action == 'new') {
-            $this->myuser->password = bcrypt($this->password);            
+            $this->myuser->password = bcrypt($this->password);
         }
         $this->myuser->name = $this->uname;
         $this->myuser->email = $this->email;
@@ -153,7 +153,7 @@ new class extends Component {
      */
     public function users(): LengthAwarePaginator
     {
-         return User::query()
+        return User::query()
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
             ->paginate(10); // No more `->get()`
@@ -163,7 +163,7 @@ new class extends Component {
 
     public function with(): array
     {
-        
+
         return [
             'roles' => Role::all(),
             'users' => $this->users(),
@@ -173,11 +173,11 @@ new class extends Component {
         ];
     }
 
-    public function getDivisions(): void {
+    public function getDivisions(): void
+    {
         //get division by group_id
         $this->mydivisions = Division::where('group_id', $this->group_id)->get();
     }
-
 };
 ?>
 

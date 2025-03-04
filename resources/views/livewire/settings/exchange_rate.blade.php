@@ -10,7 +10,8 @@ use Mary\Traits\Toast;
 use Livewire\WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Validate;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 
 new class extends Component {
@@ -23,7 +24,7 @@ new class extends Component {
 
     public array $sortBy = ['column' => 'id', 'direction' => 'asc'];
 
-    public ExchangeRate $myExchangeRate; 
+    public ExchangeRate $myExchangeRate;
 
     #[Validate('required')]
     public string $from_currency = '';
@@ -32,7 +33,7 @@ new class extends Component {
     public $rate = 0;
 
     public $action = "new";
-    
+
 
     //close Modal
     public function closeModal(): void
@@ -44,11 +45,11 @@ new class extends Component {
     //select Item
     public function selectItem($id, $action)
     {
-        if (auth()->user()->role == 'user') {
+        if (Auth::user()->role == 'user') {
             $this->error(__("This action is unauthorized."), position: 'toast-top');
             return;
         }
-        
+
         $this->selectedItemID = $id;
         $this->action = $action;
 
@@ -61,11 +62,11 @@ new class extends Component {
             $this->to_currency = $this->myExchangeRate->to_currency;
             $this->rate = $this->myExchangeRate->rate;
             $this->myModal = true;
-        } elseif ($action == 'delete'){
-                ExchangeRate::destroy($id);
-                $this->success(__("Data deleted."), position: 'toast-top');
-                $this->reset();
-                $this->resetPage();
+        } elseif ($action == 'delete') {
+            ExchangeRate::destroy($id);
+            $this->success(__("Data deleted."), position: 'toast-top');
+            $this->reset();
+            $this->resetPage();
         }
     }
     //save 
@@ -99,17 +100,16 @@ new class extends Component {
     // get all data from table
     public function allData(): LengthAwarePaginator
     {
-         return ExchangeRate::query()
+        return ExchangeRate::query()
             ->when($this->search, fn(Builder $q) => $q->where('from_currency', 'like', "%$this->search%")->orWhere('to_currency', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
-            ->paginate(10); 
-
+            ->paginate(10);
     }
 
 
     public function with(): array
     {
- 
+
         return [
             'allData' => $this->allData(),
             'headers' => $this->headers(),

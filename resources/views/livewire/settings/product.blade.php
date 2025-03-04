@@ -10,7 +10,7 @@ use Mary\Traits\Toast;
 use Livewire\WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Validate;
-
+use Illuminate\Support\Facades\Auth;
 
 
 new class extends Component {
@@ -44,7 +44,7 @@ new class extends Component {
 
 
     public $action = "new";
-    
+
 
     //close Modal
     public function closeModal(): void
@@ -56,11 +56,11 @@ new class extends Component {
     //select Item
     public function selectItem($id, $action)
     {
-        if (auth()->user()->role == 'user') {
+        if (Auth::user()->role == 'user') {
             $this->error("This action is unauthorized.", position: 'toast-top');
             return;
         }
-        
+
         $this->selectedItemID = $id;
         $this->action = $action;
 
@@ -79,17 +79,17 @@ new class extends Component {
             $this->type = $this->myProduct->type;
             $this->group_id = $this->myProduct->group_id;
             $this->myModal = true;
-        } elseif ($action == 'delete'){
+        } elseif ($action == 'delete') {
             $this->myProduct = Product::find($id);
             $product_name = $this->myProduct->name;
-            $rc=0;
+            $rc = 0;
             $sql = "select count(*) as cnt from work_order_items where name = ? LIMIT 1";
             $cnt = DB::select($sql, [$product_name]);
             foreach ($cnt as $c) {
                 $rc = $c->cnt;
                 break;
             }
-            if($rc > 0){
+            if ($rc > 0) {
                 $this->error("This data is used in work order, can't be deleted.", position: 'toast-top');
                 return;
             }
@@ -141,22 +141,21 @@ new class extends Component {
     // get all data from table
     public function allData(): LengthAwarePaginator
     {
-         return Product::query()
+        return Product::query()
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
-            ->paginate(10); 
-
+            ->paginate(10);
     }
 
 
     public function with(): array
     {
- 
+
         return [
             'allData' => $this->allData(),
             'headers' => $this->headers(),
             'groups' => AppGroup::all(),
-            'types'  => DB::table('types')->where('category','Laundry')->get(),
+            'types'  => DB::table('types')->where('category', 'Laundry')->get(),
         ];
     }
 };

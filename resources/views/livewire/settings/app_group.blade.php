@@ -9,7 +9,8 @@ use Mary\Traits\Toast;
 use Livewire\WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Validate;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 
 new class extends Component {
@@ -34,7 +35,7 @@ new class extends Component {
 
 
     public $action = "new";
-    
+
 
     //close Modal
     public function closeModal(): void
@@ -46,11 +47,11 @@ new class extends Component {
     //select Item
     public function selectItem($id, $action)
     {
-        if (auth()->user()->role != 'admin') {
+        if (Auth::user()->role != 'admin') {
             $this->error(__("This action is unauthorized."), position: 'toast-top');
             return;
         }
-        
+
         $this->selectedItemID = $id;
         $this->action = $action;
 
@@ -66,15 +67,15 @@ new class extends Component {
             $this->address = $this->myappGroup->address;
             $this->description = $this->myappGroup->description;
             $this->myModal = true;
-        } elseif ($action == 'delete'){
-            $rc=0;
+        } elseif ($action == 'delete') {
+            $rc = 0;
             $sql = "select count(*) as cnt from work_orders where group_id = ? LIMIT 1";
             $cnt = DB::select($sql, [$id]);
             foreach ($cnt as $c) {
                 $rc = $c->cnt;
                 break;
             }
-            if($rc > 0){
+            if ($rc > 0) {
                 $this->error(__("This data is used in work order, can't be deleted."), position: 'toast-top');
                 return;
             }
@@ -120,17 +121,16 @@ new class extends Component {
     // get all data from table
     public function allData(): LengthAwarePaginator
     {
-         return AppGroup::query()
+        return AppGroup::query()
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
-            ->paginate(10); 
-
+            ->paginate(10);
     }
 
 
     public function with(): array
     {
- 
+
         return [
             'allData' => $this->allData(),
             'headers' => $this->headers(),

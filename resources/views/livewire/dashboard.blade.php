@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Mary\Traits\Toast;
 use App\Models\WorkOrder;
 use App\Models\WorkOrderItem;
@@ -18,26 +19,26 @@ new class extends Component {
 
 
     //get division name by current user id 
-    public function mount(): void 
+    public function mount(): void
     {
-        $user_id = Auth()->user()->id;
-        $division_id = Auth()->user()->division_id;
-        $group_id = Auth()->user()->group_id;
+        $user_id = Auth::user()->id;
+        $division_id = Auth::user()->division_id;
+        $group_id = Auth::user()->group_id;
         $my_id = 0;
         //check if division_id is null
-        if($division_id == null || $group_id == null){
+        if ($division_id == null || $group_id == null) {
             $this->error(__("Fetal Err, cannot find basic info for the current user."), position: 'toast-top');
             return;
         }
 
-        if( Auth()->user()->role == 'user'){
+        if (Auth::user()->role == 'user') {
             $my_id = $division_id;
         } else {
             $my_id = $group_id;
         }
         //get 4pickup job count from work_order 
         /*
-        if( Auth()->user()->role == 'user'){
+        if( Auth::user()->role == 'user'){
             $sql = "select count(*) as cnt from work_orders where division_id = ? and status = '4pickup'";
         } else {
             $sql = "select count(*) as cnt from work_orders where group_id = ? and status = '4pickup'";
@@ -48,7 +49,7 @@ new class extends Component {
             break;
         }
         */
-        if( Auth()->user()->role == 'user'){
+        if (Auth::user()->role == 'user') {
             $sql = "select count(*) as cnt from work_orders where division_id = ? and status = 'pending'";
         } else {
             $sql = "select count(*) as cnt from work_orders where group_id = ? and status = 'pending'";
@@ -59,7 +60,7 @@ new class extends Component {
             break;
         }
         //get today sales from work_order
-        if( Auth()->user()->role == 'user'){
+        if (Auth::user()->role == 'user') {
             $sql = "select ifnull(sum(grand_total),0) as total from work_orders where division_id = ? and status not in ('draft' , 'cancel') and date(created_at) = CURDATE()";
         } else {
             $sql = "select ifnull(sum(grand_total),0) as total from work_orders where group_id = ? and status not in ('draft' , 'cancel') and date(created_at) = CURDATE()";
@@ -70,7 +71,7 @@ new class extends Component {
             break;
         }
         //get this month sales from work_order
-        if( Auth()->user()->role == 'user'){
+        if (Auth::user()->role == 'user') {
             $sql = "select ifnull(sum(grand_total),0) as total from work_orders where division_id = ? and status not in ('draft' , 'cancel') and MONTH(created_at) = MONTH(CURDATE())";
         } else {
             $sql = "select ifnull(sum(grand_total),0) as total from work_orders where group_id = ? and status not in ('draft' , 'cancel') and MONTH(created_at) = MONTH(CURDATE())";
@@ -82,16 +83,17 @@ new class extends Component {
         }
     }
 
-    public function findItem(){
-        if($this->search != ''){
+    public function findItem()
+    {
+        if ($this->search != '') {
             //check the length of the search
-            if(strlen($this->search) == 9 ){
+            if (strlen($this->search) == 9) {
                 $wo = WorkOrder::where('wo_no', $this->search)->first();
                 //check if get data from DB
-                if($wo){
+                if ($wo) {
                     //redirect to wo_view
-                    return redirect()->route('wo_view', ['id' => $wo->id , 'action' => 'show' ]);
-                } 
+                    return redirect()->route('wo_view', ['id' => $wo->id, 'action' => 'show']);
+                }
                 $this->warning(__("Can not find this Work Order Number"), position: 'toast-top');
                 $this->search = '';
                 return;
@@ -99,22 +101,20 @@ new class extends Component {
             //$woi = DB::table('work_orders_item')->where('barcode', $this->search)->first();
             $woi = WorkOrderItem::where('barcode', $this->search)->first();
             //check if get data from DB
-            if($woi){
+            if ($woi) {
                 //$wo = DB::table('work_orders')->where('wo_no', $woi->wo_no)->first();
                 $wo = WorkOrder::where('wo_no', $woi->wo_no)->first();
                 //check if get data from DB
-                if($wo){
+                if ($wo) {
                     //redirect to wo_view
-                    return redirect()->route('wo_view', ['id' => $wo->id , 'action' => 'show' ]);
+                    return redirect()->route('wo_view', ['id' => $wo->id, 'action' => 'show']);
                 }
             }
             //show err message
             $this->warning(__("Can't find the tracing number/barcode."), position: 'toast-top');
             $this->search = '';
         }
-
     }
-
 }; ?>
 
 <div>
@@ -124,8 +124,8 @@ new class extends Component {
     </x-header>
 
     <!-- TABLE  -->
-    <x-card title="{{__('Welcome')}}, {{ Auth()->user()->name }}"
-        subtitle="{{__('Current shop')}}: {{ Auth()->user()->division_name }}" separator>
+    <x-card title="{{__('Welcome')}}, {{ Auth::user()->name }}"
+        subtitle="{{__('Current shop')}}: {{ Auth::user()->division_name }}" separator>
         <div class="p-4 rounded-xl grid lg:grid-cols-3 gap-4 bg-base-200">
             {{-- <x-stat title="{{__('Ready for Pickup')}}" value="{{ $pickup }}" icon="o-truck" /> --}}
             <a href="/workorder/list"><x-stat title="{{__('In Progress')}}" value="{{ $inprogress }}" icon="o-bolt" /></a>
