@@ -73,7 +73,7 @@ new class extends Component {
                 $this->success("Data deleted.", position: 'toast-top');
                 $this->reset();
                 $this->resetPage();
-            } elseif ($this->myWorkOrder->status == 'draft' && Auth::user()->role != 'user') {
+            } elseif (($this->myWorkOrder->status == 'draft' || $this->myWorkOrder->status == 'pending') && Auth::user()->role != 'user') {
                 //update work order status to cancel
                 $this->myWorkOrder->status = 'cancel';
                 $this->myWorkOrder->save();
