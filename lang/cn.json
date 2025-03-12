@@ -106,6 +106,7 @@
     "Please choose a customer": "请选择一个客户",
     "Please add at least one item": "请至少添加一个项目",
     "You can only edit draft work orders.": "您只能编辑草稿工单",
+    "You can only edit work orders created today.": "您只能编辑今天创建的工单",
     "Work Order Items data not deleted.": "工单项目数据未删除",
     "You can only delete draft work orders created by you.": "您只能删除您创建的草稿工单",
     "You can only print confirmed work orders.": "您只能打印已确认的工单",
@@ -191,5 +192,18 @@
     "Monthly Report": "每月报表",
     "Report date": "报表日期",
     "Query": "查询",
-    "Date": "日期"
+    "Date": "日期",
+    "End date cannot be before start date.": "结束日期不能早于开始日期",
+    "Duration cannot be more than 1 month.": "持续时间不能超过1个月",
+    "Topup": "充值",
+    "Transaction Number": "交易编号",
+    "Reversal": "冲正",
+    "Balance": "余额",
+    "Topup successed": "充值成功",
+    "Reversal successed": "冲正成功",
+    "This transaction is not a topup transaction.": "此交易不是充值交易",
+    "The reversal amount is more than the current balance.": "冲正金额超过当前余额",
+    "The amount should not less than 0.": "金额不应少于0",
+    "You do not have sufficient privileges to do this.": "您没有足够的权限执行此操作",
+    "Customer do not have sufficient balance. Current balance is ": "客户余额不足，当前余额为"
 }

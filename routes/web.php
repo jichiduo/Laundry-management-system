@@ -21,7 +21,7 @@ Volt::route('/login', 'login')->name('login');
 
 // Define the logout
 Route::get('/logout', function () {
-    auth()->logout();
+    Auth()->logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
 
@@ -43,7 +43,8 @@ Route::middleware('auth')->group(function () {
 
     //settings
     Volt::route('/profile', 'settings.profile');
-    Volt::route('/customer', 'customer');
+    Volt::route('/customer', 'customer.customer');
+    Volt::route('/customer/topup/{id}', 'customer.topup')->name('customer_topup');
     Volt::route('/user', 'settings.user');
     Volt::route('/app-group', 'settings.app_group');
     Volt::route('/division', 'settings.division');

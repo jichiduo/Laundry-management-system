@@ -106,6 +106,7 @@
     "Please choose a customer": "Silakan pilih pelanggan",
     "Please add at least one item": "Silakan tambahkan setidaknya satu item",
     "You can only edit draft work orders.": "Anda hanya dapat mengedit pesanan kerja draf.",
+    "You can only edit work orders created today.": "Anda hanya dapat mengedit pesanan kerja yang dibuat hari ini.",
     "Work Order Items data not deleted.": "Data item pesanan kerja tidak dihapus.",
     "You can only delete draft work orders created by you.": "Anda hanya dapat menghapus pesanan kerja draf yang dibuat oleh Anda.",
     "You can only print confirmed work orders.": "Anda hanya dapat mencetak pesanan kerja yang telah dikonfirmasi.",
@@ -193,5 +194,16 @@
     "Query": "Kueri",
     "Date": "Tanggal",
     "End date cannot be before start date.": "Tanggal akhir tidak boleh sebelum tanggal mulai.",
-    "Duration cannot be more than 1 month.": "Durasi tidak boleh lebih dari 1 bulan."
+    "Duration cannot be more than 1 month.": "Durasi tidak boleh lebih dari 1 bulan.",
+    "Topup": "Topup",
+    "Transaction Number": "Nomor Transaksi",
+    "Reversal": "Pembalikan",
+    "Balance": "Saldo",
+    "Topup successed": "Topup berhasil",
+    "Reversal successed": "Pembalikan berhasil",
+    "This transaction is not a topup transaction.": "Transaksi ini bukan transaksi topup.",
+    "The reversal amount is more than the current balance.": "Jumlah pembalikan lebih besar dari saldo saat ini.",
+    "The amount should not less than 0.": "Jumlah tidak boleh kurang dari 0.",
+    "You do not have sufficient privileges to do this.": "Anda tidak memiliki hak istimewa yang cukup untuk melakukan ini.",
+    "Customer do not have sufficient balance. Current balance is ": "Pelanggan tidak memiliki saldo yang cukup. Saldo saat ini adalah "
 }

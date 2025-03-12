@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Auth;
 new class extends Component {
     use Toast;
     use WithPagination;
-    
+
 
     public string $search = '';
 
@@ -34,10 +34,10 @@ new class extends Component {
     public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
     public array $Item_sortBy = ['column' => 'id', 'direction' => 'asc'];
 
-    public Customer $myCustomer; 
-    public WorkOrder $wo; 
-    public WorkOrderItem $woi; 
-    public Product $myProduct; 
+    public Customer $myCustomer;
+    public WorkOrder $wo;
+    public WorkOrderItem $woi;
+    public Product $myProduct;
 
     public string $uname = '';
     public string $code = '';
@@ -46,6 +46,7 @@ new class extends Component {
     public string $customer_email = '';
     public string $customer_tel = '';
     public        $customer_discount = 0;
+    public        $customer_balance = 0;
     public string $explain = '';
     public int    $is_express = 0;
     public string $print = '';
@@ -84,7 +85,7 @@ new class extends Component {
 
 
     public $action = "new";
-    
+
     //mount
     public function mount($id): void
     {
@@ -95,7 +96,7 @@ new class extends Component {
         // dd($this->wo);
         $this->wo_no = $this->wo->wo_no;
         $this->wo_status = $this->wo->status;
-        if($this->wo->customer_id != null){
+        if ($this->wo->customer_id != null) {
 
             $this->customer_id = $this->wo->customer_id;
             $this->customer_name = $this->wo->customer_name;
@@ -103,7 +104,7 @@ new class extends Component {
             $this->customer_tel = $this->wo->customer_tel;
             $this->customer_discount = $this->wo->customer_discount;
         }
-        if($this->wo->explain != null){
+        if ($this->wo->explain != null) {
             $this->explain = $this->wo->explain;
         }
         $this->is_express = $this->wo->is_express;
@@ -115,14 +116,14 @@ new class extends Component {
     {
         // Besides the search results, you must include on demand selected option
         $selectedOption = Product::where('id', $this->product_searchable_id)->get();
- 
+
         $this->productSearchable = Product::query()
             ->where('name', 'like', "%$value%")
             ->take(5)
             ->orderBy('name')
             ->get()
             ->merge($selectedOption);     // <-- Adds selected option
-    }    
+    }
 
     public function chooseProduct(): void
     {
@@ -131,22 +132,22 @@ new class extends Component {
             $this->ItemName = '';
             $this->ItemPrice = '';
             $this->ItemUnit = '';
-            $this->ItemTurnover = '';            
+            $this->ItemTurnover = '';
             return;
         }
         $this->myProduct = Product::find($this->product_searchable_id);
-        
-        if($this->is_express == 1){
+
+        if ($this->is_express == 1) {
             //dd($this->myProduct);
             //check if express_price is null or zero
-            if(empty($this->myProduct->express_price)){
+            if (empty($this->myProduct->express_price)) {
                 $this->ItemPrice = $this->myProduct->price;
-            }else{
+            } else {
                 $this->ItemPrice = $this->myProduct->express_price;
             }
-            if(empty($this->myProduct->express_turnover)){
+            if (empty($this->myProduct->express_turnover)) {
                 $this->ItemTurnover = $this->myProduct->turnover;
-            }else{
+            } else {
                 $this->ItemTurnover = $this->myProduct->express_turnover;
             }
         } else {
@@ -155,45 +156,34 @@ new class extends Component {
         }
         $this->ItemName = $this->myProduct->name;
         $this->ItemUnit = $this->myProduct->unit;
-        
+
         unset($this->myProduct);
     }
 
-    //close Modal
-    public function closeModal($id): void
-    {
-        $this->reset();
-        $this->resetPage();
-        if($id==1){
-            $this->myItemModal = false;
-        } else {
-            $this->myCustomerModal = false;
-        }
-    }
     //select Item
     public function selectItem($id, $action)
     {
-        
+
         $this->selectedItemID = $id;
         $this->action = $action;
 
         if ($action == 'newCustomer') {
             $this->myCustomerModal = true;
         } elseif ($action == 'choose') {
-            $this->myCustomer = Customer::find($id);
+            $this->myCustomer = Customer::findOrFail($id);
             $this->customer_id = $this->myCustomer->id;
             $this->customer_name = $this->myCustomer->name;
             $this->customer_email = $this->myCustomer->email;
             $this->customer_tel = $this->myCustomer->tel;
             $this->customer_discount = $this->myCustomer->member_discount;
+            $this->customer_balance = $this->myCustomer->balance;
             $this->myCustomerModal = false;
-        } 
-        
+        }
     }
     // new Item
-    public function newItem(){
+    public function newItem()
+    {
         $this->myItemModal = true;
-
     }
 
 
@@ -204,7 +194,7 @@ new class extends Component {
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
             ['key' => 'name', 'label' => __('Name')],
             ['key' => 'tel', 'label' => __('Tel')],
-            ['key' => 'email', 'label' => __('Email') ],
+            ['key' => 'email', 'label' => __('Email')],
 
         ];
     }
@@ -215,15 +205,15 @@ new class extends Component {
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
             ['key' => 'barcode', 'label' => __('Barcode'), 'class' => 'w-24'],
             ['key' => 'name', 'label' => __('Name'), 'class' => 'w-36'],
-            ['key' => 'price', 'label' => __('Price'),'format' => ['currency', '0,.'] ],
-            ['key' => 'unit', 'label' => __('Unit') ],
-            ['key' => 'quantity', 'label' => __('Quantity') ],
+            ['key' => 'price', 'label' => __('Price'), 'format' => ['currency', '0,.']],
+            ['key' => 'unit', 'label' => __('Unit')],
+            ['key' => 'quantity', 'label' => __('Quantity')],
             // ['key' => 'discount', 'label' => __('Discount') ],
             // ['key' => 'tax', 'label' => __('Tax') ],
-            ['key' => 'sub_total', 'label' => __('SubTotal'),'format' => ['currency', '0,.'] ],
-            ['key' => 'pickup_date', 'label' => __('Pickup'), 'format' => ['date', 'd/m/Y'] ],
-            ['key' => 'remark', 'label' => __('Remark') ],
-            ['key' => 'location', 'label' => __('Location') ],
+            ['key' => 'sub_total', 'label' => __('SubTotal'), 'format' => ['currency', '0,.']],
+            ['key' => 'pickup_date', 'label' => __('Pickup'), 'format' => ['date', 'd/m/Y']],
+            ['key' => 'remark', 'label' => __('Remark')],
+            ['key' => 'location', 'label' => __('Location')],
 
         ];
     }
@@ -234,8 +224,8 @@ new class extends Component {
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
             ['key' => 'payment_type', 'label' => __('Payment Type')],
             ['key' => 'card_no', 'label' => __('Card No')],
-            ['key' => 'amount', 'label' => __('Amount') ],
-        
+            ['key' => 'amount', 'label' => __('Amount')],
+
         ];
     }
 
@@ -247,30 +237,27 @@ new class extends Component {
      */
     public function Customers(): LengthAwarePaginator
     {
-         return Customer::query()
+        return Customer::query()
             ->where('is_active', 1)
             ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%")->orwhere('tel', 'like', "%$this->search%")->orWhere('email', 'like', "%$this->search%"))
             ->orderBy(...array_values($this->sortBy))
-            ->paginate(3); 
-
+            ->paginate(3);
     }
 
     public function WOItems(): LengthAwarePaginator
     {
-         return WorkOrderItem::query()
+        return WorkOrderItem::query()
             ->where('wo_no', $this->wo_no)
             ->orderBy(...array_values($this->Item_sortBy))
-            ->paginate(10); 
-
+            ->paginate(10);
     }
 
     public function WOTxns(): LengthAwarePaginator
     {
-         return Transaction::query()
+        return Transaction::query()
             ->where('wo_no', $this->wo_no)
             ->orderBy(...array_values($this->Item_sortBy))
-            ->paginate(10); 
-
+            ->paginate(10);
     }
 
 
@@ -284,14 +271,15 @@ new class extends Component {
             'Txns' => $this->WOTxns(),
             'TxnHeaders' => $this->TxnHeaders(),
             'products' => Product::all(),
-            'paymentMethods' => Type::query()->where('category', '=' , 'Payment')->get(),
+            'paymentMethods' => Type::query()->where('category', '=', 'Payment')->get(),
         ];
     }
 
 
 
-    public function addItem(): void{
-        if($this->wo_status!='draft'){
+    public function addItem(): void
+    {
+        if ($this->wo_status != 'draft') {
             $this->error(__('Work Order already confirmed'));
             return;
         }
@@ -306,7 +294,7 @@ new class extends Component {
         //dd($this->ItemTurnover);
         //calc pickup date by today+turnover
         //$this->ItemPickup = date('Y-m-d', strtotime("+".$this->ItemTurnover." day"));
-        $this->ItemPickup = Carbon::now()->addDays($this->ItemTurnover*1);
+        $this->ItemPickup = Carbon::now()->addDays($this->ItemTurnover * 1);
         //save to db
         $this->woi = new WorkOrderItem();
         $this->woi->wo_no = $this->wo_no;
@@ -344,27 +332,29 @@ new class extends Component {
         $this->product_searchable_id = null;
         //close modal
         $this->myItemModal = false;
-
     }
 
-    public function roundUpToThousand($number) {
+    public function roundUpToThousand($number)
+    {
         return ceil($number / 1000) * 1000;
     }
 
-    public function ConfirmOrder() {
-        if($this->wo_status!='draft'){
+    public function ConfirmOrder()
+    {
+        if ($this->wo_status != 'draft') {
             $this->error(__('Work Order already confirmed'));
             return;
         }
         //check if myCustomer already choose 
-        if(empty($this->customer_id)){
+        if (empty($this->customer_id)) {
             $this->warning(__('Please choose a customer'));
             return;
         }
+
         //get aggregate data
-        $sql="select max(pickup_date) as pickup_date, count(pickup_date) as cnt, sum(discount) as discount, sum(tax) as tax, sum(total) as total, sum(sub_total) as sub_total from work_order_items where wo_no=?";
+        $sql = "select max(pickup_date) as pickup_date, count(pickup_date) as cnt, sum(discount) as discount, sum(tax) as tax, sum(total) as total, sum(sub_total) as sub_total from work_order_items where wo_no=?";
         $this->data = DB::select($sql, [$this->wo_no]);
-        if($this->data[0]->cnt==0){
+        if ($this->data[0]->cnt == 0) {
             $this->warning(__('Please add at least one item'));
             return;
         }
@@ -379,10 +369,10 @@ new class extends Component {
         $this->amount = $this->balance_due;
         //open myTxnModal
         $this->myTxnModal = true;
-
     }
-    
-    public function submitOrder() {
+
+    public function submitOrder()
+    {
         //check
         if (!$this->calc()) {
             return false;
@@ -405,10 +395,14 @@ new class extends Component {
         $this->wo->status = 'pending';
         $this->wo->save();
         //set all work order items status to pending
-        $sql="update work_order_items set status='pending' where wo_no=?";
+        $sql = "update work_order_items set status='pending' where wo_no=?";
         DB::update($sql, [$this->wo_no]);
+        //create work order controller
+        $woc = new WorkOrderController();
+
         //create transaction
         $newTxn = new Transaction();
+        $newTxn->trans_no = $woc->get_trans_no(Auth::user()->division_id);
         $newTxn->wo_no = $this->wo_no;
         $newTxn->amount = $this->wo->grand_total;
         $newTxn->customer_id = $this->customer_id;
@@ -416,38 +410,48 @@ new class extends Component {
         $newTxn->payment_type = $this->payment_method;
         $newTxn->type = 'debit';
         $newTxn->remark = 'CfmOrd';
+        $newTxn->create_by = Auth::user()->id;
 
         $newTxn->save();
+        //deduct amount from customer balance
+        if ($this->payment_method == 'Member Card') {
+            $sql = "update customers set balance = balance - ? where id=?";
+            DB::update($sql, [$this->amount, $this->customer_id]);
+        }
 
         // create receipt file
-        $woc = new WorkOrderController();
         $this->print = $woc->getReceipt($this->wo->wo_no);
         //return to view
-        return redirect()->route('wo_view', ['id' => $this->wo->id , 'action' => 'new']);
-        
+        return redirect()->route('wo_view', ['id' => $this->wo->id, 'action' => 'new']);
     }
 
-    public function calc(): bool {
-        if($this->amount){
-            if(($this->amount  ) >= $this->balance_due){
+    public function calc(): bool
+    {
+        if ($this->amount) {
+            if (($this->amount) >= $this->balance_due) {
+                //if payment type is Member Card , check the balance is enough for the payment
+                if ($this->payment_method == 'Member Card') {
+                    if ($this->customer_balance < $this->amount) {
+                        $this->addError('amount', __('Customer do not have sufficient balance. Current balance is ') . $this->customer_balance);
+                        return false;
+                    }
+                }
+
                 $this->amount_tendered = $this->balance_due;
                 $this->change = $this->amount  - $this->balance_due;
                 $this->can_submit = true;
                 $this->resetErrorBag();
                 return true;
-            }else{
+            } else {
                 $this->addError('amount', __('The amount should not less than balance due.'));
                 //$this->amount_tendered = $this->txns[0]->amount + $this->amount;
                 //$this->change = 0;
             }
-            
-
         } else {
             $this->addError('amount', __('The amount is required.'));
         }
         return false;
     }
-
 };
 ?>
 
@@ -465,7 +469,7 @@ new class extends Component {
         <div class="grid grid-cols-3 gap-2  mt-4">
             <x-input label="{{__('Customer Name')}}" wire:model="customer_name" disabled />
             <x-input label="{{__('Customer Tel')}}" wire:model="customer_tel" disabled />
-            <x-input label="{{__('Customer Email')}}" wire:model="customer_email" disabled />
+            <x-input label="{{__('Customer Balance')}}" wire:model="customer_balance" disabled />
         </div>
     </x-card>
     <x-card title="{{__('Basic Information')}}" separator>

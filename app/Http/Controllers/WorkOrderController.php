@@ -50,6 +50,28 @@ class WorkOrderController extends Controller
         return $wo_no;
     }
 
+    //generate work order number
+    public function get_trans_no($division_id): string
+    {
+        //get the last transaction number
+        //crate a new trans_no , the trans_no rule: 2 digi division id+yymm+001(seq no,start from 0001 every month 1st day)
+        //how to create a sequence in mariadb, CREATE SEQUENCE seq START WITH 1 INCREMENT BY 1;
+        //how to reset the sequence , ALTER SEQUENCE seq restart = 1 ;
+        //event scheduler , enable it by add this to my.ini [mysqld] , event_scheduler=ON
+        /*
+            CREATE EVENT event1
+            ON SCHEDULE EVERY '1' MONTH
+            STARTS '2021-11-01 00:00:00'
+            DO 
+            ALTER SEQUENCE seq restart = 1 ;
+         */
+        $sql = "select nextval(seq_transaction) as sn";
+        $sn  = DB::select($sql);
+        $sn  = (int) $sn[0]->sn;
+        $trans_no = sprintf("%02d", $division_id) . date('ym') . sprintf("%03d", $sn);
+        return $trans_no;
+    }
+
 
     //get receipt print content by work order number
     public function getReceipt($workOrderNumber)

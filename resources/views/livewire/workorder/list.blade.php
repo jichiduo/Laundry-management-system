@@ -52,6 +52,11 @@ new class extends Component {
             $this->redirect('/workorder/new');
         } elseif ($action == 'edit') {
             $this->myWorkOrder = WorkOrder::find($id);
+            //check if the work order created_at is not today
+            if (date('Y-m-d', strtotime($this->myWorkOrder->created_at)) != date('Y-m-d')) {
+                $this->error(__('You can only edit work orders created today.'), position: 'toast-top');
+                return;
+            }
             //check if the staus not in draft 
             if ($this->myWorkOrder->status == 'draft') {
                 return redirect()->route('wo_update', $id);

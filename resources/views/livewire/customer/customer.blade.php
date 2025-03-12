@@ -40,7 +40,7 @@ new class extends Component {
     public function closeModal(): void
     {
         $this->reset();
-        $this->resetPage();
+        // $this->resetPage();
         $this->myModal = false;
     }
     //select Item
@@ -61,9 +61,9 @@ new class extends Component {
             $this->remark = $this->myCustomer->remark;
             $this->email = $this->myCustomer->email;
             $this->myModal = true;
-        } elseif ($action == 'member') {
-            $this->info("Coming soon", position: 'toast-top');
-            return;
+        } elseif ($action == 'topup') {
+            //redirect to customer.topup
+            $this->redirect(route('customer_topup', ['id' => $id]));
         } elseif ($action == 'delete') {
             $rc = 0;
             $sql = "select count(*) as cnt from work_orders where customer_id = ? LIMIT 1";
@@ -85,7 +85,7 @@ new class extends Component {
                 $this->success(__("Data deleted."), position: 'toast-top');
             }
             $this->reset();
-            $this->resetPage();
+            // $this->resetPage();
         }
     }
     //save 
@@ -110,7 +110,7 @@ new class extends Component {
         $this->myCustomer->save();
         $this->success(__("Data saved."), position: 'toast-top');
         $this->reset();
-        $this->resetPage();
+        // $this->resetPage();
         $this->myModal = false;
     }
 
@@ -124,17 +124,11 @@ new class extends Component {
             ['key' => 'tel', 'label' => __('Tel')],
             ['key' => 'email', 'label' => __('Email')],
             ['key' => 'address', 'label' => __('Address')],
-            ['key' => 'remark', 'label' => __('Remark')],
+            ['key' => 'balance', 'label' => __('Balance')],
 
         ];
     }
 
-    /**
-     * For demo purpose, this is a static collection.
-     *
-     * On real projects you do it with Eloquent collections.
-     * Please, refer to maryUI docs to see the eloquent examples.
-     */
     public function Customers(): LengthAwarePaginator
     {
         return Customer::query()
@@ -172,9 +166,8 @@ new class extends Component {
         <x-table :headers="$headers" :rows="$Customers" :sort-by="$sortBy" with-pagination show-empty-text>
             @scope('actions', $Customer)
             <div class="w-48 flex justify-end">
-                {{--
-                <x-button icon="o-credit-card" wire:click="selectItem({{ $Customer['id'] }},'member')" spinner
-                class="btn-ghost btn-xs text-yellow-500" tooltip="{{__('Member Card')}}" /> --}}
+                <x-button icon="o-credit-card" wire:click="selectItem({{ $Customer['id'] }},'topup')" spinner
+                    class="btn-ghost btn-xs text-yellow-500" tooltip="{{__('Topup')}}" />
                 <x-button icon="o-pencil-square" wire:click="selectItem({{ $Customer['id'] }},'edit')"
                     class="btn-ghost btn-xs text-blue-500" tooltip="{{__('Edit')}}" />
                 <x-button icon="o-trash" wire:click="selectItem({{ $Customer['id'] }},'delete')"
