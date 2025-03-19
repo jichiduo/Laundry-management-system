@@ -205,5 +205,10 @@
     "The reversal amount is more than the current balance.": "Jumlah pembalikan lebih besar dari saldo saat ini.",
     "The amount should not less than 0.": "Jumlah tidak boleh kurang dari 0.",
     "You do not have sufficient privileges to do this.": "Anda tidak memiliki hak istimewa yang cukup untuk melakukan ini.",
-    "Customer do not have sufficient balance. Current balance is ": "Pelanggan tidak memiliki saldo yang cukup. Saldo saat ini adalah "
+    "Customer do not have sufficient balance. Current balance is ": "Pelanggan tidak memiliki saldo yang cukup. Saldo saat ini adalah ",
+    "Printer Server": "Server Pencetak",
+    "How to use?": "Bagaimana cara menggunakan?",
+    "1. Download the printer server from the link above.": "1. Unduh server pencetak dari tautan di atas.",
+    "2. Install the printer server on your computer.": "2. Instal server pencetak di komputer Anda.",
+    "3. Add one serial port name is KEY": "3. Tambahkan satu nama port serial adalah KEY"
 }

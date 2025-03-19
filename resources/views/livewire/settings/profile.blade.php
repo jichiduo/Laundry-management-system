@@ -56,7 +56,18 @@ new class extends Component {
     </x-card>
 
     <x-card title="{{__('Download')}}" shadow separator progress-indicator class="mt-4">
-        <x-button label="{{__('Printer Server')}}" link="/download/whb.exe" external icon="o-link" class="btn-ghost" />
+        <x-button label="{{__('Printer Server')}}" link="/download/whb-1.0.0.exe" external icon="o-link" class="btn-ghost" />
+        <x-collapse>
+            <x-slot:heading>
+                {{__('How to use?')}}
+            </x-slot:heading>
+            <x-slot:content>
+                {{__('1. Download the printer server from the link above.')}}<br>
+                {{__('2. Install the printer server on your computer.')}}<br>
+                {{__('3. Add one serial port name is KEY')}}<br>
+                <img src="/download/print_server_settings.png">
+            </x-slot:content>
+        </x-collapse>
     </x-card>
 
 

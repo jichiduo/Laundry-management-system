@@ -27,7 +27,7 @@ new class extends Component {
     public string $collect_date = '';
     public string $print = '';
     public array $Item_sortBy = ['column' => 'id', 'direction' => 'asc'];
-    public string $content='';
+    public string $content = '';
 
     // Table headers
     public function WOItemHeaders(): array
@@ -36,16 +36,16 @@ new class extends Component {
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
             ['key' => 'barcode', 'label' => __('Barcode'), 'class' => 'w-24'],
             ['key' => 'name', 'label' => __('Name'), 'class' => 'w-36'],
-            ['key' => 'price', 'label' => __('Price'),'format' => ['currency', '0,.'] ],
-            ['key' => 'unit', 'label' => __('Unit') ],
-            ['key' => 'quantity', 'label' => __('Quantity') ],
+            ['key' => 'price', 'label' => __('Price'), 'format' => ['currency', '0,.']],
+            ['key' => 'unit', 'label' => __('Unit')],
+            ['key' => 'quantity', 'label' => __('Quantity')],
             // ['key' => 'discount', 'label' => __('Discount') ],
             // ['key' => 'tax', 'label' => __('Tax') ],
-            ['key' => 'sub_total', 'label' => __('SubTotal'),'format' => ['currency', '0,.'] ],
-            ['key' => 'pickup_date', 'label' => __('Pickup'), 'format' => ['date', 'd/m/Y'] ],
-            ['key' => 'remark', 'label' => __('Remark') ],
-            ['key' => 'location', 'label' => __('Location') ],
-            ['key' => 'status', 'label' => __('Status') ],
+            ['key' => 'sub_total', 'label' => __('SubTotal'), 'format' => ['currency', '0,.']],
+            ['key' => 'pickup_date', 'label' => __('Pickup'), 'format' => ['date', 'd/m/Y']],
+            ['key' => 'remark', 'label' => __('Remark')],
+            ['key' => 'location', 'label' => __('Location')],
+            ['key' => 'status', 'label' => __('Status')],
 
         ];
     }
@@ -54,9 +54,8 @@ new class extends Component {
     {
         // dd($this->wo_no);
         return WorkOrderItem::query()
-        ->where('wo_no', $this->wo_no)
-        ->get();
-        
+            ->where('wo_no', $this->wo_no)
+            ->get();
     }
 
     public function with(): array
@@ -67,16 +66,16 @@ new class extends Component {
         ];
     }
 
-    public function mount($id,$action): void
+    public function mount($id, $action): void
     {
         $this->action = $action;
-        if($this->action==null){
+        if ($this->action == null) {
             $this->action = 'show';
         }
         $this->wo = WorkOrder::findOrFail($id);
         $this->wo_no = $this->wo->wo_no;
         $this->status = $this->wo->status;
-        if($this->status !='draft'){
+        if ($this->status != 'draft') {
             $this->customer_name = $this->wo->customer_name;
             $this->customer_email = $this->wo->customer_email;
             $this->customer_tel = $this->wo->customer_tel;
@@ -87,36 +86,36 @@ new class extends Component {
             $this->discount = $this->wo->discount;
             $this->tax = $this->wo->tax;
             $this->grand_total = $this->wo->grand_total;
-            
+
             //format date as Y-m-d
-            if($this->wo->pickup_date != null){
-                $this->pickup_date = date_format($this->wo->pickup_date,'Y-m-d');
+            if ($this->wo->pickup_date != null) {
+                $this->pickup_date = date_format($this->wo->pickup_date, 'Y-m-d');
             }
-            if($this->wo->collect_date != null){
-                $this->collect_date = date_format($this->wo->collect_date,'Y-m-d');
+            if ($this->wo->collect_date != null) {
+                $this->collect_date = date_format($this->wo->collect_date, 'Y-m-d');
             }
             //get download
-            $this->content = str_replace('"','',json_encode($this->getDownload($this->wo_no)));
+            $this->content = str_replace('"', '', json_encode($this->getDownload($this->wo_no)));
         }
     }
 
-    public function getDownload($wo_no) {
-        $filename = substr($wo_no,0,4)."/receipt/".$wo_no.'.txt';
+    public function getDownload($wo_no)
+    {
+        $filename = substr($wo_no, 0, 4) . "/receipt/" . $wo_no . '.txt';
         // $woc = new WorkOrderController();
         // $this->print = $woc->getReceipt($wo_no);
         // return response()->streamDownload(function () {
         //     echo $this->print;
         // }, $filename);
         //check the file exist or not
-        if(Storage::disk('public')->exists($filename)){
+        if (Storage::disk('public')->exists($filename)) {
             return Storage::disk('public')->get($filename);
         } else {
-           //re-create the print file
-           $woc = new WorkOrderController();
-           return $woc->getReceipt($wo_no);
+            //re-create the print file
+            $woc = new WorkOrderController();
+            return $woc->getReceipt($wo_no);
         }
     }
-
 }; ?>
 
 <div>
@@ -191,10 +190,12 @@ new class extends Component {
     </x-card>
 
     <script>
-        @if($action=='new')
+        @if($action == 'new')
 
-        setTimeout(function() { WsPrint();}, 1000); 
-        
+        setTimeout(function() {
+            WsPrint();
+        }, 1000);
+
         @endif
 
         function WsPrint() {
@@ -218,7 +219,7 @@ new class extends Component {
 
             // create WebSocket 
             //const ws = new WebSocket('ws://localhost:8989/ws');
-            const ws = new WebSocket('ws://127.0.0.1:12212/serial/KEY');
+            const ws = new WebSocket('ws://127.0.0.1:12212/serial/KEY?');
 
             // send commands
             //const commands = [command1, multilineContent];
@@ -227,13 +228,13 @@ new class extends Component {
             // send commands to server
             ws.onopen = () => {
                 sendCommands(ws, commands)
-                .then(() => {
-                    //console.log('All commands sent successfully');
-                })
+                    .then(() => {
+                        //console.log('All commands sent successfully');
+                    })
                     .catch(error => {
-                    console.error('Error sending commands:', error);
-                });
-            };            
+                        console.error('Error sending commands:', error);
+                    });
+            };
         }
     </script>
 

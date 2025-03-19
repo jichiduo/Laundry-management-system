@@ -205,5 +205,10 @@
     "The reversal amount is more than the current balance.": "冲正金额超过当前余额",
     "The amount should not less than 0.": "金额不应少于0",
     "You do not have sufficient privileges to do this.": "您没有足够的权限执行此操作",
-    "Customer do not have sufficient balance. Current balance is ": "客户余额不足，当前余额为"
+    "Customer do not have sufficient balance. Current balance is ": "客户余额不足，当前余额为",
+    "Printer Server": "打印机服务器",
+    "How to use?": "如何使用？",
+    "1. Download the printer server from the link above.": "1. 从上面的链接下载打印机服务器。",
+    "2. Install the printer server on your computer.": "2. 在您的计算机上安装打印机服务器。",
+    "3. Add one serial port name is KEY": "3. 添加一个串口名称为KEY"
 }

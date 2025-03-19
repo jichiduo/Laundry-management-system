@@ -16,6 +16,8 @@ use App\Models\WorkOrder;
 use App\Models\WorkOrderItem;
 use App\Models\Division;
 use App\Models\Transaction;
+use App\Models\Customer;
+
 
 class WorkOrderController extends Controller
 {
@@ -80,6 +82,7 @@ class WorkOrderController extends Controller
         $workOrderItems = WorkOrderItem::where('wo_no', $workOrderNumber)->get();
         $txn = Transaction::where('wo_no', $workOrderNumber)->get();
         $division = Division::where('id', $workOrder->division_id)->first();
+        $customer = Customer::where('id', $workOrder->customer_id)->first();
         $content  = "\t" . $division->name . "\n\n";
         $content .= $division->address . "\n";
         $content .= __('Tel') . ':' . $division->tel . "\n\n";
@@ -106,7 +109,7 @@ class WorkOrderController extends Controller
         foreach ($txn as $t) {
             $content .= "-" . $t->payment_type . "\t" . $t->amount . "\n";
             if ($t->payment_type == 'Member Card') {
-                $content .= __("-Card No:")  . $t->card_no . "\n";
+                $content .= "-" . __("Balance") . ":"  . $customer->balance . "\n";
             }
         }
 
@@ -128,6 +131,8 @@ class WorkOrderController extends Controller
         $content .= __('4. Complaints occur 1x24 hours after the laundry is picked up') . "\n";
 
         $content .= "\n\n\n\n\n\n\n\n";
+        //add cut paper ESC command
+        $content .= "\x1D\x56\x41\x00";
         //write content to a file
         $filename = substr($workOrderNumber, 0, 4) . "/receipt/" . $workOrderNumber . ".txt";
         Storage::disk('public')->put($filename, $content);
