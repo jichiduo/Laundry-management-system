@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     //report
     Volt::route('/report/daily', 'report.daily');
     Volt::route('/report/monthly', 'report.monthly');
+    Volt::route('/report/yearly', 'report.yearly');
 
     //settings
     Volt::route('/profile', 'settings.profile');

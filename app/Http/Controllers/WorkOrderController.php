@@ -127,7 +127,7 @@ class WorkOrderController extends Controller
         $content .= "---------------------------------\n";
         $content .= __('1. Damage/fade/tear/shrinkage of clothing in the washing and drying process caused by the basic nature of the clothing material is not our responsibility, it is the consumer risk') . "\n";
         $content .= __('2. The loss of valuables left in clothes is not our responsibility.') . "\n";
-        $content .= __('3. If the amount of clothing has been filled in accurately and correctly, then the amount we calculated is considered correct') . "\n";
+        $content .= __('3. If any of the clothing fades, consumers MUST inform us; if not, then if fading occurs, it is not our responsibility.') . "\n";
         $content .= __('4. Complaints occur 1x24 hours after the laundry is picked up') . "\n";
 
         $content .= "\n\n\n\n\n\n\n\n";
