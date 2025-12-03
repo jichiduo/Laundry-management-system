@@ -13,7 +13,7 @@ The system is a simple laundry management system with multilanguage support.
 2. Install the dependencies 
 ``` bash
     Composer install 
-
+    npm install
     npm run build
 ```
 3. Configure the database connection, create a database name cuci
@@ -23,10 +23,11 @@ The system is a simple laundry management system with multilanguage support.
 4. Run the migrations 
 ``` bash
     php artisan migrate:fresh --seed
+    php artisan key:generate
 ```    
 5. Run the server 
 ``` bash
-    php artisan server
+    php artisan serve
 ```
 ## Login
 
@@ -42,6 +43,7 @@ The system is a simple laundry management system with multilanguage support.
 - Laundry transaction management
 - Laundry customer management
 - Silent print to local printer via https://github.com/imTigger/webapp-hardware-bridge
+- Various report
 
 ## Contact
 For any questions or issues, please contact us at [jichiduo@163.com](mailto:jichiduo@163.com).
