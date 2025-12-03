@@ -35,11 +35,9 @@ new class extends Component {
     {
         return [
             ['key' => 'division_name', 'label' => __('Division')],
-            ['key' => 'customer_name', 'label' => __('Customer')],
-            ['key' => 'customer_tel', 'label' => __('Customer Tel')],
+            ['key' => 'name', 'label' => __('Product')],
             ['key' => 'quantity', 'label' => __('Quantity')],
             ['key' => 'amount', 'label' => __('Amount'), 'format' => ['currency', '0,.']],
-            ['key' => 'ATV', 'label' => __('Average Transaction Value'), 'format' => ['currency', '0,.']],
         ];
     }
 
@@ -69,24 +67,26 @@ new class extends Component {
             //$sql = "select a.division_name,max(a.customer_name) as customer_name, count(a.id) as quantity, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by a.division_name, a.customer_id order by a.division_name, amount desc";
             $data = DB::table('work_orders as a')
                 ->join('transactions as b', 'a.wo_no', '=', 'b.wo_no')
-                ->select('a.division_name', DB::raw('max(a.customer_name) as customer_name'),DB::raw('max(a.customer_tel) as customer_tel'), DB::raw('count(a.id) as quantity'), DB::raw('sum(b.amount) as amount'), DB::raw(' round(sum(b.amount) / count(a.id),0) as ATV'))
+                ->join('work_order_items as c', 'a.wo_no', '=', 'c.wo_no')
+                ->select('a.division_name', 'c.name', DB::raw('count(c.quantity) as quantity'), DB::raw('sum(c.sub_total) as amount'))
                 ->where('b.remark', 'CfmOrd')
                 ->whereNotIn('a.status', ['draft', 'cancel'])
                 ->where('a.division_id', $my_id)
                 ->whereBetween('b.created_at', [$this->start_date, $end_date])
-                ->groupBy('a.division_name', 'a.customer_id')
+                ->groupBy('a.division_name', 'c.name')
                 ->orderByDesc('amount')
                 ->paginate(200);
         } else {
-            //$sql = "select a.division_name,max(a.customer_name) as customer_name, count(a.id) as quantity, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by a.division_name, a.customer_id order by a.division_name, amount desc";
+            //$sql = "select a.division_name,max(a.customer_name) as customer_name, count(a.id) as quantity, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by a.division_name, a.customer_id order by a.division_id, amount desc";
             $data = DB::table('work_orders as a')
                 ->join('transactions as b', 'a.wo_no', '=', 'b.wo_no')
-                ->select('a.division_name', DB::raw('max(a.customer_name) as customer_name'),DB::raw('max(a.customer_tel) as customer_tel'), DB::raw('count(a.id) as quantity'), DB::raw('sum(b.amount) as amount'), DB::raw(' round(sum(b.amount) / count(a.id),0) as ATV'))
+                ->join('work_order_items as c', 'a.wo_no', '=', 'c.wo_no')
+                ->select('a.division_name', 'c.name', DB::raw('count(c.quantity) as quantity'), DB::raw('sum(c.sub_total) as amount'))
                 ->where('b.remark', 'CfmOrd')
                 ->whereNotIn('a.status', ['draft', 'cancel'])
                 ->where('a.group_id', $my_id)
                 ->whereBetween('b.created_at', [$this->start_date, $end_date])
-                ->groupBy('a.division_name', 'a.customer_id')
+                ->groupBy('a.division_name', 'c.name')
                 ->orderBy('a.division_id')
                 ->orderByDesc('amount')
                 ->paginate(200);
@@ -140,7 +140,7 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="{{__('Customer Report')}}" separator progress-indicator />
+    <x-header title="{{__('Product Report')}}" separator progress-indicator />
 
     <!-- TABLE  -->
     <x-card>

@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Volt::route('/report/monthly', 'report.monthly');
     Volt::route('/report/yearly', 'report.yearly');
     Volt::route('/report/customer', 'report.customer');
+    Volt::route('/report/product', 'report.product');
 
     //settings
     Volt::route('/profile', 'settings.profile');

@@ -64,6 +64,7 @@
                     <x-menu-item title="{{__('Monthly')}}" icon="o-calendar-days" link="/report/monthly" />
                     <x-menu-item title="{{__('Yearly')}}" icon="o-calendar-days" link="/report/yearly" />
                     <x-menu-item title="{{__('Customer')}}" icon="o-user-group" link="/report/customer" />
+                    <x-menu-item title="{{__('Product')}}" icon="o-shopping-bag" link="/report/product" />
                 </x-menu-sub>
 
                 @if(auth()->user()->role !='user')
