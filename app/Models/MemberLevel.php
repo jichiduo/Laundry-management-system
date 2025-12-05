@@ -17,6 +17,9 @@ class MemberLevel extends Model
     protected $fillable = [
         'name',
         'discount',
+        'topup_amount',
+        'effective_days',
+        'remark',
     ];
 
     /**
@@ -27,5 +30,7 @@ class MemberLevel extends Model
     protected $casts = [
         'id' => 'integer',
         'discount' => 'decimal:2',
+        'topup_amount' => 'decimal:2',
+        'effective_days' => 'integer',
     ];
 }

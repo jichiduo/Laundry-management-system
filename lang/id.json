@@ -63,6 +63,13 @@
     "Data saved.": "Data tersimpan.",
     "name, tel, email...": "nama, tel, emel...",
     "Member Card": "Kartu Anggota",
+    "Member Level": "Tingkat Anggota",
+    "Member Discount": "Diskon Anggota",
+    "Member Expire Date": "Tanggal Kedaluwarsa Anggota",
+    "Topup Amount": "Jumlah Topup",
+    "Effective Days": "Hari Efektif",
+    "Topup the corresponding amount allows user to automatically become a member of the corresponding level": "Topup jumlah yang sesuai memungkinkan pengguna secara otomatis menjadi anggota tingkat yang sesuai",
+    "The topup amount is less than the current member level, please topup more to extend or upgrade user member level": "Jumlah topup kurang dari tingkat anggota saat ini, silakan topup lebih untuk memperpanjang atau meningkatkan tingkat anggota pengguna",
     "Edit": "Edit",
     "Delete": "Hapus",
     "Add": "Tambah",
@@ -215,5 +222,7 @@
     "How to use?": "Bagaimana cara menggunakan?",
     "1. Download the printer server from the link above.": "1. Unduh server pencetak dari tautan di atas.",
     "2. Install the printer server on your computer.": "2. Instal server pencetak di komputer Anda.",
-    "3. Add one serial port name is KEY": "3. Tambahkan satu nama port serial adalah KEY"
+    "3. Add one serial port name is KEY": "3. Tambahkan satu nama port serial adalah KEY",
+    "Topup Receipt": "Struk Topup",
+    "New Balance": "Saldo Baru"
 }

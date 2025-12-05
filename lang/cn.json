@@ -63,6 +63,13 @@
     "Data saved.": "数据已保存",
     "name, tel, email...": "姓名，电话，电子邮件...",
     "Member Card": "会员卡",
+    "Member Level": "会员等级",
+    "Member Discount": "会员折扣",
+    "Member Expire Date": "会员到期日期",
+    "Topup Amount": "充值金额",
+    "Effective Days": "有效天数",
+    "Topup the corresponding amount allows user to automatically become a member of the corresponding level": "充值相应金额允许用户自动成为对应级别的会员",
+    "The topup amount is less than the current member level, please topup more to extend or upgrade user member level": "充值金额低于当前会员等级，请充值更多以延长或升级用户会员等级",
     "Edit": "编辑",
     "Delete": "删除",
     "Add": "添加",
@@ -215,5 +222,7 @@
     "How to use?": "如何使用？",
     "1. Download the printer server from the link above.": "1. 从上面的链接下载打印机服务器。",
     "2. Install the printer server on your computer.": "2. 在您的计算机上安装打印机服务器。",
-    "3. Add one serial port name is KEY": "3. 添加一个串口名称为KEY"
+    "3. Add one serial port name is KEY": "3. 添加一个串口名称为KEY",
+    "Topup Receipt": "充值收据",
+    "New Balance": "新余额"
 }

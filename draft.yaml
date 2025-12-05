@@ -136,6 +136,9 @@ models:
   MemberLevel:
     name: string:255
     discount: decimal:4,2 default:1
+    topup_amount: decimal:20,2 default:0.00
+    effective_days: integer:5 default:0
+    remark: string:255 nullable
 
   Customer:
     name: string:128 index

@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Volt::route('/report/yearly', 'report.yearly');
     Volt::route('/report/customer', 'report.customer');
     Volt::route('/report/product', 'report.product');
+    Volt::route('/report/applog', 'report.applog');
 
     //settings
     Volt::route('/profile', 'settings.profile');
@@ -54,6 +55,8 @@ Route::middleware('auth')->group(function () {
     Volt::route('/product', 'settings.product');
     Volt::route('/type', 'settings.type');
     Volt::route('/currency', 'settings.currency');
+    Volt::route('/member-level', 'settings.member_level');
+    
     //for future use
     //Volt::route('/account-code', 'settings.acc_code');
     //Volt::route('/exchange-rate', 'settings.exchange_rate');

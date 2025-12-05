@@ -65,6 +65,7 @@
                     <x-menu-item title="{{__('Yearly')}}" icon="o-calendar-days" link="/report/yearly" />
                     <x-menu-item title="{{__('Customer')}}" icon="o-user-group" link="/report/customer" />
                     <x-menu-item title="{{__('Product')}}" icon="o-shopping-bag" link="/report/product" />
+                    <x-menu-item title="{{__('Applog')}}" icon="o-computer-desktop" link="/report/applog" />
                 </x-menu-sub>
 
                 @if(auth()->user()->role !='user')
@@ -79,6 +80,7 @@
                     <x-menu-item title="{{__('Division')}}" icon="o-share" link="/division" />
                     <x-menu-item title="{{__('Type')}}" icon="o-chart-bar" link="/type" />
                     <x-menu-item title="{{__('Currency')}}" icon="o-currency-dollar" link="/currency" />
+                    <x-menu-item title="{{__('Member Level')}}" icon="o-face-smile" link="/member-level" />
                     {{--
                     <x-menu-item title="{{__('Account Code')}}" icon="o-calculator" link="/account-code" /> --}}
                     @endif

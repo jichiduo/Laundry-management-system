@@ -139,6 +139,41 @@ class WorkOrderController extends Controller
         return $content;
     }
 
+    //get topup receipt print content by transaction number
+    public function getTopupReceipt($transNo)
+    {
+        $transaction = Transaction::where('trans_no', $transNo)->first();
+        $customer = Customer::where('id', $transaction->customer_id)->first();
+        //get division info by transaction created_by user
+        $division_id = User::where('id', $transaction->created_by)->pluck('division_id')->first();
+        $division = Division::where('id', $division_id)->first();
+        $content  = "\t" . $division->name . "\n\n";
+        $content .= $division->address . "\n";
+        $content .= __('Tel') . ':' . $division->tel . "\n\n";
+
+        $content .= __('Topup Receipt') . "\n\n";
+        $content .= "---------------------------------\n";
+        $content .= __('Trans No:') . $transaction->trans_no . "\n";
+        $content .= __('Date') . ":" . date_format($transaction->created_at, 'd-m-Y H:i:s') . "\n";
+        $content .= __('Customer Name') . ":" . $customer->name . "\n";
+        $content .= "---------------------------------\n";
+        $content .= __('Topup Amount') . "\t" . $transaction->amount . "\n";
+        $content .= __('New Balance') . "\t" . $customer->balance . "\n";
+        $content .= "---------------------------------\n";
+        $content .= "\n\n\n\n";
+        $content .= "\t" . __('Thank You') . "\n";
+        $content .= "\t" . __('See You Again') . "\n";
+        $content .= "---------------------------------\n";
+        $content .= __('Powered By:') . $division->group_name . "\n\n\n";
+        $content .= "\n\n\n\n\n\n\n\n";
+        //add cut paper ESC command
+        $content .= "\x1D\x56\x41\x00";
+        //write content to a file
+        $filename = substr($transNo, 0, 4) . "/receipt/topup_" . $transNo . ".txt";
+        Storage::disk('public')->put($filename, $content);
+        return $content;
+    }
+
     private function getExternalRate($from_CY, $to_CY)
     {
         //loading jquery https://gasparesganga.com/labs/jquery-loading-overlay/
