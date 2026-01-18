@@ -72,9 +72,10 @@ new class extends Component {
         }
         //get this month sales from work_order
         if (Auth::user()->role == 'user') {
-            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where division_id = ? and status not in ('draft' , 'cancel') and MONTH(created_at) = MONTH(CURDATE())";
+            //chang from the month to year and month
+            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where division_id = ? and status not in ('draft' , 'cancel') and YEAR(created_at) = YEAR(CURDATE()) and MONTH(created_at) = MONTH(CURDATE())";
         } else {
-            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where group_id = ? and status not in ('draft' , 'cancel') and MONTH(created_at) = MONTH(CURDATE())";
+            $sql = "select ifnull(sum(grand_total),0) as total from work_orders where group_id = ? and status not in ('draft' , 'cancel') and YEAR(created_at) = YEAR(CURDATE()) and MONTH(created_at) = MONTH(CURDATE())";
         }
         $cnt = DB::select($sql, [$my_id]);
         foreach ($cnt as $c) {
