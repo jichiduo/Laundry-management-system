@@ -17,6 +17,7 @@ use App\Models\WorkOrderItem;
 use App\Models\Division;
 use App\Models\Transaction;
 use App\Models\Customer;
+use App\Models\User;
 
 
 class WorkOrderController extends Controller
@@ -143,9 +144,13 @@ class WorkOrderController extends Controller
     public function getTopupReceipt($transNo)
     {
         $transaction = Transaction::where('trans_no', $transNo)->first();
+        //dd($transaction);
         $customer = Customer::where('id', $transaction->customer_id)->first();
         //get division info by transaction created_by user
-        $division_id = User::where('id', $transaction->created_by)->pluck('division_id')->first();
+        $myUser = User::where('id', $transaction->create_by)->first();
+        //dd($myUser);
+        $division_id = $myUser->division_id;
+        //get division info by division_id
         $division = Division::where('id', $division_id)->first();
         $content  = "\t" . $division->name . "\n\n";
         $content .= $division->address . "\n";
@@ -157,8 +162,8 @@ class WorkOrderController extends Controller
         $content .= __('Date') . ":" . date_format($transaction->created_at, 'd-m-Y H:i:s') . "\n";
         $content .= __('Customer Name') . ":" . $customer->name . "\n";
         $content .= "---------------------------------\n";
-        $content .= __('Topup Amount') . "\t" . $transaction->amount . "\n";
-        $content .= __('New Balance') . "\t" . $customer->balance . "\n";
+        $content .= __('Topup Amount') . ":" .  "\t" . $transaction->amount . "\n";
+        $content .= __('New Balance') . ":" .  "\t" . $customer->balance . "\n";
         $content .= "---------------------------------\n";
         $content .= "\n\n\n\n";
         $content .= "\t" . __('Thank You') . "\n";

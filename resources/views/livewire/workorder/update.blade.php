@@ -170,6 +170,12 @@ new class extends Component {
         if ($action == 'newCustomer') {
             $this->myCustomerModal = true;
         } elseif ($action == 'choose') {
+            //check if already add one item then can not change customer
+            $itemCount = WorkOrderItem::where('wo_no', $this->wo_no)->count();
+            if ($itemCount > 0) {
+                $this->error(__('Cannot change customer after adding items'));
+                return;
+            }
             $this->myCustomer = Customer::findOrFail($id);
             $this->customer_id = $this->myCustomer->id;
             $this->customer_name = $this->myCustomer->name;
@@ -178,6 +184,14 @@ new class extends Component {
             $this->customer_discount = $this->myCustomer->member_discount;
             $this->customer_balance = $this->myCustomer->balance;
             $this->myCustomerModal = false;
+        } elseif ($action == 'remove') {
+            if ($this->wo_status != 'draft') {
+                $this->error(__('Work Order already confirmed'));
+                return;
+            }
+            $woi = WorkOrderItem::findOrFail($id);
+            $woi->delete();
+            $this->success(__('Item removed'));
         }
     }
     // new Item
@@ -283,6 +297,11 @@ new class extends Component {
             $this->error(__('Work Order already confirmed'));
             return;
         }
+        //check if customer already choose
+        if (empty($this->customer_id)) {
+            $this->warning(__('Please choose a customer before adding items'));;
+            return;
+        }
         $validatedData = $this->validate();
         //calc tax
         $this->ItemTotal    = $this->ItemPrice * $this->ItemQty;
@@ -290,7 +309,7 @@ new class extends Component {
         $this->ItemTax      = $this->ItemTotal * $this->tax_rate;
         $this->ItemDiscount = $this->ItemTotal * $this->customer_discount;
         $this->ItemSubTotal = $this->ItemTotal - $this->ItemDiscount + $this->ItemTax;
-        $this->ItemSubTotal = $this->roundUpToThousand($this->ItemSubTotal);
+        //$this->ItemSubTotal = $this->roundUpToThousand($this->ItemSubTotal);
         //dd($this->ItemTurnover);
         //calc pickup date by today+turnover
         //$this->ItemPickup = date('Y-m-d', strtotime("+".$this->ItemTurnover." day"));
@@ -390,7 +409,12 @@ new class extends Component {
         $this->wo->discount = $this->data[0]->discount;
         $this->wo->tax = $this->data[0]->tax;
         $this->wo->total = $this->data[0]->total;
-        $this->wo->grand_total = $this->data[0]->sub_total;
+        //if the payment method is member card , then no round up sub_total
+        if ($this->payment_method == 'Member Card') {
+            $this->wo->grand_total = $this->data[0]->sub_total;
+        } else {
+            $this->wo->grand_total = $this->roundUpToThousand($this->data[0]->sub_total);
+        }
         //status: draft->pending->4pickup->complete
         $this->wo->status = 'pending';
         $this->wo->save();

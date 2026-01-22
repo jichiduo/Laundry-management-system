@@ -16,6 +16,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Validate;
 use Carbon\Carbon;
 use App\Http\Controllers\WorkOrderController;
+use Illuminate\Support\Facades\Storage;
 
 
 new class extends Component {
@@ -156,12 +157,12 @@ new class extends Component {
                 //check if current member_expire_date is more than now
                 if ($this->myCustomer->member_expire_date && Carbon::parse($this->myCustomer->member_expire_date)->isFuture()) {
                     $this->myCustomer->member_expire_date = Carbon::parse($this->myCustomer->member_expire_date)->addDays($level->effective_days);
-                } else { 
+                } else {
                     $this->myCustomer->member_expire_date = Carbon::now()->addDays($level->effective_days);
                 }
                 break; //exit loop after first match
             }
-        }   
+        }
         //update customer
         $this->myCustomer->last_trans_no = $trans_no;
         $this->myCustomer->balance = $this->myCustomer->balance + $this->amount;
@@ -182,12 +183,10 @@ new class extends Component {
         $logs->save();
         $this->success(__("Topup successed"), position: 'toast-top');
         $this->amount = 0;
-        //reset page
-        $this->resetPage();
+        //create receipt print file
+        $woc->getTopupReceipt($trans_no);
         //retun to view
         return redirect()->route('customer_topup', ['id' => $this->myCustomer->id, 'trans_no' => $trans_no]);
-
-
     }
 
     public function calc(): bool
@@ -255,11 +254,10 @@ new class extends Component {
         $this->getCustomer($id);
         //check if trans_no is not empty, then set print content
 
-        if(!empty($trans_no)) {
+        if (!empty($trans_no)) {
             $this->print_action = 'receipt';
             $this->content = str_replace('"', '', json_encode($this->getDownload($trans_no)));
         }
-
     }
 
     public function getDownload($trans_no)
@@ -276,7 +274,7 @@ new class extends Component {
     }
 
 
-    public function getCustomer($id): void 
+    public function getCustomer($id): void
     {
         $this->myCustomer = Customer::findOrFail($id);
         $this->uname = $this->myCustomer->name;
@@ -286,10 +284,9 @@ new class extends Component {
         $this->remark = $this->myCustomer->remark;
         $this->balance = $this->myCustomer->balance;
         //get member level info
-        $this->member_level_name = $this->myCustomer->member_level_name??'';
-        $this->member_discount = $this->myCustomer->member_discount??'';
-        $this->member_expire_date = $this->myCustomer->member_expire_date??'';
-
+        $this->member_level_name = $this->myCustomer->member_level_name ?? '';
+        $this->member_discount = $this->myCustomer->member_discount ?? '';
+        $this->member_expire_date = $this->myCustomer->member_expire_date ?? '';
     }
 };
 ?>
@@ -311,7 +308,7 @@ new class extends Component {
                 <x-input label="{{__('Member Expire Date')}}" wire:model="member_expire_date" disabled />
             </div>
             <x-header title="{{__('Member Level')}}" subtitle="{{__('Topup the corresponding amount allows user to automatically become a member of the corresponding level')}}" size="text-xl" separator />
-            <x-table :headers="$memberLevelHeaders" :rows="$MemberLevels"  show-empty-text />
+            <x-table :headers="$memberLevelHeaders" :rows="$MemberLevels" show-empty-text />
             <div class="divider"></div>
             <div class="grid grid-cols-3  gap-2">
                 <x-input label="{{__('Topup')}} {{__('Amount')}}" wire:model="amount">
