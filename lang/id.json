@@ -216,6 +216,7 @@
     "Balance": "Saldo",
     "Topup successed": "Topup berhasil",
     "Reversal successed": "Pembalikan berhasil",
+    "The topup amount should not less than the minimum topup amount :amount": "Jumlah topup tidak boleh kurang dari jumlah topup minimum :amount",
     "This transaction is not a topup transaction.": "Transaksi ini bukan transaksi topup.",
     "The reversal amount is more than the current balance.": "Jumlah pembalikan lebih besar dari saldo saat ini.",
     "The amount should not less than 0.": "Jumlah tidak boleh kurang dari 0.",

@@ -216,6 +216,7 @@
     "Balance": "余额",
     "Topup successed": "充值成功",
     "Reversal successed": "冲正成功",
+    "The topup amount should not less than the minimum topup amount :amount": "充值金额不应少于最低充值金额 :amount",
     "This transaction is not a topup transaction.": "此交易不是充值交易",
     "The reversal amount is more than the current balance.": "冲正金额超过当前余额",
     "The amount should not less than 0.": "金额不应少于0",

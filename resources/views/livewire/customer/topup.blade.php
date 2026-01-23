@@ -119,18 +119,23 @@ new class extends Component {
     //save 
     public function topup()
     {
-        //check
+        //topup method is like this 
+        //1. check the amount is valid
+        //2. add one transaction record
+        //3. update customer balance and member level info
+        //4. add to applog
+        //if the memeber recharge to their account
+        //the expire date should extend according to the member level effective days
+        //the effective days should calculate as $this->amount / memberLevel->topup_amount * memberLevel->effective_days
+        //the minimum topup amount should be the minimum topup amount of the member levels
         if (!$this->calc()) {
             return false;
         }
-        //check if the current customer level is higher than this topup level
-        if ($this->myCustomer->member_level_id) {
-            $currentLevel = MemberLevel::where('id', $this->myCustomer->member_level_id)->first();
-            if ($currentLevel && $currentLevel->topup_amount > $this->amount) {
-                //send error message
-                $this->addError('amount', __('The topup amount is less than the current member level, please topup more to extend or upgrade user member level'));
-                return false;
-            }
+        //check the topup amount , the amount should more than the minimum topup amount of the member levels
+        $min_topup = MemberLevel::min('topup_amount');
+        if ($this->amount < $min_topup) {
+            $this->addError('amount', __('The topup amount should not less than the minimum topup amount :amount', ['amount' => $min_topup]));
+            return false;
         }
         //add one transaction record
         $woc = new WorkOrderController();
@@ -146,23 +151,50 @@ new class extends Component {
         $myTrans->create_by = Auth::user()->id;
         $myTrans->created_at = Carbon::now();
         $myTrans->save();
-        //check if the topup amount reach any member level
-        $memberLevels = MemberLevel::orderBy('topup_amount', 'desc')->get();
-        foreach ($memberLevels as $level) {
-            if ($this->amount >= $level->topup_amount) {
-                //update customer member level info
-                $this->myCustomer->member_level_id = $level->id;
-                $this->myCustomer->member_level_name = $level->name;
-                $this->myCustomer->member_discount = $level->discount;
-                //check if current member_expire_date is more than now
-                if ($this->myCustomer->member_expire_date && Carbon::parse($this->myCustomer->member_expire_date)->isFuture()) {
-                    $this->myCustomer->member_expire_date = Carbon::parse($this->myCustomer->member_expire_date)->addDays($level->effective_days);
-                } else {
-                    $this->myCustomer->member_expire_date = Carbon::now()->addDays($level->effective_days);
+
+        //check if the current customer level is already there 
+        if ($this->myCustomer->member_level_id) {
+            $currentLevel = MemberLevel::where('id', $this->myCustomer->member_level_id)->first();
+            // if ($currentLevel && $currentLevel->topup_amount > $this->amount) {
+            //     //send error message
+            //     $this->addError('amount', __('The topup amount is less than the current member level, please topup more to extend or upgrade user member level'));
+            //     return false;
+            // }
+
+            if ($currentLevel) {
+                //recharge current member level effective days
+                //the effective days should calculate as $this->amount / currentLevel->topup_amount * currentLevel->effective_days
+                $additional_days = floor($this->amount / $currentLevel->topup_amount * $currentLevel->effective_days);
+                if ($additional_days > 0) {
+                    //check if current member_expire_date is more than now
+                    if ($this->myCustomer->member_expire_date && Carbon::parse($this->myCustomer->member_expire_date)->isFuture()) {
+                        $this->myCustomer->member_expire_date = Carbon::parse($this->myCustomer->member_expire_date)->addDays($additional_days);
+                    } else {
+                        $this->myCustomer->member_expire_date = Carbon::now()->addDays($additional_days);
+                    }
                 }
-                break; //exit loop after first match
+            } else {
+                //check if the topup amount reach any member level
+                $memberLevels = MemberLevel::orderBy('topup_amount', 'desc')->get();
+                foreach ($memberLevels as $level) {
+                    if ($this->amount >= $level->topup_amount) {
+                        //update customer member level info
+                        $this->myCustomer->member_level_id = $level->id;
+                        $this->myCustomer->member_level_name = $level->name;
+                        $this->myCustomer->member_discount = $level->discount;
+                        //check if current member_expire_date is more than now
+                        if ($this->myCustomer->member_expire_date && Carbon::parse($this->myCustomer->member_expire_date)->isFuture()) {
+
+                            $this->myCustomer->member_expire_date = Carbon::parse($this->myCustomer->member_expire_date)->addDays($level->effective_days);
+                        } else {
+                            $this->myCustomer->member_expire_date = Carbon::now()->addDays($level->effective_days);
+                        }
+                        break; //exit loop after first match
+                    }
+                }
             }
         }
+
         //update customer
         $this->myCustomer->last_trans_no = $trans_no;
         $this->myCustomer->balance = $this->myCustomer->balance + $this->amount;

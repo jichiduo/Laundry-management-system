@@ -384,7 +384,9 @@ new class extends Component {
         // } else {
         //     $this->balance_due = $this->data[0]->sub_total;
         // }
-        $this->balance_due = $this->data[0]->sub_total;
+
+        $this->discount = $this->data[0]->discount;
+        $this->balance_due = $this->data[0]->sub_total + $this->discount;
         $this->amount = $this->balance_due;
         //open myTxnModal
         $this->myTxnModal = true;
@@ -406,14 +408,19 @@ new class extends Component {
         $this->wo->is_express = $this->is_express;
         $this->wo->piece = $this->data[0]->cnt;
         $this->wo->pickup_date = $this->data[0]->pickup_date;
-        $this->wo->discount = $this->data[0]->discount;
+        //only apply discount when user use member card
+        if ($this->payment_method == 'Member Card') {
+            $this->wo->discount = $this->data[0]->discount;
+        } else {
+            $this->wo->discount = 0;
+        }
         $this->wo->tax = $this->data[0]->tax;
         $this->wo->total = $this->data[0]->total;
         //if the payment method is member card , then no round up sub_total
         if ($this->payment_method == 'Member Card') {
             $this->wo->grand_total = $this->data[0]->sub_total;
         } else {
-            $this->wo->grand_total = $this->roundUpToThousand($this->data[0]->sub_total);
+            $this->wo->grand_total = $this->roundUpToThousand($this->data[0]->sub_total + $this->data[0]->discount);
         }
         //status: draft->pending->4pickup->complete
         $this->wo->status = 'pending';
@@ -475,6 +482,19 @@ new class extends Component {
             $this->addError('amount', __('The amount is required.'));
         }
         return false;
+    }
+
+    public function change_payment_method()
+    {
+
+        //if the payment method is member card , set amount and balance due to minus discount
+        if ($this->payment_method == 'Member Card') {
+            $this->balance_due = $this->data[0]->sub_total;
+            $this->amount = $this->balance_due;
+        } else {
+            $this->balance_due = $this->data[0]->sub_total + $this->discount;
+            $this->amount = $this->balance_due;
+        }
     }
 };
 ?>
@@ -577,7 +597,7 @@ new class extends Component {
         <div class="grid grid-cols-1 gap-2 mt-4">
             <x-input label="{{__('Pay Amount')}}" wire:model="amount" wire:keydown.enter="calc" />
             <x-radio label="{{__('Payment Method')}}" :options="$paymentMethods" option-value="name" option-label="name"
-                wire:model="payment_method" />
+                wire:model="payment_method" wire:click="change_payment_method" />
         </div>
         <x-slot:actions>
             <x-button label="{{__('Confirm')}}" wire:click="submitOrder" spinner class="btn-primary" />
