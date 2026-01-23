@@ -211,6 +211,8 @@
     "Duration cannot be more than 1 month.": "持续时间不能超过1个月",
     "Duration cannot be more than 1 year.": "持续时间不能超过1年",
     "Topup": "充值",
+    "Revenue": "收入",
+    "Total Topup Amount": "充值总额",
     "Transaction Number": "交易编号",
     "Reversal": "冲正",
     "Balance": "余额",
@@ -228,5 +230,8 @@
     "2. Install the printer server on your computer.": "2. 在您的计算机上安装打印机服务器。",
     "3. Add one serial port name is KEY": "3. 添加一个串口名称为KEY",
     "Topup Receipt": "充值收据",
-    "New Balance": "新余额"
+    "New Balance": "新余额",
+    "Number of Members": "会员数量",
+    "Member Balance": "会员余额",
+    "No member level found, please contact administrator to set up member levels first": "未找到会员等级，请联系管理员先设置会员等级"
 }

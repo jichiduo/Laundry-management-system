@@ -35,16 +35,29 @@ new class extends Component {
         return [
             ['key' => 'division_name', 'label' => __('Name')],
             ['key' => 'payment_date', 'label' => __('Date')],
-            ['key' => 'amount', 'label' => __('Amount'), 'format' => ['currency', '0,.']],
+            ['key' => 'revenue', 'label' => __('Revenue'), 'format' => ['currency', '0,.']],
+            ['key' => 'topup', 'label' => __('Topup'), 'format' => ['currency', '0,.']],
+            ['key' => 'total', 'label' => __('Total'), 'format' => ['currency', '0,.']],
         ];
     }
     public function headersTotal(): array
     {
         return [
             ['key' => 'division_name', 'label' => __('Name')],
-            ['key' => 'amount', 'label' => __('Total'), 'format' => ['currency', '0,.']],
+            ['key' => 'revenue', 'label' => __('Revenue'), 'format' => ['currency', '0,.']],
+            ['key' => 'topup', 'label' => __('Topup'), 'format' => ['currency', '0,.']],
+            ['key' => 'total', 'label' => __('Total'), 'format' => ['currency', '0,.']],
         ];
     }
+    public function headersMember(): array
+    {
+        return [
+            ['key' => 'group_id', 'label' => __('Group ID')],
+            ['key' => 'member_count', 'label' => __('Number of Members')],
+            ['key' => 'total', 'label' => __('Total'), 'format' => ['currency', '0,.']],
+        ];
+    }
+
 
     public function allData(): array
     {
@@ -65,17 +78,42 @@ new class extends Component {
         }
 
         if (Auth::user()->role == 'user') {
-            $sql = "select a.division_name,date_format(b.created_at,'%Y-%m') as payment_date, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by division_name, payment_date";
+            $sql = "select a.division_name,date_format(b.created_at,'%Y-%m') as payment_date, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and b.payment_type<>'Member Card' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by division_name, payment_date";
+            $sql2 = "select division_name, date_format(created_at,'%Y-%m') as payment_date, sum(amount) as amount from transactions where remark='Topup' and division_id = ? and created_at between ? and ? group by division_name, payment_date";
         } else {
-            $sql = "select a.division_name,date_format(b.created_at,'%Y-%m') as payment_date, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by division_name, payment_date order by division_name, payment_date";
+            $sql = "select a.division_name,date_format(b.created_at,'%Y-%m') as payment_date, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and b.payment_type<>'Member Card' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by division_name, payment_date order by division_name, payment_date";
+            $sql2 = "select division_name, date_format(created_at,'%Y-%m') as payment_date, sum(amount) as amount from transactions where remark='Topup' and group_id = ? and created_at between ? and ? group by division_name, payment_date order by division_name, payment_date";
         }
         //end_date = end_date + 1 day
         $end_date = $this->end_date;
         $end_date = date('Y-m-d', strtotime($end_date . ' +1 day'));
 
         $data = DB::select($sql, [$my_id, $this->start_date, $end_date]);
+        $data2 = DB::select($sql2, [$my_id, $this->start_date, $end_date]);
+        //merge data and data2 based on division_name and payment_date
+        $data3 = [];
+        foreach ($data as $row) {
+            $data3[] = (object)[
+                'division_name' => $row->division_name,
+                'payment_date' => $row->payment_date,
+                'revenue' => $row->amount,
+                'topup' => 0,
+                'total' => $row->amount,
+            ];
+            end($data3);
+            $newIndex = key($data3);
+
+            foreach ($data2 as $row2) {
+                if ($row->division_name == $row2->division_name && $row->payment_date == $row2->payment_date) {
+                    $data3[$newIndex]->topup = $row2->amount;
+                    $data3[$newIndex]->total = $row->amount + $row2->amount;
+
+                    break;
+                }
+            }
+        }
         //dd($data);
-        return $data;
+        return $data3;
     }
 
     public function allDataTotal(): array
@@ -98,16 +136,54 @@ new class extends Component {
         }
 
         if (Auth::user()->role == 'user') {
-            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by division_name";
+            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and b.payment_type<>'Member Card' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by division_name";
+            //total topup amount per division
+            $sql2 = "select division_name, sum(amount) as amount from transactions where remark='Topup' and division_id = ? and created_at between ? and ? group by division_name";
         } else {
-            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by division_name order by division_name";
+            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and b.payment_type<>'Member Card' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by division_name order by division_name";
+            $sql2 = "select division_name, sum(amount) as amount from transactions where remark='Topup' and group_id = ? and created_at between ? and ? group by division_name order by division_name";
         }
         //end_date = end_date + 1 day
         $end_date = $this->end_date;
         $end_date = date('Y-m-d', strtotime($end_date . ' +1 day'));
 
         $data = DB::select($sql, [$my_id, $this->start_date, $end_date]);
+        $data2 = DB::select($sql2, [$my_id, $this->start_date, $end_date]);
+        //creae a new array , combin $data and $data2 into $data3 based on division_name
+        $data3 = [];
+        foreach ($data as $row) {
+            $data3[] = (object)[
+                'division_name' => $row->division_name,
+                'revenue' => $row->amount,
+                'topup' => 0,
+                'total' => $row->amount,
+            ];
+            end($data3);
+            $newIndex = key($data3);
+            foreach ($data2 as $row2) {
+                if ($row->division_name == $row2->division_name) {
+                    $data3[$newIndex]->topup = $row2->amount;
+                    $data3[$newIndex]->total = $row->amount + $row2->amount;
+                    break;
+                }
+            }
+        }
         //dd($data);
+        return $data3;
+    }
+
+    public function allDataMember(): array
+    {
+        $user_id = Auth::user()->id;
+        $group_id = Auth::user()->group_id;
+        if (Auth::user()->role == 'admin') {
+            $sql = "select group_id, count(*) as member_count, sum(balance) as total from customers group by group_id";
+            $data = DB::select($sql);
+        } else {
+            $sql = "select group_id, sum(balance) as total from customers where group_id = ?  group by group_id";
+            $data = DB::select($sql, [$group_id]);
+        }
+
         return $data;
     }
 
@@ -135,6 +211,8 @@ new class extends Component {
                 'headers' => [],
                 'allDataTotal' => [],
                 'headersTotal' => [],
+                'allDataMember' => [],
+                'headersMember' => [],
             ];
         } else {
             $this->resetErrorBag();
@@ -143,6 +221,8 @@ new class extends Component {
                 'headers' => $this->headers(),
                 'allDataTotal' => $this->allDataTotal(),
                 'headersTotal' => $this->headersTotal(),
+                'allDataMember' => $this->allDataMember(),
+                'headersMember' => $this->headersMember(),
             ];
         }
     }
@@ -172,6 +252,10 @@ new class extends Component {
         </div>
         <x-header title="{{__('Total')}}" size="text-xl" separator />
         <x-table :headers="$headersTotal" :rows="$allDataTotal" show-empty-text />
+        <div class="mt-4 mb-4">
+            <x-header title="{{__('Member Balance')}}" size="text-xl" separator />
+            <x-table :headers="$headersMember" :rows="$allDataMember" show-empty-text />
+        </div>
     </x-card>
 
 </div>

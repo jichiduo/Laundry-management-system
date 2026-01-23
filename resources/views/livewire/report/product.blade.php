@@ -50,7 +50,13 @@ new class extends Component {
         //end_date = end_date + 1 day
         $end_date = $this->end_date;
         $end_date = date('Y-m-d', strtotime($end_date . ' +1 day'));
-
+        $date1 = Carbon::parse($this->start_date);
+        $date2 = Carbon::parse($end_date);
+        //check the end date is after start date
+        if ($date2 < $date1) {
+            $this->addError('end_date', __('End date cannot be before start date.'));
+            return [];
+        }
         //check if division_id is null
         if ($division_id == null || $group_id == null) {
             $this->addError('end_date', __('Fetal Err, cannot find basic info for the current user.'));
@@ -62,7 +68,7 @@ new class extends Component {
         } else {
             $my_id = $group_id;
         }
-
+        $data = [];
         if (Auth::user()->role == 'user') {
             //$sql = "select a.division_name,max(a.customer_name) as customer_name, count(a.id) as quantity, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by a.division_name, a.customer_id order by a.division_name, amount desc";
             $data = DB::table('work_orders as a')
@@ -150,7 +156,7 @@ new class extends Component {
         </div>
         <div class="mt-4 mb-4">
             <x-header title="{{__('Details')}}" size="text-xl" separator />
-            <x-table :headers="$headers" :rows="$allData"  with-pagination show-empty-text />
+            <x-table :headers="$headers" :rows="$allData" with-pagination show-empty-text />
         </div>
     </x-card>
 

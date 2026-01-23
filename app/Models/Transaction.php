@@ -25,6 +25,10 @@ class Transaction extends Model
         'type',
         'remark',
         'create_by',
+        'division_id',
+        'division_name',
+        'group_id',
+        'group_name',
     ];
 
     /**
@@ -36,5 +40,7 @@ class Transaction extends Model
         'id' => 'integer',
         'customer_id' => 'integer',
         'amount' => 'decimal:2',
+        'division_id' => 'integer',
+        'group_id' => 'integer',
     ];
 }

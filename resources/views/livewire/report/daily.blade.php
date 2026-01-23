@@ -40,9 +40,12 @@ new class extends Component {
     {
         return [
             ['key' => 'division_name', 'label' => __('Name')],
-            ['key' => 'amount', 'label' => __('Total'), 'format' => ['currency', '0,.']],
+            ['key' => 'revenue', 'label' => __('Revenue'), 'format' => ['currency', '0,.']],
+            ['key' => 'topup', 'label' => __('Topup'), 'format' => ['currency', '0,.']],
+            ['key' => 'total', 'label' => __('Total'), 'format' => ['currency', '0,.']],
         ];
     }
+
 
     public function allData(): array
     {
@@ -92,15 +95,38 @@ new class extends Component {
         }
 
         if (Auth::user()->role == 'user') {
-            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by division_name";
+            //total sales amount per division
+            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and b.payment_type<>'Member Card' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by division_name";
+            //total topup amount per division
+            $sql2 = "select division_name, sum(amount) as amount from transactions where remark='Topup' and division_id = ? and created_at between ? and ? group by division_name";
         } else {
-            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by division_name order by division_name";
+            $sql = "select a.division_name, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and b.payment_type<>'Member Card' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by division_name order by division_name";
+            $sql2 = "select division_name, sum(amount) as amount from transactions where remark='Topup' and group_id = ? and created_at between ? and ? group by division_name order by division_name";
         }
         $data = DB::select($sql, [$my_id, $this->start_date, $this->end_date]);
-        //dd($data);
-        return $data;
+        $data2 = DB::select($sql2, [$my_id, $this->start_date, $this->end_date]);
+        //creae a new array , combin $data and $data2 into $data3 based on division_name
+        $data3 = [];
+        foreach ($data as $row) {
+            $data3[] = (object)[
+                'division_name' => $row->division_name,
+                'revenue' => $row->amount,
+                'topup' => 0,
+                'total' => $row->amount,
+            ];
+            end($data3);
+            $newIndex = key($data3);
+            foreach ($data2 as $row2) {
+                if ($row->division_name == $row2->division_name) {
+                    $data3[$newIndex]->topup = $row2->amount;
+                    $data3[$newIndex]->total = $row->amount + $row2->amount;
+                    break;
+                }
+            }
+        }
+        //dd($data3);
+        return $data3;
     }
-
 
     public function with(): array
     {

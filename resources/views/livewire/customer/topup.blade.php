@@ -88,6 +88,11 @@ new class extends Component {
             $myTrans->type = 'credit';
             $myTrans->remark = 'Reversal';
             $myTrans->create_by = Auth::user()->id;
+            //get divison & group info by user
+            $myTrans->division_id = Auth::user()->division_id;
+            $myTrans->division_name = Auth::user()->division_name;
+            $myTrans->group_id = Auth::user()->group_id;
+            $myTrans->group_name = Auth::user()->group_name;
             $myTrans->created_at = Carbon::now();
             $myTrans->save();
             //set current trans remark to Reversed
@@ -149,6 +154,11 @@ new class extends Component {
         $myTrans->type = 'credit';
         $myTrans->remark = 'Topup';
         $myTrans->create_by = Auth::user()->id;
+        //get divison & group info by user 
+        $myTrans->division_id = Auth::user()->division_id;
+        $myTrans->division_name = Auth::user()->division_name;
+        $myTrans->group_id = Auth::user()->group_id;
+        $myTrans->group_name = Auth::user()->group_name;
         $myTrans->created_at = Carbon::now();
         $myTrans->save();
 
@@ -224,6 +234,14 @@ new class extends Component {
     public function calc(): bool
     {
         $this->resetErrorBag();
+        //check if memeber level exist
+        $sql = "select count(*) as cnt from member_levels";
+        $data = DB::select($sql);
+        if ($data[0]->cnt == 0) {
+            // dd($data);
+            $this->addError('amount', __('No member level found, please contact administrator to set up member levels first'));
+            return false;
+        }
         if ($this->amount) {
             if (($this->amount) > 0) {
                 return true;

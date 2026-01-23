@@ -64,12 +64,12 @@ new class extends Component {
         } else {
             $my_id = $group_id;
         }
-
+        $data = [];
         if (Auth::user()->role == 'user') {
             //$sql = "select a.division_name,max(a.customer_name) as customer_name, count(a.id) as quantity, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.division_id = ? and b.created_at between ? and ? group by a.division_name, a.customer_id order by a.division_name, amount desc";
             $data = DB::table('work_orders as a')
                 ->join('transactions as b', 'a.wo_no', '=', 'b.wo_no')
-                ->select('a.division_name', DB::raw('max(a.customer_name) as customer_name'),DB::raw('max(a.customer_tel) as customer_tel'), DB::raw('count(a.id) as quantity'), DB::raw('sum(b.amount) as amount'), DB::raw(' round(sum(b.amount) / count(a.id),0) as ATV'))
+                ->select('a.division_name', DB::raw('max(a.customer_name) as customer_name'), DB::raw('max(a.customer_tel) as customer_tel'), DB::raw('count(a.id) as quantity'), DB::raw('sum(b.amount) as amount'), DB::raw(' round(sum(b.amount) / count(a.id),0) as ATV'))
                 ->where('b.remark', 'CfmOrd')
                 ->whereNotIn('a.status', ['draft', 'cancel'])
                 ->where('a.division_id', $my_id)
@@ -81,7 +81,7 @@ new class extends Component {
             //$sql = "select a.division_name,max(a.customer_name) as customer_name, count(a.id) as quantity, sum(b.amount) as amount from work_orders a, transactions b where a.wo_no = b.wo_no and b.remark='CfmOrd' and a.status not in ('draft' , 'cancel') and a.group_id = ? and b.created_at between ? and ? group by a.division_name, a.customer_id order by a.division_name, amount desc";
             $data = DB::table('work_orders as a')
                 ->join('transactions as b', 'a.wo_no', '=', 'b.wo_no')
-                ->select('a.division_name', DB::raw('max(a.customer_name) as customer_name'),DB::raw('max(a.customer_tel) as customer_tel'), DB::raw('count(a.id) as quantity'), DB::raw('sum(b.amount) as amount'), DB::raw(' round(sum(b.amount) / count(a.id),0) as ATV'))
+                ->select('a.division_name', DB::raw('max(a.customer_name) as customer_name'), DB::raw('max(a.customer_tel) as customer_tel'), DB::raw('count(a.id) as quantity'), DB::raw('sum(b.amount) as amount'), DB::raw(' round(sum(b.amount) / count(a.id),0) as ATV'))
                 ->where('b.remark', 'CfmOrd')
                 ->whereNotIn('a.status', ['draft', 'cancel'])
                 ->where('a.group_id', $my_id)
@@ -150,7 +150,7 @@ new class extends Component {
         </div>
         <div class="mt-4 mb-4">
             <x-header title="{{__('Details')}}" size="text-xl" separator />
-            <x-table :headers="$headers" :rows="$allData"  with-pagination show-empty-text />
+            <x-table :headers="$headers" :rows="$allData" with-pagination show-empty-text />
         </div>
     </x-card>
 

@@ -211,6 +211,8 @@
     "Duration cannot be more than 1 month.": "Durasi tidak boleh lebih dari 1 bulan.",
     "Duration cannot be more than 1 year.": "Durasi tidak boleh lebih dari 1 tahun.",
     "Topup": "Topup",
+    "Revenue": "Pendapatan",
+    "Total Topup Amount": "Jumlah Topup Total",
     "Transaction Number": "Nomor Transaksi",
     "Reversal": "Pembalikan",
     "Balance": "Saldo",
@@ -228,5 +230,8 @@
     "2. Install the printer server on your computer.": "2. Instal server pencetak di komputer Anda.",
     "3. Add one serial port name is KEY": "3. Tambahkan satu nama port serial adalah KEY",
     "Topup Receipt": "Struk Topup",
-    "New Balance": "Saldo Baru"
+    "New Balance": "Saldo Baru",
+    "Number of Members": "Jumlah Anggota",
+    "Member Balance": "Saldo Anggota",
+    "No member level found, please contact administrator to set up member levels first": "Tidak ada tingkat anggota yang ditemukan, silakan hubungi administrator untuk mengatur tingkat anggota terlebih dahulu"
 }

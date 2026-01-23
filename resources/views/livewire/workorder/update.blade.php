@@ -442,6 +442,10 @@ new class extends Component {
         $newTxn->type = 'debit';
         $newTxn->remark = 'CfmOrd';
         $newTxn->create_by = Auth::user()->id;
+        $newTxn->division_id = Auth::user()->division_id;
+        $newTxn->division_name = Auth::user()->division_name;
+        $newTxn->group_id = Auth::user()->group_id;
+        $newTxn->group_name = Auth::user()->group_name;
 
         $newTxn->save();
         //deduct amount from customer balance
